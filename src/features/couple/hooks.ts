@@ -142,3 +142,17 @@ export function useUpdateProfile() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: spaceKeys.space(userId) }),
   });
 }
+
+/** Quem sou eu e quem é o parceiro (para rótulos "Meu / De Ana / Nosso"). */
+export function usePeople() {
+  const userId = useSession((s) => s.userId);
+  const { data: space } = useMySpace();
+  return {
+    viewerId: userId ?? '',
+    me: space?.me ?? null,
+    partner: space?.partner ?? null,
+    partnerId: space?.partner?.id ?? null,
+    partnerName: space?.partner?.displayName ?? null,
+    space: space ?? null,
+  };
+}

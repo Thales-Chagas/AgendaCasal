@@ -70,3 +70,9 @@ export async function openEncryptedDatabase(name: string, access: KeyAccess): Pr
     }
   }
 }
+
+/** Apaga o arquivo e a chave (os dados ficam irrecuperáveis). */
+export async function deleteEncryptedDatabase(name: string): Promise<void> {
+  await SQLite.deleteDatabaseAsync(`${name}.db`).catch(() => undefined);
+  await SecureStore.deleteItemAsync(`dbkey.${name}`).catch(() => undefined);
+}

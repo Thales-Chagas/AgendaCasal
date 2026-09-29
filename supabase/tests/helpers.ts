@@ -34,14 +34,27 @@ export function localEnv(): LocalEnv {
 
 const clientOptions = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
 
+const openClients: SupabaseClient[] = [];
+
+/** Fecha conexões de tempo real abertas pelos testes (chamado no afterAll global). */
+export async function closeAllClients(): Promise<void> {
+  await Promise.all(
+    openClients.splice(0).map((c) => c.removeAllChannels().then(() => c.realtime.disconnect())),
+  );
+}
+
 export function anonClient(): SupabaseClient {
   const env = localEnv();
-  return createClient(env.apiUrl, env.publishableKey, clientOptions);
+  const client = createClient(env.apiUrl, env.publishableKey, clientOptions);
+  openClients.push(client);
+  return client;
 }
 
 export function adminClient(): SupabaseClient {
   const env = localEnv();
-  return createClient(env.apiUrl, env.secretKey, clientOptions);
+  const client = createClient(env.apiUrl, env.secretKey, clientOptions);
+  openClients.push(client);
+  return client;
 }
 
 export type TestUser = { id: string; email: string; password: string; name: string; client: SupabaseClient };

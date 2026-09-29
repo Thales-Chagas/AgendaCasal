@@ -377,7 +377,9 @@ export type Database = {
           my_event_count: number;
         }[];
       };
+      register_push_token: { Args: { p_platform: string; p_token: string }; Returns: undefined };
       revoke_couple_invites: { Args: Record<PropertyKey, never>; Returns: undefined };
+      unregister_push_token: { Args: { p_token: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

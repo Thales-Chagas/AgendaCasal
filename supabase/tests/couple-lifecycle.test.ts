@@ -227,16 +227,14 @@ describe('LGPD', () => {
   it('exclui a conta: remove os dados pessoais e mantém os compromissos "Nosso" do parceiro', async () => {
     const [ana, bruno] = await Promise.all([createUser('Ana'), createUser('Bruno')]);
     const coupleId = await connect(ana, bruno);
-    await bruno.client
-      .from('events')
-      .insert([
-        timedEvent(coupleId, {
-          title: 'Pessoal do Bruno',
-          owner_scope: 'person',
-          responsible_user_id: bruno.id,
-        }),
-        timedEvent(coupleId, { title: 'Nosso' }),
-      ]);
+    await bruno.client.from('events').insert([
+      timedEvent(coupleId, {
+        title: 'Pessoal do Bruno',
+        owner_scope: 'person',
+        responsible_user_id: bruno.id,
+      }),
+      timedEvent(coupleId, { title: 'Nosso' }),
+    ]);
 
     const { error } = await bruno.client.rpc('delete_my_account');
     expect(error).toBeNull();
