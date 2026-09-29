@@ -36,7 +36,9 @@ npm run db:lint
 
 ## 2. Supabase em produção
 
-1. Crie um projeto em https://supabase.com na região **South America (São Paulo)**.
+1. Crie um projeto em https://supabase.com na região **South America (São Paulo)**. No
+   formulário: _Enable Data API_ **ligado**, _Automatically expose new tables_ **desligado**
+   (as migrations concedem acesso tabela por tabela) e _Enable automatic RLS_ **ligado**.
 2. Vincule e aplique as migrations:
    ```bash
    npx supabase login
