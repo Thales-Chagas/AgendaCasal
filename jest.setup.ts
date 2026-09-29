@@ -1,1 +1,2 @@
-// Configuração global dos testes do app.
+// Testes rodam no fuso do público principal do app.
+process.env.TZ = 'America/Sao_Paulo';

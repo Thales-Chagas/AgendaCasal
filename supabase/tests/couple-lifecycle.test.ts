@@ -4,7 +4,9 @@
 import { anonClient, connect, coupleIdOf, createUser, timedEvent, withDb } from './helpers';
 
 async function createInvite(client: Awaited<ReturnType<typeof createUser>>['client']) {
-  const { data, error } = await client.rpc('create_couple_invite').single<{ code: string; expires_at: string }>();
+  const { data, error } = await client
+    .rpc('create_couple_invite')
+    .single<{ code: string; expires_at: string }>();
   if (error) throw error;
   return data;
 }
@@ -47,26 +49,39 @@ describe('convite', () => {
   it('leva os compromissos de quem aceita para a agenda do casal', async () => {
     const [ana, bruno] = await Promise.all([createUser('Ana'), createUser('Bruno')]);
     const brunoSolo = await coupleIdOf(bruno);
-    const ev = timedEvent(brunoSolo, { title: 'Academia', owner_scope: 'person', responsible_user_id: bruno.id });
+    const ev = timedEvent(brunoSolo, {
+      title: 'Academia',
+      owner_scope: 'person',
+      responsible_user_id: bruno.id,
+    });
     await bruno.client.from('events').insert(ev);
 
     const coupleId = await connect(ana, bruno);
 
     const { data } = await ana.client.from('events').select('title, couple_id').eq('id', ev.id).single();
     expect(data).toEqual({ title: 'Academia', couple_id: coupleId });
-    const leftover = await withDb((db) => db.query('select 1 from public.couples where id = $1', [brunoSolo]));
+    const leftover = await withDb((db) =>
+      db.query('select 1 from public.couples where id = $1', [brunoSolo]),
+    );
     expect(leftover.rowCount).toBe(0);
   });
 
   it('recusa convite inválido, expirado, revogado ou já usado', async () => {
-    const [ana, bruno, carla] = await Promise.all([createUser('Ana'), createUser('Bruno'), createUser('Carla')]);
+    const [ana, bruno, carla] = await Promise.all([
+      createUser('Ana'),
+      createUser('Bruno'),
+      createUser('Carla'),
+    ]);
 
     const { data: invalid } = await bruno.client.rpc('accept_invite', { p_code: 'ZZZZZZZZ' });
     expect(invalid).toBeNull();
 
     const expired = await createInvite(ana.client);
     await withDb((db) =>
-      db.query(`update public.couple_invites set expires_at = now() - interval '1 minute' where created_by = $1`, [ana.id]),
+      db.query(
+        `update public.couple_invites set expires_at = now() - interval '1 minute' where created_by = $1`,
+        [ana.id],
+      ),
     );
     const { data: expiredResult } = await bruno.client.rpc('accept_invite', { p_code: expired.code });
     expect(expiredResult).toBeNull();
@@ -91,7 +106,11 @@ describe('convite', () => {
   });
 
   it('não permite mais de duas pessoas no casal', async () => {
-    const [ana, bruno, carla] = await Promise.all([createUser('Ana'), createUser('Bruno'), createUser('Carla')]);
+    const [ana, bruno, carla] = await Promise.all([
+      createUser('Ana'),
+      createUser('Bruno'),
+      createUser('Carla'),
+    ]);
     const { code } = await createInvite(ana.client);
     // Um segundo convite válido para o mesmo casal, inserido por fora (cenário de corrida).
     await connect(ana, bruno);
@@ -112,7 +131,11 @@ describe('convite', () => {
   });
 
   it('quem já está conectado não aceita outro convite', async () => {
-    const [ana, bruno, carla] = await Promise.all([createUser('Ana'), createUser('Bruno'), createUser('Carla')]);
+    const [ana, bruno, carla] = await Promise.all([
+      createUser('Ana'),
+      createUser('Bruno'),
+      createUser('Carla'),
+    ]);
     await connect(ana, bruno);
     const { code } = await createInvite(carla.client);
     const { error } = await bruno.client.rpc('accept_invite', { p_code: code });
@@ -135,8 +158,16 @@ describe('desfazer vínculo', () => {
     const [ana, bruno] = await Promise.all([createUser('Ana'), createUser('Bruno')]);
     const coupleId = await connect(ana, bruno);
 
-    const mine = timedEvent(coupleId, { title: 'Dentista do Bruno', owner_scope: 'person', responsible_user_id: bruno.id });
-    const hers = timedEvent(coupleId, { title: 'Reunião da Ana', owner_scope: 'person', responsible_user_id: ana.id });
+    const mine = timedEvent(coupleId, {
+      title: 'Dentista do Bruno',
+      owner_scope: 'person',
+      responsible_user_id: bruno.id,
+    });
+    const hers = timedEvent(coupleId, {
+      title: 'Reunião da Ana',
+      owner_scope: 'person',
+      responsible_user_id: ana.id,
+    });
     const ours = timedEvent(coupleId, { title: 'Viagem' });
     await bruno.client.from('events').insert([mine, hers, ours]);
 
@@ -144,7 +175,10 @@ describe('desfazer vínculo', () => {
     expect(error).toBeNull();
 
     // Bruno: novo espaço com o dele e a cópia do "Nosso".
-    const { data: brunoEvents } = await bruno.client.from('events').select('title, couple_id').is('deleted_at', null);
+    const { data: brunoEvents } = await bruno.client
+      .from('events')
+      .select('title, couple_id')
+      .is('deleted_at', null);
     expect(brunoEvents?.map((e) => e.title).sort()).toEqual(['Dentista do Bruno', 'Viagem']);
     expect(brunoEvents?.every((e) => e.couple_id === newCouple)).toBe(true);
 
@@ -171,10 +205,16 @@ describe('desfazer vínculo', () => {
 
 describe('LGPD', () => {
   it('exporta somente os próprios dados e os da agenda do casal', async () => {
-    const [ana, bruno, carla] = await Promise.all([createUser('Ana'), createUser('Bruno'), createUser('Carla')]);
+    const [ana, bruno, carla] = await Promise.all([
+      createUser('Ana'),
+      createUser('Bruno'),
+      createUser('Carla'),
+    ]);
     const coupleId = await connect(ana, bruno);
     await ana.client.from('events').insert(timedEvent(coupleId, { title: 'Nosso jantar' }));
-    await carla.client.from('events').insert(timedEvent(await coupleIdOf(carla), { title: 'Segredo da Carla' }));
+    await carla.client
+      .from('events')
+      .insert(timedEvent(await coupleIdOf(carla), { title: 'Segredo da Carla' }));
 
     const { data } = await ana.client.rpc('export_my_data');
     const text = JSON.stringify(data);
@@ -187,10 +227,16 @@ describe('LGPD', () => {
   it('exclui a conta: remove os dados pessoais e mantém os compromissos "Nosso" do parceiro', async () => {
     const [ana, bruno] = await Promise.all([createUser('Ana'), createUser('Bruno')]);
     const coupleId = await connect(ana, bruno);
-    await bruno.client.from('events').insert([
-      timedEvent(coupleId, { title: 'Pessoal do Bruno', owner_scope: 'person', responsible_user_id: bruno.id }),
-      timedEvent(coupleId, { title: 'Nosso' }),
-    ]);
+    await bruno.client
+      .from('events')
+      .insert([
+        timedEvent(coupleId, {
+          title: 'Pessoal do Bruno',
+          owner_scope: 'person',
+          responsible_user_id: bruno.id,
+        }),
+        timedEvent(coupleId, { title: 'Nosso' }),
+      ]);
 
     const { error } = await bruno.client.rpc('delete_my_account');
     expect(error).toBeNull();
@@ -200,7 +246,10 @@ describe('LGPD', () => {
     const { data: couple } = await ana.client.from('couples').select('sync_epoch, connected_at').single();
     expect(couple).toEqual({ sync_epoch: 2, connected_at: null });
 
-    const { error: loginError } = await anonClient().auth.signInWithPassword({ email: bruno.email, password: bruno.password });
+    const { error: loginError } = await anonClient().auth.signInWithPassword({
+      email: bruno.email,
+      password: bruno.password,
+    });
     expect(loginError).not.toBeNull();
 
     // Ana pode convidar outra pessoa.

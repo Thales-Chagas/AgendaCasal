@@ -20,7 +20,7 @@ module.exports = defineConfig([
   },
   {
     rules: {
-      'no-console': ['error', { allow: [] }],
+      'no-console': 'error',
       eqeqeq: ['error', 'always'],
       'import/no-default-export': 'off',
     },

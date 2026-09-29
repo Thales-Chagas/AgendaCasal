@@ -24,7 +24,11 @@ beforeAll(async () => {
   coupleA = await connect(ana, bruno);
   coupleB = await connect(carla, davi);
 
-  const ev = timedEvent(coupleB, { title: 'Consulta da Carla', owner_scope: 'person', responsible_user_id: carla.id });
+  const ev = timedEvent(coupleB, {
+    title: 'Consulta da Carla',
+    owner_scope: 'person',
+    responsible_user_id: carla.id,
+  });
   const { error } = await carla.client.from('events').insert(ev);
   if (error) throw error;
   eventB = ev.id;
@@ -45,7 +49,16 @@ describe('cadastro', () => {
 });
 
 describe('usuário não autenticado (anon)', () => {
-  const tables = ['profiles', 'couples', 'couple_members', 'couple_invites', 'events', 'special_dates', 'notification_settings', 'push_tokens'];
+  const tables = [
+    'profiles',
+    'couples',
+    'couple_members',
+    'couple_invites',
+    'events',
+    'special_dates',
+    'notification_settings',
+    'push_tokens',
+  ];
 
   it.each(tables)('não lê a tabela %s', async (table) => {
     const { data, error } = await anonClient().from(table).select('*');
@@ -78,7 +91,11 @@ describe('Casal A não acessa dados do Casal B', () => {
   });
 
   it('não edita nem exclui (logicamente) compromisso do outro casal', async () => {
-    const { data: updated } = await ana.client.from('events').update({ title: 'hackeado' }).eq('id', eventB).select();
+    const { data: updated } = await ana.client
+      .from('events')
+      .update({ title: 'hackeado' })
+      .eq('id', eventB)
+      .select();
     expect(updated).toEqual([]);
     const { data: deleted } = await ana.client
       .from('events')
@@ -87,7 +104,11 @@ describe('Casal A não acessa dados do Casal B', () => {
       .select();
     expect(deleted).toEqual([]);
 
-    const { data: still } = await carla.client.from('events').select('title, deleted_at').eq('id', eventB).single();
+    const { data: still } = await carla.client
+      .from('events')
+      .select('title, deleted_at')
+      .eq('id', eventB)
+      .single();
     expect(still).toEqual({ title: 'Consulta da Carla', deleted_at: null });
   });
 
@@ -103,12 +124,17 @@ describe('Casal A não acessa dados do Casal B', () => {
     const { data: couples } = await ana.client.from('couples').select('id');
     expect(couples).toEqual([{ id: coupleA }]);
 
-    const { data: members } = await ana.client.from('couple_members').select('user_id').eq('couple_id', coupleB);
+    const { data: members } = await ana.client
+      .from('couple_members')
+      .select('user_id')
+      .eq('couple_id', coupleB);
     expect(members).toEqual([]);
   });
 
   it('não lê datas especiais do outro casal', async () => {
-    await carla.client.from('special_dates').insert({ couple_id: coupleB, title: 'Aniversário', date: '1990-05-10' });
+    await carla.client
+      .from('special_dates')
+      .insert({ couple_id: coupleB, title: 'Aniversário', date: '1990-05-10' });
     const { data } = await ana.client.from('special_dates').select('id').eq('couple_id', coupleB);
     expect(data).toEqual([]);
   });
@@ -137,7 +163,11 @@ describe('integridade dos vínculos', () => {
   it('não altera nem cria espaços diretamente', async () => {
     const { error: insertError } = await ana.client.from('couples').insert({});
     expect(insertError).not.toBeNull();
-    const { data } = await ana.client.from('couples').update({ connected_at: null }).eq('id', coupleA).select();
+    const { data } = await ana.client
+      .from('couples')
+      .update({ connected_at: null })
+      .eq('id', coupleA)
+      .select();
     expect(data ?? []).toEqual([]);
   });
 
@@ -147,7 +177,11 @@ describe('integridade dos vínculos', () => {
   });
 
   it('não altera o perfil do parceiro nem campos protegidos do próprio perfil', async () => {
-    const { data } = await ana.client.from('profiles').update({ display_name: 'x' }).eq('id', bruno.id).select();
+    const { data } = await ana.client
+      .from('profiles')
+      .update({ display_name: 'x' })
+      .eq('id', bruno.id)
+      .select();
     expect(data).toEqual([]);
     const { error } = await ana.client.from('profiles').update({ terms_version: 'forjado' }).eq('id', ana.id);
     expect(error).not.toBeNull();
@@ -171,13 +205,21 @@ describe('campos controlados pelo servidor', () => {
       created_at: '2000-01-01T00:00:00Z',
     });
     await ana.client.from('events').insert(ev);
-    const { data } = await ana.client.from('events').select('version, created_by, created_at').eq('id', ev.id).single();
+    const { data } = await ana.client
+      .from('events')
+      .select('version, created_by, created_at')
+      .eq('id', ev.id)
+      .single();
     expect(data?.version).toBe(1);
     expect(data?.created_by).toBe(ana.id);
     expect(data?.created_at).not.toContain('2000-01-01');
 
     await bruno.client.from('events').update({ title: 'Jantar às 21h', version: 50 }).eq('id', ev.id);
-    const { data: after } = await ana.client.from('events').select('version, updated_by').eq('id', ev.id).single();
+    const { data: after } = await ana.client
+      .from('events')
+      .select('version, updated_by')
+      .eq('id', ev.id)
+      .single();
     expect(after).toEqual({ version: 2, updated_by: bruno.id });
   });
 });

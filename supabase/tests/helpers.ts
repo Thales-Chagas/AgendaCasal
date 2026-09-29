@@ -20,7 +20,9 @@ export function localEnv(): LocalEnv {
     };
     return cachedEnv;
   }
-  const status = JSON.parse(execSync('npx supabase status -o json', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+  const status = JSON.parse(
+    execSync('npx supabase status -o json', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }),
+  );
   cachedEnv = {
     apiUrl: status.API_URL,
     publishableKey: status.PUBLISHABLE_KEY ?? status.ANON_KEY,
@@ -64,7 +66,11 @@ export async function createUser(name: string): Promise<TestUser> {
 }
 
 export async function coupleIdOf(user: TestUser): Promise<string> {
-  const { data, error } = await user.client.from('couple_members').select('couple_id').eq('user_id', user.id).single();
+  const { data, error } = await user.client
+    .from('couple_members')
+    .select('couple_id')
+    .eq('user_id', user.id)
+    .single();
   if (error) throw error;
   return data.couple_id as string;
 }
