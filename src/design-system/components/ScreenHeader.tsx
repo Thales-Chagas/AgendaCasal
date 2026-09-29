@@ -1,5 +1,6 @@
-import { router } from 'expo-router';
 import type { ReactNode } from 'react';
+
+import { goBackOrHome } from '@/shared/navigation';
 import { StyleSheet, View } from 'react-native';
 
 import { ChevronLeft, X } from '../icons';
@@ -25,7 +26,7 @@ export function ScreenHeader({
   onLeadingPress,
 }: ScreenHeaderProps) {
   const { spacing } = useTheme();
-  const goBack = onLeadingPress ?? (() => (router.canGoBack() ? router.back() : router.replace('/')));
+  const goBack = onLeadingPress ?? goBackOrHome;
 
   return (
     <View style={{ marginBottom: spacing.lg, gap: spacing.xs }}>

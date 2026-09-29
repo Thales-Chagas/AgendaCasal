@@ -41,6 +41,7 @@ import {
 import { describeRule, expandOccurrences } from '@/features/events/domain/recurrence';
 import { deleteEventWithUndo, skipOccurrence, useEvent } from '@/features/events/hooks';
 import { useNow } from '@/shared/hooks/use-now';
+import { goBackOrHome } from '@/shared/navigation';
 
 export default function EventDetailScreen() {
   const { id, date } = useLocalSearchParams<{ id: string; date?: string }>();
@@ -84,7 +85,7 @@ export default function EventDetailScreen() {
 
   const remove = async () => {
     setDeleteSheet(false);
-    router.back();
+    goBackOrHome();
     await deleteEventWithUndo(event.id);
   };
 
@@ -180,7 +181,7 @@ export default function EventDetailScreen() {
               variant="secondary"
               onPress={() => {
                 setDeleteSheet(false);
-                router.back();
+                goBackOrHome();
                 void skipOccurrence(event, occurrence.localDate);
               }}
             />

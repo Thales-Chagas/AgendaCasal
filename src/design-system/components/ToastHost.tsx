@@ -29,9 +29,7 @@ export function ToastHost({ bottomOffset = 0 }: { bottomOffset?: number }) {
     current.tone === 'success' ? colors.success : current.tone === 'error' ? colors.danger : colors.info;
 
   return (
-    <View
-      pointerEvents="box-none"
-      style={[styles.wrapper, { bottom: insets.bottom + bottomOffset + spacing.lg }]}>
+    <View style={[styles.wrapper, { bottom: insets.bottom + bottomOffset + spacing.lg }]}>
       <Animated.View
         key={current.id}
         entering={FadeInDown.duration(220)}
@@ -71,7 +69,7 @@ export function ToastHost({ bottomOffset = 0 }: { bottomOffset?: number }) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: { position: 'absolute', left: 16, right: 16, alignItems: 'center' },
+  wrapper: { position: 'absolute', left: 16, right: 16, alignItems: 'center', pointerEvents: 'box-none' },
   toast: {
     flexDirection: 'row',
     alignItems: 'center',

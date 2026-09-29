@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 
 import { ScreenHeader, toast } from '@/design-system';
@@ -11,6 +11,7 @@ import {
   requestPermission,
   scheduleRescheduling,
 } from '@/features/notifications/notification-service';
+import { goBackOrHome } from '@/shared/navigation';
 
 export default function NewEventScreen() {
   const { date } = useLocalSearchParams<{ date?: string }>();
@@ -26,7 +27,7 @@ export default function NewEventScreen() {
       onSubmit={async (state) => {
         await createEvent(formToFields(state, { viewerId, partnerId }));
         toast.success(partnerId ? 'Compromisso salvo ✓ Já aparece para vocês dois' : 'Compromisso salvo ✓');
-        router.back();
+        goBackOrHome();
         // Pede permissão de notificação no momento em que ela faz sentido.
         if (state.reminders.length && (await getPermissionState()) === 'undetermined') {
           if ((await requestPermission()) === 'granted') scheduleRescheduling(0);

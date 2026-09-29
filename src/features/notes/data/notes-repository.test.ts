@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { createNodeSqlDatabase } from '@/core/storage/testing/node-sql';
 
 import { displayTitle, isEmptyNote, preview } from '../domain/types';
-import { createNotesRepository, toFtsQuery } from './notes-repository';
+import { createNotesRepository, searchWords } from './notes-repository';
 
 async function setup() {
   let clock = new Date('2026-09-29T12:00:00Z').getTime();
@@ -27,7 +27,7 @@ describe('notas privadas (repositório local)', () => {
     expect((await repo.list()).map((n) => n.id)).toEqual([note.id]);
   });
 
-  it('busca sem acento, por prefixo, em título e texto', async () => {
+  it('busca sem acento, por parte da palavra, em título e texto', async () => {
     const repo = await setup();
     await repo.create({ title: 'Café da manhã', body: 'pão de queijo' });
     await repo.create({ title: 'Viagem', body: 'Levar protetor solar' });
@@ -70,9 +70,15 @@ describe('notas privadas (repositório local)', () => {
     expect((await repo.list({ sort: 'title' })).map((n) => n.title)).toEqual(['Abacaxi', 'banana']);
   });
 
-  it('protege a busca contra sintaxe especial do FTS', () => {
-    expect(toFtsQuery('"; DROP TABLE notes; --')).toBe('"DROP"* "TABLE"* "notes"*');
-    expect(toFtsQuery('   ')).toBeNull();
+  it('trata a busca como texto (sem injeção de SQL ou curingas)', async () => {
+    const repo = await setup();
+    await repo.create({ title: '100% feito', body: 'a_b' });
+    await repo.create({ title: 'Outra', body: 'nada' });
+    expect(searchWords('"; DROP TABLE notes; --')).toEqual(['drop', 'table', 'notes']);
+    expect(await repo.list({ search: '"; DROP TABLE notes; --' })).toEqual([]);
+    expect((await repo.list({ search: '%' })).length).toBe(0);
+    expect(await repo.list({ search: '   ' })).toEqual([]);
+    expect((await repo.list()).length).toBe(2);
   });
 
   it('títulos e prévias amigáveis', () => {

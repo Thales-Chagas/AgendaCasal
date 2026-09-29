@@ -10,6 +10,7 @@ import {
   Button,
   Chip,
   EmptyState,
+  ErrorState,
   IconButton,
   ListRow,
   PrivateBadge,
@@ -47,7 +48,12 @@ export default function NotesScreen() {
   const [sortOpen, setSortOpen] = useState(false);
   const locked = lockEnabled && !unlocked;
 
-  const { data: notes, isLoading } = useNotes(locked ? null : userId, {
+  const {
+    data: notes,
+    isLoading,
+    isError,
+    refetch,
+  } = useNotes(locked ? null : userId, {
     archived,
     sort,
     search: search.trim() || undefined,
@@ -130,7 +136,13 @@ export default function NotesScreen() {
           </View>
         ) : null}
 
-        {isLoading ? (
+        {isError ? (
+          <ErrorState
+            title="Não conseguimos abrir suas notas"
+            message="Elas continuam guardadas neste celular. Tente novamente."
+            onRetry={() => void refetch()}
+          />
+        ) : isLoading ? (
           <>
             <Skeleton height={72} radius={24} />
             <Skeleton height={72} radius={24} />

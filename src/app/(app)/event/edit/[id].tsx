@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 
 import { ErrorState, EventCardSkeleton, Screen, ScreenHeader, toast } from '@/design-system';
@@ -6,6 +6,7 @@ import { usePeople } from '@/features/couple/hooks';
 import { EventForm } from '@/features/events/components/EventForm';
 import { eventToForm, formToFields } from '@/features/events/domain/form';
 import { updateEvent, useEvent } from '@/features/events/hooks';
+import { goBackOrHome } from '@/shared/navigation';
 
 export default function EditEventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -47,7 +48,7 @@ export default function EditEventScreen() {
         const fields = formToFields(state, { viewerId, partnerId }, event.timezone);
         await updateEvent(event.id, { ...fields, recurrenceExdates: event.recurrenceExdates });
         toast.success('Alterações salvas ✓');
-        router.back();
+        goBackOrHome();
       }}
     />
   );

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import type { Href } from 'expo-router';
 
 import { expandOccurrences } from '@/features/events/domain/recurrence';
 import { upcomingSpecialDates } from '@/features/special-dates/domain/presentation';
@@ -10,7 +11,7 @@ export type CountdownItem = {
   title: string;
   emoji: string;
   date: Date;
-  href: { pathname: '/event/[id]' | '/special-date/[id]'; params: Record<string, string> };
+  href: Href;
 };
 
 const DAY = 86_400_000;

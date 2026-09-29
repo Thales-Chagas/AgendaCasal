@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { Platform, Pressable, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { Eye, EyeOff, type Icon } from '../icons';
 import { useTheme } from '../theme/theme';
@@ -65,6 +65,8 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
             typography.body,
             styles.input,
             { color: colors.textPrimary },
+            // Na web, o contorno de foco do navegador é substituído pela nossa borda.
+            Platform.OS === 'web' && ({ outlineStyle: 'none' } as object),
             multilineHeight
               ? { minHeight: multilineHeight - spacing.md * 2, textAlignVertical: 'top' }
               : null,

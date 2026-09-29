@@ -1,9 +1,10 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { AppText, IconButton, Screen, useTheme } from '@/design-system';
 import { X } from '@/design-system/icons';
 import { privacyPolicy, termsOfUse } from '@/features/legal/content';
+import { goBackOrHome } from '@/shared/navigation';
 
 export default function LegalScreen() {
   const { doc } = useLocalSearchParams<{ doc: string }>();
@@ -13,11 +14,7 @@ export default function LegalScreen() {
   return (
     <Screen>
       <View style={{ alignItems: 'flex-end', marginRight: -spacing.md }}>
-        <IconButton
-          icon={X}
-          label="Fechar"
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-        />
+        <IconButton icon={X} label="Fechar" onPress={() => goBackOrHome()} />
       </View>
       <AppText variant="title1" accessibilityRole="header">
         {content.title}

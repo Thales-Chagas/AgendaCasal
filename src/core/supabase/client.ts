@@ -1,6 +1,6 @@
 import 'react-native-url-polyfill/auto';
 
-import { createClient, processLock, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 
 import { env } from '@/core/config/env';
@@ -27,7 +27,6 @@ export function getSupabase(): AppSupabaseClient {
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false,
-      lock: processLock,
     },
     global: { headers: { 'x-client-info': `nossa-agenda/${Platform.OS}` } },
   });

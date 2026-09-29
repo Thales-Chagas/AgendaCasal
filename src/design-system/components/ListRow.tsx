@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { ChevronRight, type Icon } from '../icons';
 import type { ColorTokens } from '../tokens/colors';
@@ -65,6 +65,8 @@ export function ListRow({
           onValueChange={toggle.onChange}
           trackColor={{ true: colors.primary, false: colors.borderStrong }}
           thumbColor={colors.surface}
+          // react-native-web usa esta propriedade para a bolinha ligada.
+          {...(Platform.OS === 'web' ? ({ activeThumbColor: colors.surface } as object) : null)}
           ios_backgroundColor={colors.borderStrong}
           accessibilityLabel={title}
         />

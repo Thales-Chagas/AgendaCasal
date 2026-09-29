@@ -1,10 +1,11 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 import { Button, ErrorState, Screen, ScreenHeader, Skeleton, toast } from '@/design-system';
 import { Trash } from '@/design-system/icons';
 import { SpecialDateForm } from '@/features/special-dates/components/SpecialDateForm';
 import { daysUntilLabel, nextOccurrence } from '@/features/special-dates/domain/presentation';
 import { deleteSpecialDateWithUndo, saveSpecialDate, useSpecialDate } from '@/features/special-dates/hooks';
+import { goBackOrHome } from '@/shared/navigation';
 
 export default function SpecialDateScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -44,7 +45,7 @@ export default function SpecialDateScreen() {
       onSubmit={async (fields) => {
         await saveSpecialDate(item.id, fields);
         toast.success('Alterações salvas ✓');
-        router.back();
+        goBackOrHome();
       }}
       extraFooter={
         <Button
@@ -52,7 +53,7 @@ export default function SpecialDateScreen() {
           icon={Trash}
           variant="ghost"
           onPress={() => {
-            router.back();
+            goBackOrHome();
             void deleteSpecialDateWithUndo(item.id);
           }}
         />

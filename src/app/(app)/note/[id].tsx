@@ -1,6 +1,6 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, View } from 'react-native';
 
 import { logger } from '@/core/logging/logger';
 import {
@@ -18,6 +18,7 @@ import { useSession } from '@/features/auth/session-store';
 import { isEmptyNote } from '@/features/notes/domain/types';
 import { useNote } from '@/features/notes/hooks';
 import { invalidateNotes, openNotes } from '@/features/notes/notes-service';
+import { goBackOrHome } from '@/shared/navigation';
 
 const AUTOSAVE_MS = 500;
 
@@ -124,7 +125,7 @@ export default function NoteEditorScreen() {
       await repo.setArchived(noteId, !archived);
       setArchived(!archived);
       toast.success(archived ? 'Nota de volta às notas' : 'Nota arquivada');
-      if (!archived) router.back();
+      if (!archived) goBackOrHome();
     });
 
   const remove = () =>
@@ -132,7 +133,7 @@ export default function NoteEditorScreen() {
       if (timer.current) clearTimeout(timer.current);
       const removed = await repo.remove(noteId);
       loaded.current = false; // evita salvar de novo ao sair
-      router.back();
+      goBackOrHome();
       toast.success('Nota excluída', {
         label: 'Desfazer',
         onPress: () => {
@@ -190,7 +191,7 @@ export default function NoteEditorScreen() {
           placeholderTextColor={colors.textTertiary}
           accessibilityLabel="Título da nota"
           maxLength={200}
-          style={[typography.title1, { color: colors.textPrimary }]}
+          style={[typography.title1, styles.input, { color: colors.textPrimary }]}
           testID="note-title"
         />
         <TextInput
@@ -206,7 +207,7 @@ export default function NoteEditorScreen() {
           multiline
           autoFocus={isNew}
           textAlignVertical="top"
-          style={[typography.body, styles.body, { color: colors.textPrimary }]}
+          style={[typography.body, styles.input, styles.body, { color: colors.textPrimary }]}
           testID="note-body"
         />
       </View>
@@ -214,4 +215,8 @@ export default function NoteEditorScreen() {
   );
 }
 
-const styles = StyleSheet.create({ body: { minHeight: 320 } });
+const styles = StyleSheet.create({
+  body: { minHeight: 320 },
+  // Na web (pré-visualização), remove o contorno de foco do navegador.
+  input: Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : {},
+});

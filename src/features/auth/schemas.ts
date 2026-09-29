@@ -21,7 +21,7 @@ export const passwordSchema = z
 export const displayNameSchema = z
   .string()
   .trim()
-  .min(1, 'Como podemos te chamar?')
+  .min(1, 'Informe seu nome ou apelido.')
   .max(40, 'Use no máximo 40 caracteres.');
 
 export const otpSchema = z

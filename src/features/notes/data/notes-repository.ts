@@ -17,23 +17,11 @@ const MIGRATIONS = [
     pinned INTEGER NOT NULL DEFAULT 0,
     archived INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
+    updated_at TEXT NOT NULL,
+    -- Título + texto sem acentos e em minúsculas, para a busca local.
+    search_text TEXT NOT NULL DEFAULT ''
   );
   CREATE INDEX notes_list_idx ON notes (archived, pinned, updated_at);
-
-  CREATE VIRTUAL TABLE notes_fts USING fts5(
-    title, body, content='notes', content_rowid='rowid', tokenize='unicode61 remove_diacritics 2'
-  );
-  CREATE TRIGGER notes_ai AFTER INSERT ON notes BEGIN
-    INSERT INTO notes_fts (rowid, title, body) VALUES (new.rowid, new.title, new.body);
-  END;
-  CREATE TRIGGER notes_ad AFTER DELETE ON notes BEGIN
-    INSERT INTO notes_fts (notes_fts, rowid, title, body) VALUES ('delete', old.rowid, old.title, old.body);
-  END;
-  CREATE TRIGGER notes_au AFTER UPDATE OF title, body ON notes BEGIN
-    INSERT INTO notes_fts (notes_fts, rowid, title, body) VALUES ('delete', old.rowid, old.title, old.body);
-    INSERT INTO notes_fts (rowid, title, body) VALUES (new.rowid, new.title, new.body);
-  END;
   `,
 ];
 
@@ -63,48 +51,53 @@ const ORDER: Record<NoteSort, string> = {
   title: `CASE WHEN title = '' THEN body ELSE title END COLLATE NOCASE ASC`,
 };
 
-/** "cafe ana" → `"cafe"* "ana"*` (todas as palavras, por prefixo, sem acento). */
-export function toFtsQuery(term: string): string | null {
-  const words = term
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+/** Remove acentos e padroniza caixa ("Café" → "cafe"). */
+export function normalizeText(text: string): string {
+  return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+/** Palavras da busca (no máximo 8), já normalizadas. */
+export function searchWords(term: string): string[] {
+  return normalizeText(term)
     .split(/[^\p{L}\p{N}]+/u)
     .filter(Boolean)
     .slice(0, 8);
-  if (words.length === 0) return null;
-  return words.map((w) => `"${w.replace(/"/g, '')}"*`).join(' ');
 }
+
+const escapeLike = (word: string) => word.replace(/[\\%_]/g, (c) => `\\${c}`);
 
 export type ListOptions = { archived?: boolean; sort?: NoteSort; search?: string };
 
+/**
+ * Busca: todas as palavras precisam aparecer (em qualquer ordem), sem diferenciar
+ * acentos ou maiúsculas. Igual em iOS, Android e web, sem depender de extensões do SQLite.
+ */
 export async function createNotesRepository(
   db: SqlDatabase,
   deps: { newId: () => string; now?: () => Date },
 ) {
   await migrate(db, MIGRATIONS);
   const now = () => (deps.now ?? (() => new Date()))().toISOString();
+  const searchText = (title: string, body: string) => normalizeText(`${title}\n${body}`);
+
+  async function get(id: string): Promise<Note | null> {
+    const row = await db.getFirstAsync<NoteRow>('SELECT * FROM notes WHERE id = ?', [id]);
+    return row ? toNote(row) : null;
+  }
 
   return {
-    async list({ archived = false, sort = 'updated', search }: ListOptions = {}): Promise<Note[]> {
-      const fts = search ? toFtsQuery(search) : null;
-      if (search && !fts) return [];
-      const rows = fts
-        ? await db.getAllAsync<NoteRow>(
-            `SELECT n.* FROM notes n JOIN notes_fts f ON f.rowid = n.rowid
-              WHERE notes_fts MATCH ? AND n.archived = ?
-              ORDER BY n.pinned DESC, ${ORDER[sort].replace(/(^|, )(\w)/g, '$1n.$2')}`,
-            [fts, archived ? 1 : 0],
-          )
-        : await db.getAllAsync<NoteRow>(
-            `SELECT * FROM notes WHERE archived = ? ORDER BY pinned DESC, ${ORDER[sort]}`,
-            [archived ? 1 : 0],
-          );
-      return rows.map(toNote);
-    },
+    get,
 
-    async get(id: string): Promise<Note | null> {
-      const row = await db.getFirstAsync<NoteRow>('SELECT * FROM notes WHERE id = ?', [id]);
-      return row ? toNote(row) : null;
+    async list({ archived = false, sort = 'updated', search }: ListOptions = {}): Promise<Note[]> {
+      const words = search ? searchWords(search) : [];
+      if (search && words.length === 0) return [];
+      const conditions = ['archived = ?', ...words.map(() => `search_text LIKE ? ESCAPE '\\'`)];
+      const params = [archived ? 1 : 0, ...words.map((w) => `%${escapeLike(w)}%`)];
+      const rows = await db.getAllAsync<NoteRow>(
+        `SELECT * FROM notes WHERE ${conditions.join(' AND ')} ORDER BY pinned DESC, ${ORDER[sort]}`,
+        params,
+      );
+      return rows.map(toNote);
     },
 
     async create(input: { title?: string; body?: string } = {}): Promise<Note> {
@@ -119,22 +112,23 @@ export async function createNotesRepository(
         updatedAt: timestamp,
       };
       await db.runAsync(
-        'INSERT INTO notes (id, title, body, pinned, archived, created_at, updated_at) VALUES (?, ?, ?, 0, 0, ?, ?)',
-        [note.id, note.title, note.body, note.createdAt, note.updatedAt],
+        `INSERT INTO notes (id, title, body, pinned, archived, created_at, updated_at, search_text)
+         VALUES (?, ?, ?, 0, 0, ?, ?, ?)`,
+        [note.id, note.title, note.body, note.createdAt, note.updatedAt, searchText(note.title, note.body)],
       );
       return note;
     },
 
     /** Salvamento automático do editor (título e texto). */
     async update(id: string, patch: { title?: string; body?: string }): Promise<void> {
-      const current = await this.get(id);
+      const current = await get(id);
       if (!current) return;
-      await db.runAsync('UPDATE notes SET title = ?, body = ?, updated_at = ? WHERE id = ?', [
-        patch.title ?? current.title,
-        patch.body ?? current.body,
-        now(),
-        id,
-      ]);
+      const title = patch.title ?? current.title;
+      const body = patch.body ?? current.body;
+      await db.runAsync(
+        'UPDATE notes SET title = ?, body = ?, search_text = ?, updated_at = ? WHERE id = ?',
+        [title, body, searchText(title, body), now(), id],
+      );
     },
 
     async setPinned(id: string, pinned: boolean): Promise<void> {
@@ -150,14 +144,15 @@ export async function createNotesRepository(
 
     /** Exclui e devolve a nota (para "Desfazer"). */
     async remove(id: string): Promise<Note | null> {
-      const note = await this.get(id);
+      const note = await get(id);
       await db.runAsync('DELETE FROM notes WHERE id = ?', [id]);
       return note;
     },
 
     async restore(note: Note): Promise<void> {
       await db.runAsync(
-        'INSERT OR REPLACE INTO notes (id, title, body, pinned, archived, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        `INSERT OR REPLACE INTO notes (id, title, body, pinned, archived, created_at, updated_at, search_text)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           note.id,
           note.title,
@@ -166,12 +161,13 @@ export async function createNotesRepository(
           note.archived ? 1 : 0,
           note.createdAt,
           note.updatedAt,
+          searchText(note.title, note.body),
         ],
       );
     },
 
     async count(): Promise<{ active: number; archived: number }> {
-      const row = await db.getFirstAsync<{ active: number; archived: number }>(
+      const row = await db.getFirstAsync<{ active: number | null; archived: number | null }>(
         'SELECT sum(archived = 0) AS active, sum(archived = 1) AS archived FROM notes',
       );
       return { active: row?.active ?? 0, archived: row?.archived ?? 0 };

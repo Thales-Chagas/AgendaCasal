@@ -1,9 +1,8 @@
-import { router } from 'expo-router';
-
 import { ScreenHeader, toast } from '@/design-system';
 import { toDateKey } from '@/features/events/domain/dates';
 import { SpecialDateForm } from '@/features/special-dates/components/SpecialDateForm';
 import { saveSpecialDate } from '@/features/special-dates/hooks';
+import { goBackOrHome } from '@/shared/navigation';
 
 export default function NewSpecialDateScreen() {
   return (
@@ -26,7 +25,7 @@ export default function NewSpecialDateScreen() {
       onSubmit={async (fields) => {
         await saveSpecialDate(null, fields);
         toast.success('Data salva ❤️');
-        router.back();
+        goBackOrHome();
       }}
     />
   );
