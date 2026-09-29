@@ -1,0 +1,2 @@
+-- Intencionalmente vazio: o app não usa dados fictícios permanentes.
+-- Usuários de teste são criados pelos testes de integração (supabase/tests).
