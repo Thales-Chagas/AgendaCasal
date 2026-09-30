@@ -6,7 +6,6 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { usePreferences } from '@/core/preferences/preferences-store';
 import {
   AppText,
-  Avatar,
   Card,
   EmptyState,
   EventCardSkeleton,
@@ -30,6 +29,7 @@ import { QuickActions } from '@/features/home/components/QuickActions';
 import { useNextCountdown } from '@/features/home/hooks';
 import { SyncIndicator } from '@/features/sync/components/SyncIndicator';
 import { useAgendaStatus } from '@/features/sync/agenda-runtime';
+import { PersonAvatar } from '@/features/couple/components/PersonAvatar';
 
 export default function HomeScreen() {
   const { spacing, colors } = useTheme();
@@ -80,7 +80,7 @@ export default function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel="Nosso espaço"
             onPress={() => router.push('/us')}>
-            <Avatar name={me.displayName} color={me.avatarColor} size={44} />
+            <PersonAvatar person={me} size={44} />
           </Pressable>
         ) : null}
       </View>

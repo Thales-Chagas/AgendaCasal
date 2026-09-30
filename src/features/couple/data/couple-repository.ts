@@ -1,9 +1,14 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import * as Crypto from 'expo-crypto';
 
 import { AppError, toAppError } from '@/core/errors/app-error';
 import type { Database } from '@/core/supabase/database.types';
 
 import { normalizeInviteCode } from '../domain/invite-code';
+
+const AVATAR_BUCKET = 'avatars';
+/** Validade das URLs assinadas das fotos (o app renova antes de vencer). */
+export const AVATAR_URL_TTL_S = 24 * 60 * 60;
 
 export type AvatarColorKey = 'rose' | 'plum' | 'indigo' | 'teal' | 'amber' | 'sage';
 
@@ -11,6 +16,8 @@ export type Person = {
   id: string;
   displayName: string;
   avatarColor: AvatarColorKey;
+  /** Foto de perfil no bucket privado `avatars` (null = só iniciais). */
+  avatarPath: string | null;
 };
 
 export type MySpace = {
@@ -29,7 +36,7 @@ type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 function toPerson(row: ProfileRow): Person {
   // O rosé é reservado para o casal: perfis antigos com rosé aparecem em índigo.
   const color = row.avatar_color === 'rose' ? 'indigo' : (row.avatar_color as AvatarColorKey);
-  return { id: row.id, displayName: row.display_name, avatarColor: color };
+  return { id: row.id, displayName: row.display_name, avatarColor: color, avatarPath: row.avatar_path };
 }
 
 /** Espaço do casal, convites e perfil. Autorização real: RLS + RPCs no servidor. */
@@ -83,6 +90,39 @@ export function createCoupleRepository(client: SupabaseClient<Database>) {
           })
           .eq('id', userId),
       );
+    },
+
+    /** Envia a foto já recortada (JPEG) e troca a do perfil; a antiga é apagada. */
+    async setMyAvatar(userId: string, jpeg: ArrayBuffer, previousPath: string | null): Promise<string> {
+      const path = `${userId}/${Crypto.randomUUID()}.jpg`;
+      const { error } = await client.storage
+        .from(AVATAR_BUCKET)
+        .upload(path, jpeg, { contentType: 'image/jpeg', upsert: false });
+      if (error) throw toAppError(error);
+      await unwrapNullable(client.from('profiles').update({ avatar_path: path }).eq('id', userId));
+      if (previousPath) await client.storage.from(AVATAR_BUCKET).remove([previousPath]);
+      return path;
+    },
+
+    async removeMyAvatar(userId: string, path: string | null): Promise<void> {
+      await unwrapNullable(client.from('profiles').update({ avatar_path: null }).eq('id', userId));
+      if (path) await client.storage.from(AVATAR_BUCKET).remove([path]);
+    },
+
+    /** Apaga todas as minhas fotos (usado ao excluir a conta). */
+    async removeAllMyAvatars(userId: string): Promise<void> {
+      const { data } = await client.storage.from(AVATAR_BUCKET).list(userId, { limit: 100 });
+      const paths = (data ?? []).map((f) => `${userId}/${f.name}`);
+      if (paths.length) await client.storage.from(AVATAR_BUCKET).remove(paths);
+    },
+
+    /** URL temporária (a foto nunca fica pública). */
+    async avatarUrl(path: string): Promise<string> {
+      const { data, error } = await client.storage
+        .from(AVATAR_BUCKET)
+        .createSignedUrl(path, AVATAR_URL_TTL_S);
+      if (error || !data) throw toAppError(error ?? new Error('signed url'));
+      return data.signedUrl;
     },
 
     async createInvite(): Promise<ActiveInvite> {

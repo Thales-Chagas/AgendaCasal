@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
 import { useTheme } from '../theme/theme';
@@ -30,10 +31,17 @@ export function initialsOf(name: string): string {
   return (first + last).toUpperCase() || '♡';
 }
 
-export type AvatarProps = { name: string; color?: AvatarColor; size?: number; ring?: boolean };
+export type AvatarProps = {
+  name: string;
+  color?: AvatarColor;
+  size?: number;
+  ring?: boolean;
+  /** Foto de perfil (opcional). Sem foto, mostra as iniciais na cor da pessoa. */
+  photoUri?: string | null;
+};
 
-/** Avatar com iniciais: sem foto obrigatória (minimização de dados). */
-export function Avatar({ name, color = 'rose', size = 44, ring }: AvatarProps) {
+/** Avatar com foto ou iniciais: a foto é opcional (minimização de dados). */
+export function Avatar({ name, color = 'rose', size = 44, ring, photoUri }: AvatarProps) {
   const { scheme, colors } = useTheme();
   const [bg, fg] = avatarPalette[color][scheme];
   return (
@@ -51,19 +59,30 @@ export function Avatar({ name, color = 'rose', size = 44, ring }: AvatarProps) {
           borderColor: colors.surface,
         },
       ]}>
-      <AppText
-        compact
-        style={{ color: fg, fontSize: size * 0.38, lineHeight: size * 0.5 }}
-        variant="bodyStrong">
-        {initialsOf(name)}
-      </AppText>
+      {photoUri ? (
+        <Image
+          source={{ uri: photoUri }}
+          style={{ width: size, height: size, borderRadius: size / 2 }}
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
+          accessibilityIgnoresInvertColors
+        />
+      ) : (
+        <AppText
+          compact
+          style={{ color: fg, fontSize: size * 0.38, lineHeight: size * 0.5 }}
+          variant="bodyStrong">
+          {initialsOf(name)}
+        </AppText>
+      )}
     </View>
   );
 }
 
 export type CoupleAvatarProps = {
-  me: { name: string; color?: AvatarColor };
-  partner?: { name: string; color?: AvatarColor } | null;
+  me: { name: string; color?: AvatarColor; photoUri?: string | null };
+  partner?: { name: string; color?: AvatarColor; photoUri?: string | null } | null;
   size?: number;
 };
 
@@ -72,10 +91,10 @@ export function CoupleAvatar({ me, partner, size = 44 }: CoupleAvatarProps) {
   const { colors } = useTheme();
   return (
     <View style={styles.row} accessibilityLabel={partner ? `${me.name} e ${partner.name}` : me.name}>
-      <Avatar name={me.name} color={me.color} size={size} ring />
+      <Avatar name={me.name} color={me.color} photoUri={me.photoUri} size={size} ring />
       <View style={{ marginLeft: -size * 0.28 }}>
         {partner ? (
-          <Avatar name={partner.name} color={partner.color} size={size} ring />
+          <Avatar name={partner.name} color={partner.color} photoUri={partner.photoUri} size={size} ring />
         ) : (
           <View
             style={[

@@ -13,14 +13,16 @@ export const privacyPolicy: LegalDoc = {
       body:
         'Agenda: compartilhada só com a pessoa que você conectar.\n' +
         'Notas: ficam somente no seu celular, criptografadas. Nós não temos acesso.\n' +
+        'Contas a pagar: as do casal os dois veem; as marcadas como "só minha" só você vê.\n' +
         'Conta: seu nome e e-mail são usados apenas para o funcionamento do app.',
     },
     {
       heading: 'Quais dados coletamos',
       body:
-        'Nome (ou apelido) e e-mail para criar sua conta; os compromissos e datas especiais que vocês cadastram; ' +
+        'Nome (ou apelido) e e-mail para criar sua conta; se você quiser, uma foto de perfil (vista só por você ' +
+        'e seu parceiro); os compromissos, datas especiais e contas a pagar que vocês cadastram; ' +
         'preferências de notificação; e, se você permitir, um identificador do aparelho para enviar notificações. ' +
-        'Não coletamos localização do aparelho, contatos, fotos ou dados de uso para publicidade.',
+        'Não coletamos localização do aparelho, contatos, outras fotos da galeria ou dados de uso para publicidade.',
     },
     {
       heading: 'Para que usamos',

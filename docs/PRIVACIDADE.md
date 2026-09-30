@@ -10,13 +10,17 @@
 | E-mail e senha (hash)             | Supabase Auth (São Paulo)           | Só o titular                            | Execução de contrato (V)                 | Até excluir a conta                                  |
 | Nome ou apelido e cor do avatar   | `profiles`                          | Titular e parceiro conectado            | Execução de contrato (V)                 | Até excluir a conta                                  |
 | Compromissos e datas especiais    | `events`, `special_dates`           | Os dois membros do casal                | Execução de contrato (V)                 | Até excluir. Itens excluídos são apagados em 30 dias |
+| Contas do casal (Finanças)        | `bills` (`owner_scope = couple`)    | Os dois membros do casal                | Execução de contrato (V)                 | Até excluir. Itens excluídos são apagados em 30 dias |
+| Contas pessoais (Finanças)        | `bills` (`owner_scope = person`)    | **Só o titular** (RLS)                  | Execução de contrato (V)                 | Até excluir; somem ao excluir a conta                |
+| Foto de perfil (opcional)         | Storage privado `avatars`           | Titular e parceiro (URL temporária)     | Consentimento (I): a pessoa escolhe      | Trocada/removida pela pessoa; apagada ao excluir     |
 | Preferências de notificação       | `notification_settings`             | Só o titular                            | Execução de contrato (V)                 | Até excluir a conta                                  |
 | Token de push do aparelho         | `push_tokens`                       | Só o titular (e o servidor para enviar) | Consentimento (I) ao ativar notificações | Removido ao sair ou excluir a conta                  |
 | Aceite dos termos (versão e data) | `profiles`                          | Só o titular                            | Cumprimento de obrigação (II)            | Até excluir a conta                                  |
 | **Notas privadas**                | **Somente no aparelho** (SQLCipher) | **Só o titular**                        | Não há tratamento pelo controlador       | Até a pessoa apagar ou desinstalar o app             |
 | Cópia local da agenda             | Aparelho (SQLCipher)                | Titular                                 | Execução de contrato (V)                 | Apagada ao sair da conta                             |
 
-**Não coletamos:** localização do aparelho, contatos, fotos, identificadores de publicidade ou
+**Não coletamos:** localização do aparelho, contatos, outras fotos da galeria (só a escolhida para o
+perfil, já recortada), identificadores de publicidade ou
 analytics de comportamento.
 
 ## Medidas técnicas

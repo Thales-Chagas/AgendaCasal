@@ -29,6 +29,10 @@ export async function deleteAccount(email: string, password: string, userId: str
   }
 
   await prepareSignOut();
+  // Fotos de perfil ficam no Storage: apagamos antes de a conta deixar de existir.
+  await getCoupleRepository()
+    .removeAllMyAvatars(userId)
+    .catch((error) => logger.warn('Remove avatars failed', { error }));
   await getCoupleRepository().deleteMyAccount();
 
   await destroyNotes(userId).catch((error) => logger.warn('Destroy notes failed', { error }));

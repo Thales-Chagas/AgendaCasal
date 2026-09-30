@@ -2,7 +2,7 @@
 
 Pedidos feitos depois de ver o app rodando no celular (30/09/2026).
 
-Situação: ✅ 1 e 2 feitos · ⏳ 3 (foto) em andamento · 4 já existia · 5 medir antes de publicar.
+Situação: ✅ 1, 2 e 3 feitos · 4 já existia · 5 medir antes de publicar.
 
 ## 1. Cores dos compromissos ✅
 
@@ -25,11 +25,16 @@ Situação: ✅ 1 e 2 feitos · ⏳ 3 (foto) em andamento · 4 já existia · 5 
   Finanças (total do mês, pago/falta, marcar como paga, atrasadas), formulário, lembretes e
   opção "Contas a pagar" em Notificações. Testes de privacidade no banco (`bills.test.ts`).
 
-## 3. Foto de perfil
+## 3. Foto de perfil ✅
 
 - Poder colocar uma foto em _Minha conta_.
 - Ajuste como nos apps modernos: arrastar para enquadrar, dar zoom e escolher o melhor ângulo
   (recorte circular).
+- Feito: tela "Ajustar foto" (arrastar, pinça, toque duplo e botões − / +), envio em JPEG
+  512×512 para o bucket **privado** `avatars` (só a pessoa e o parceiro veem, por URL
+  temporária), remover foto, e as fotos são apagadas ao excluir a conta. Migration
+  `20260930120200_avatars.sql` e testes em `avatars.test.ts`.
+- Precisa de um **novo build** do app (entraram `expo-image-picker` e `expo-image-manipulator`).
 
 ## 4. Tema claro ou escuro
 

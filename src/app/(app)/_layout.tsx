@@ -54,6 +54,11 @@ export default function AppLayout() {
       <Stack.Screen name="event/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="event/edit/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="special-date/new" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="bill/new" options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="settings/avatar-crop"
+        options={{ presentation: 'fullScreenModal', gestureEnabled: false, animation: 'fade' }}
+      />
       <Stack.Screen
         name="couple/connected"
         options={{ presentation: 'fullScreenModal', gestureEnabled: false }}

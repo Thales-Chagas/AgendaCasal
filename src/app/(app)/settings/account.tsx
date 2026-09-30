@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { Pressable, View } from 'react-native';
@@ -18,12 +19,13 @@ import {
   useTheme,
   type AvatarColor,
 } from '@/design-system';
-import { Check, KeyRound, Mail, Trash } from '@/design-system/icons';
+import { Camera, Check, ImagePlus, KeyRound, Mail, Trash } from '@/design-system/icons';
 import { deleteAccount } from '@/features/account/account-actions';
 import { getAuthRepository } from '@/features/auth/auth-service';
 import { changePasswordSchema, displayNameSchema } from '@/features/auth/schemas';
 import { useSession } from '@/features/auth/session-store';
-import { usePeople, useUpdateProfile } from '@/features/couple/hooks';
+import { pickAvatarImage } from '@/features/couple/avatar-picker';
+import { usePeople, useAvatarUri, useRemoveAvatar, useUpdateProfile } from '@/features/couple/hooks';
 import { resolvePersonalColor } from '@/features/events/domain/person-color';
 import { useZodForm } from '@/shared/forms';
 
@@ -47,6 +49,15 @@ export default function AccountScreen() {
   const [nameError, setNameError] = useState<string>();
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
+  const myPhoto = useAvatarUri(me?.avatarPath);
+  const removeAvatar = useRemoveAvatar();
+
+  const pickPhoto = async (from: 'library' | 'camera') => {
+    setPhotoOpen(false);
+    const uri = await pickAvatarImage(from);
+    if (uri) router.push({ pathname: '/settings/avatar-crop', params: { uri } });
+  };
 
   const saveName = () => {
     const parsed = displayNameSchema.safeParse(name);
@@ -68,8 +79,35 @@ export default function AccountScreen() {
     <Screen>
       <ScreenHeader title="Minha conta" />
       <View style={{ gap: spacing.xl }}>
-        <View style={{ alignItems: 'center' }}>
-          <Avatar name={name || me?.displayName || ''} color={myColor} size={88} />
+        <View style={{ alignItems: 'center', gap: spacing.sm }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={myPhoto ? 'Alterar foto de perfil' : 'Adicionar foto de perfil'}
+            onPress={() => setPhotoOpen(true)}
+            testID="account-avatar">
+            <Avatar name={name || me?.displayName || ''} color={myColor} photoUri={myPhoto} size={104} />
+            <View
+              style={{
+                position: 'absolute',
+                right: 0,
+                bottom: 0,
+                backgroundColor: colors.primary,
+                borderRadius: 18,
+                padding: 7,
+                borderWidth: 3,
+                borderColor: colors.background,
+              }}>
+              <Camera size={16} color={colors.textOnPrimary} strokeWidth={2.4} />
+            </View>
+          </Pressable>
+          <Button
+            label={myPhoto ? 'Alterar foto' : 'Adicionar foto'}
+            variant="ghost"
+            size="sm"
+            fullWidth={false}
+            onPress={() => setPhotoOpen(true)}
+            style={{ alignSelf: 'center' }}
+          />
         </View>
 
         <View style={{ gap: spacing.sm }}>
@@ -137,6 +175,40 @@ export default function AccountScreen() {
       </View>
 
       <ChangePasswordSheet visible={passwordOpen} email={email} onClose={() => setPasswordOpen(false)} />
+      <BottomSheet visible={photoOpen} onClose={() => setPhotoOpen(false)} title="Foto de perfil">
+        <View style={{ gap: spacing.xs }}>
+          <AppText variant="caption" color="textSecondary">
+            Só você e seu parceiro veem sua foto.
+          </AppText>
+          <ListRow
+            icon={ImagePlus}
+            iconTone="primary"
+            title="Escolher da galeria"
+            onPress={() => void pickPhoto('library')}
+            testID="avatar-pick-library"
+          />
+          <ListRow
+            icon={Camera}
+            iconTone="primary"
+            title="Tirar uma foto"
+            onPress={() => void pickPhoto('camera')}
+          />
+          {me?.avatarPath ? (
+            <ListRow
+              icon={Trash}
+              title="Remover foto"
+              destructive
+              onPress={() => {
+                setPhotoOpen(false);
+                removeAvatar.mutate(me.avatarPath, {
+                  onSuccess: () => toast.success('Foto removida'),
+                  onError: (e) => toast.error(toAppError(e).userMessage),
+                });
+              }}
+            />
+          ) : null}
+        </View>
+      </BottomSheet>
       <DeleteAccountSheet
         visible={deleteOpen}
         email={email}

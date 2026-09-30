@@ -5,9 +5,10 @@ import { Platform, StyleSheet, View } from 'react-native';
 import Animated, { FadeInUp, ZoomIn } from 'react-native-reanimated';
 
 import { usePreferences } from '@/core/preferences/preferences-store';
-import { AppText, Button, CoupleAvatar, Screen, useTheme } from '@/design-system';
+import { AppText, Button, Screen, useTheme } from '@/design-system';
 import { useSession } from '@/features/auth/session-store';
 import { useMySpace } from '@/features/couple/hooks';
+import { CouplePersonAvatar } from '@/features/couple/components/PersonAvatar';
 
 /** Momento de celebração, curto e elegante. */
 export default function ConnectedScreen() {
@@ -29,15 +30,7 @@ export default function ConnectedScreen() {
       }>
       <View style={[styles.center, { gap: spacing.xl }]}>
         <Animated.View entering={ZoomIn.springify().damping(12)}>
-          {space ? (
-            <CoupleAvatar
-              me={{ name: space.me.displayName, color: space.me.avatarColor }}
-              partner={
-                space.partner ? { name: space.partner.displayName, color: space.partner.avatarColor } : null
-              }
-              size={88}
-            />
-          ) : null}
+          {space ? <CouplePersonAvatar me={space.me} partner={space.partner} size={88} /> : null}
         </Animated.View>
         <Animated.View entering={FadeInUp.delay(200).duration(400)} style={{ gap: spacing.sm }}>
           <AppText variant="display" align="center" accessibilityRole="header">

@@ -7,6 +7,7 @@ import { getSupabase } from '@/core/supabase/client';
 import { useSession } from '@/features/auth/session-store';
 
 import {
+  AVATAR_URL_TTL_S,
   createCoupleRepository,
   type ActiveInvite,
   type AvatarColorKey,
@@ -155,4 +156,38 @@ export function usePeople() {
     partnerName: space?.partner?.displayName ?? null,
     space: space ?? null,
   };
+}
+
+/** URL temporária da foto de perfil (renovada antes de vencer). `null` = sem foto. */
+export function useAvatarUri(path: string | null | undefined): string | null {
+  const { data } = useQuery({
+    queryKey: ['avatar-url', path],
+    enabled: !!path,
+    queryFn: () => getCoupleRepository().avatarUrl(path as string),
+    staleTime: (AVATAR_URL_TTL_S / 2) * 1000,
+    gcTime: (AVATAR_URL_TTL_S / 2) * 1000,
+  });
+  return path ? (data ?? null) : null;
+}
+
+/** Envia a foto recortada (arquivo local JPEG) e atualiza o perfil. */
+export function useSetAvatar() {
+  const queryClient = useQueryClient();
+  const userId = useSession((s) => s.userId);
+  return useMutation({
+    mutationFn: async (input: { localUri: string; previousPath: string | null }) => {
+      const jpeg = await (await fetch(input.localUri)).arrayBuffer();
+      return getCoupleRepository().setMyAvatar(userId as string, jpeg, input.previousPath);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: spaceKeys.space(userId) }),
+  });
+}
+
+export function useRemoveAvatar() {
+  const queryClient = useQueryClient();
+  const userId = useSession((s) => s.userId);
+  return useMutation({
+    mutationFn: (path: string | null) => getCoupleRepository().removeMyAvatar(userId as string, path),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: spaceKeys.space(userId) }),
+  });
 }

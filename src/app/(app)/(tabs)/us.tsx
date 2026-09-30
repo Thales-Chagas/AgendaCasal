@@ -9,7 +9,6 @@ import {
   Button,
   Card,
   ConfirmDialog,
-  CoupleAvatar,
   ListRow,
   Screen,
   SectionHeader,
@@ -33,6 +32,7 @@ import { usePeople } from '@/features/couple/hooks';
 import { daysUntilLabel, kindMeta, specialDateSubtitle } from '@/features/special-dates/domain/presentation';
 import { useSpecialDates } from '@/features/special-dates/hooks';
 import { useAgendaStatus } from '@/features/sync/agenda-runtime';
+import { CouplePersonAvatar } from '@/features/couple/components/PersonAvatar';
 
 export default function UsScreen() {
   const { spacing } = useTheme();
@@ -63,11 +63,7 @@ export default function UsScreen() {
       <Card>
         <View style={{ alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm }}>
           {me ? (
-            <CoupleAvatar
-              me={{ name: me.displayName, color: me.avatarColor }}
-              partner={partner ? { name: partner.displayName, color: partner.avatarColor } : null}
-              size={72}
-            />
+            <CouplePersonAvatar me={me} partner={partner} size={72} />
           ) : (
             <Skeleton width={120} height={72} radius={36} />
           )}
