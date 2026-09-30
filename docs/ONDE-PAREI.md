@@ -38,7 +38,9 @@
    - Feito: `supabase link` + `db push` no TST (8 tabelas criadas; ref `ytwkgqpfmvibfhbpbjbl`)
      e projeto no Expo (`@thaleschagas-team/duoday`, ID `3738207b-…-12ae005003c6`, já no
      `app.json`).
-   - Falta: `.env.local`, build de desenvolvimento no EAS e testar no celular.
+   - Feito: build de desenvolvimento Android (EAS, perfil `development`), com `expo-updates`.
+     Link: https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/49ef39a9-75d8-46ac-a982-d0e385817e50
+   - Falta: instalar no celular, `npx expo start` e testar cadastro/casal.
    - Travou no 3.3: no plano grátis o Supabase só deixa editar os modelos de e-mail com SMTP
      próprio. O app precisa do modelo com o código de 6 dígitos (`{{ .Token }}`), então o
      SMTP (Brevo, grátis) foi adiantado e vale para os dois projetos.
