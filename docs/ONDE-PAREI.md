@@ -14,6 +14,9 @@
 - **Nome do app: DuoDay.** Domínio `duoday.com.br` (registrado). Pacote Android/iOS
   `br.com.duoday` (não muda depois de publicado), esquema de links `duoday://` (no Supabase:
   _Site URL_ `duoday://`).
+- Domínio comprado na HostGator (só o domínio, sem hospedagem nem e-mail). Nameservers trocados
+  em 30/09 para `cullen.ns.cloudflare.com` e `joselyn.ns.cloudflare.com`; aguardando a
+  Cloudflare ficar _Active_. Depois: _Email Routing_ e autenticação do Brevo.
 - Domínio: DNS na Cloudflare (grátis), com _Email Routing_ encaminhando `ajuda@` e
   `privacidade@duoday.com.br` para o Gmail. Brevo autenticado no domínio, remetente
   `noreply@duoday.com.br`.
