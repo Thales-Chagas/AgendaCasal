@@ -56,6 +56,9 @@
 8. Publicar na Play Store.
 9. iPhone depois.
 
+Pedidos de mudança do app (cores, aba Financeiro, foto de perfil, tema, lentidão): ver
+`docs/PEDIDOS.md`.
+
 Pendências do nome: conferir se "DuoDay" está livre na Play Store; criar os encaminhamentos
 `ajuda@duoday.com.br` e `privacidade@duoday.com.br`, que aparecem no app.
 
