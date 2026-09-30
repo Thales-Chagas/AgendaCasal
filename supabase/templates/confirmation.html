@@ -1,12 +1,55 @@
 <!doctype html>
 <html lang="pt-BR">
-  <body style="margin:0;padding:32px 16px;background:#FBF8F6;font-family:Helvetica,Arial,sans-serif;color:#2A1F28;">
-    <div style="max-width:440px;margin:0 auto;background:#FFFFFF;border-radius:20px;padding:32px;">
-      <p style="font-size:14px;color:#6E6069;margin:0 0 8px;">DuoDay</p>
-      <h1 style="font-size:22px;margin:0 0 16px;">Confirme seu e-mail</h1>
-      <p style="font-size:16px;line-height:24px;margin:0 0 24px;">Digite este código no aplicativo para ativar sua conta:</p>
-      <p style="font-size:32px;letter-spacing:8px;font-weight:bold;margin:0 0 24px;color:#B8385A;">{{ .Token }}</p>
-      <p style="font-size:14px;line-height:20px;color:#6E6069;margin:0;">O código vale por 1 hora. Se você não criou uma conta, pode ignorar este e-mail com segurança.</p>
-    </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Confirme seu e-mail</title>
+    <style>
+      @media (max-width: 480px) {
+        .card { padding: 32px 24px !important; }
+      }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body style="margin:0;padding:0;background:#FBF8F6;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Seu código do DuoDay: {{ .Token }}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FBF8F6;">
+      <tr>
+        <td align="center" style="padding:48px 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;color:#2A1F28;">
+            <tr>
+              <td align="center" style="padding:0 0 28px;">
+                <span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#3F4FB0;vertical-align:middle;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#12716D;vertical-align:middle;margin-left:4px;"></span>
+                <span style="font-size:22px;font-weight:800;letter-spacing:-0.4px;vertical-align:middle;margin-left:10px;">Duo<span style="color:#B8385A;">Day</span></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="card" style="background:#FFFFFF;border:1px solid #EAE1DB;border-radius:24px;padding:40px 36px;">
+                <p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#B8385A;">Confirmação de conta</p>
+                <h1 style="margin:0 0 12px;font-size:26px;line-height:32px;font-weight:800;letter-spacing:-0.5px;color:#2A1F28;">Falta só um passo</h1>
+                <p style="margin:0 0 28px;font-size:16px;line-height:26px;color:#66575F;">Digite o código abaixo no DuoDay para ativar sua conta e começar a organizar a agenda a dois.</p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center" style="background:#FCF1F4;border:1px solid #F9E4EA;border-radius:16px;padding:26px 16px 22px;">
+                      <p style="margin:0;font-size:38px;line-height:44px;font-weight:800;letter-spacing:10px;padding-left:10px;color:#9A2C4A;font-variant-numeric:tabular-nums;">{{ .Token }}</p>
+                      <p style="margin:10px 0 0;font-size:13px;line-height:18px;color:#7D6D76;">Válido por 1 hora</p>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:28px 0 0;padding:20px 0 0;border-top:1px solid #F5EFEB;font-size:14px;line-height:22px;color:#7D6D76;">Não criou uma conta? Pode ignorar este e&#8209;mail com segurança. Nada é ativado sem este código.</p>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:28px 16px 0;font-size:13px;line-height:20px;color:#7D6D76;">
+                DuoDay · a agenda de vocês dois<br />
+                Enviado para {{ .Email }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
