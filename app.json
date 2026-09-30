@@ -85,6 +85,12 @@
         "projectId": "3738207b-eb58-4d13-98ad-12ae005003c6"
       }
     },
-    "owner": "thaleschagas-team"
+    "owner": "thaleschagas-team",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3738207b-eb58-4d13-98ad-12ae005003c6"
+    }
   }
 }
