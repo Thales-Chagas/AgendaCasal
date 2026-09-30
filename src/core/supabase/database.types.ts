@@ -23,6 +23,77 @@ export type Database = {
   };
   public: {
     Tables: {
+      bills: {
+        Row: {
+          amount_cents: number | null;
+          category: string;
+          couple_id: string;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          first_due_date: string;
+          frequency: string;
+          id: string;
+          notes: string | null;
+          owner_scope: string;
+          owner_user_id: string | null;
+          paid_periods: string[];
+          reminder_days: number[];
+          title: string;
+          updated_at: string;
+          updated_by: string | null;
+          version: number;
+        };
+        Insert: {
+          amount_cents?: number | null;
+          category?: string;
+          couple_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          first_due_date: string;
+          frequency?: string;
+          id?: string;
+          notes?: string | null;
+          owner_scope?: string;
+          owner_user_id?: string | null;
+          paid_periods?: string[];
+          reminder_days?: number[];
+          title: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          version?: number;
+        };
+        Update: {
+          amount_cents?: number | null;
+          category?: string;
+          couple_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          first_due_date?: string;
+          frequency?: string;
+          id?: string;
+          notes?: string | null;
+          owner_scope?: string;
+          owner_user_id?: string | null;
+          paid_periods?: string[];
+          reminder_days?: number[];
+          title?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'bills_couple_id_fkey';
+            columns: ['couple_id'];
+            isOneToOne: false;
+            referencedRelation: 'couples';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       couple_invites: {
         Row: {
           code_hash: string;
@@ -215,6 +286,7 @@ export type Database = {
           partner_event_reminders: boolean;
           partner_new_event: boolean;
           show_details_in_push: boolean;
+          bill_reminders: boolean;
           special_date_reminders: boolean;
           updated_at: string;
           user_id: string;
@@ -224,6 +296,7 @@ export type Database = {
           partner_event_reminders?: boolean;
           partner_new_event?: boolean;
           show_details_in_push?: boolean;
+          bill_reminders?: boolean;
           special_date_reminders?: boolean;
           updated_at?: string;
           user_id: string;
@@ -233,6 +306,7 @@ export type Database = {
           partner_event_reminders?: boolean;
           partner_new_event?: boolean;
           show_details_in_push?: boolean;
+          bill_reminders?: boolean;
           special_date_reminders?: boolean;
           updated_at?: string;
           user_id?: string;

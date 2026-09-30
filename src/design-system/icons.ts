@@ -75,4 +75,9 @@ export {
   Palette,
   FileText,
   MessageCircleHeart,
+  Receipt,
+  CircleCheck,
+  Circle,
+  ImagePlus,
+  Camera,
 } from 'lucide-react-native';

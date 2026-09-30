@@ -8,6 +8,7 @@ export type NotificationSettings = {
   partnerEventReminders: boolean;
   partnerNewEvent: boolean;
   specialDateReminders: boolean;
+  billReminders: boolean;
   showDetailsInPush: boolean;
 };
 
@@ -16,6 +17,7 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
   partnerEventReminders: false,
   partnerNewEvent: true,
   specialDateReminders: true,
+  billReminders: true,
   showDetailsInPush: false,
 };
 
@@ -24,6 +26,7 @@ const columns = {
   partnerEventReminders: 'partner_event_reminders',
   partnerNewEvent: 'partner_new_event',
   specialDateReminders: 'special_date_reminders',
+  billReminders: 'bill_reminders',
   showDetailsInPush: 'show_details_in_push',
 } as const;
 
@@ -38,6 +41,7 @@ export function createNotificationSettingsRepository(client: SupabaseClient<Data
         partnerEventReminders: data.partner_event_reminders,
         partnerNewEvent: data.partner_new_event,
         specialDateReminders: data.special_date_reminders,
+        billReminders: data.bill_reminders,
         showDetailsInPush: data.show_details_in_push,
       };
     },

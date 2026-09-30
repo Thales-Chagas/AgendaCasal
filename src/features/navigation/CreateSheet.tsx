@@ -2,7 +2,7 @@ import { router, type Href } from 'expo-router';
 import { View } from 'react-native';
 
 import { BottomSheet, ListRow, useTheme } from '@/design-system';
-import { CalendarClock, Gift, NotebookPen } from '@/design-system/icons';
+import { CalendarClock, Gift, NotebookPen, Wallet } from '@/design-system/icons';
 
 type Props = { visible: boolean; onClose: () => void };
 
@@ -23,6 +23,14 @@ export function CreateSheet({ visible, onClose }: Props) {
           subtitle="Aparece para vocês dois"
           onPress={() => go('/event/new')}
           testID="create-event"
+        />
+        <ListRow
+          icon={Wallet}
+          iconTone="primary"
+          title="Nova conta a pagar"
+          subtitle="Do casal ou só sua, com lembrete"
+          onPress={() => go('/bill/new')}
+          testID="create-bill"
         />
         <ListRow
           icon={NotebookPen}

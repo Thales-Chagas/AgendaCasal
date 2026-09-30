@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, PressableScale, useTheme } from '@/design-system';
-import { CalendarDays, Heart, House, NotebookPen, Plus, type Icon } from '@/design-system/icons';
+import { CalendarDays, Heart, House, NotebookPen, Plus, Wallet, type Icon } from '@/design-system/icons';
 
 import { CreateSheet } from './CreateSheet';
 
@@ -13,6 +13,7 @@ type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>
 const tabMeta: Record<string, { label: string; icon: Icon }> = {
   index: { label: 'Início', icon: House },
   agenda: { label: 'Agenda', icon: CalendarDays },
+  finance: { label: 'Finanças', icon: Wallet },
   notes: { label: 'Notas', icon: NotebookPen },
   us: { label: 'Nós', icon: Heart },
 };
@@ -20,7 +21,7 @@ const tabMeta: Record<string, { label: string; icon: Icon }> = {
 export const TAB_BAR_HEIGHT = 64;
 
 /**
- * Barra inferior: Início · Agenda · [+] · Notas · Nós.
+ * Barra inferior: Início · Agenda · Finanças · [+] · Notas · Nós.
  * O "+" central abre as ações de criação, sempre ao alcance do polegar.
  */
 export function AppTabBar({ state, navigation }: TabBarProps) {
@@ -86,7 +87,7 @@ export function AppTabBar({ state, navigation }: TabBarProps) {
             haptic
             testID="create-button"
             accessibilityLabel="Criar"
-            accessibilityHint="Abre opções para novo compromisso, nota ou data especial"
+            accessibilityHint="Abre opções para novo compromisso, conta, nota ou data especial"
             onPress={() => setCreateOpen(true)}
             style={[
               styles.createButton,
@@ -106,7 +107,7 @@ export function AppTabBar({ state, navigation }: TabBarProps) {
 const styles = StyleSheet.create({
   bar: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth },
   tab: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 2, minHeight: 56 },
-  iconPill: { width: 56, height: 30, alignItems: 'center', justifyContent: 'center' },
+  iconPill: { width: 48, height: 30, alignItems: 'center', justifyContent: 'center' },
   centerSlot: { flex: 1, alignItems: 'center' },
   createButton: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center', marginTop: -20 },
 });

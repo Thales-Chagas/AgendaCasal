@@ -1,6 +1,7 @@
 import { migrate, type SqlDatabase, type SqlValue } from '@/core/storage/sql';
 import { toDateKey } from '@/features/events/domain/dates';
 import type { CalendarEvent } from '@/features/events/domain/types';
+import type { Bill } from '@/features/finance/domain/types';
 import type { SpecialDate } from '@/features/special-dates/domain/types';
 
 import { entityConfigs, normalizeSearch, type EntityName, type SyncedEntity } from './entities';
@@ -54,6 +55,19 @@ const MIGRATIONS = [
 
   CREATE TABLE sync_state (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL);
   `,
+  // 2: Financeiro (contas fixas).
+  `
+  CREATE TABLE bills (
+    id TEXT PRIMARY KEY NOT NULL,
+    couple_id TEXT NOT NULL,
+    data TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    deleted INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL,
+    first_due_date TEXT NOT NULL,
+    search TEXT NOT NULL
+  );
+  `,
 ];
 
 export type OutboxOp = 'create' | 'update' | 'delete';
@@ -80,7 +94,7 @@ type OutboxRow = {
   attempts: number;
 };
 
-export type EntityMap = { events: CalendarEvent; special_dates: SpecialDate };
+export type EntityMap = { events: CalendarEvent; special_dates: SpecialDate; bills: Bill };
 
 export async function createLocalStore(db: SqlDatabase) {
   await migrate(db, MIGRATIONS);
@@ -158,6 +172,7 @@ export async function createLocalStore(db: SqlDatabase) {
       await db.withTransactionAsync(async () => {
         await db.runAsync('DELETE FROM events');
         await db.runAsync('DELETE FROM special_dates');
+        await db.runAsync('DELETE FROM bills');
         await db.runAsync(`DELETE FROM sync_state WHERE key LIKE 'cursor:%'`);
       });
     },

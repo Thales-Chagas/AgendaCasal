@@ -5,7 +5,7 @@ import { entityConfigs, type EntityName, type SyncedEntity } from './entities';
 import type { LocalStore, OutboxItem } from './local-store';
 import type { RemoteSource } from './remote-source';
 
-const ENTITIES: EntityName[] = ['events', 'special_dates'];
+const ENTITIES: EntityName[] = ['events', 'special_dates', 'bills'];
 const PAGE_SIZE = 500;
 /** Margem para transações que confirmaram fora de ordem no servidor. */
 const CURSOR_OVERLAP_MS = 60_000;

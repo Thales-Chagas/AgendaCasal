@@ -105,6 +105,11 @@ export default function NotificationsScreen() {
                 toggle={toggle('specialDateReminders')}
               />
               <ListRow
+                title="Contas a pagar"
+                subtitle="Antes do vencimento das contas do Financeiro"
+                toggle={toggle('billReminders')}
+              />
+              <ListRow
                 title="Novo compromisso do parceiro"
                 subtitle="Avisar quando algo for adicionado"
                 toggle={toggle('partnerNewEvent')}

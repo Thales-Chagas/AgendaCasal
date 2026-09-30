@@ -3,6 +3,10 @@ import { differenceInCalendarDays, format } from 'date-fns';
 import { expandOccurrences } from '@/features/events/domain/recurrence';
 import { categoryMeta, responsibilityFor } from '@/features/events/domain/presentation';
 import type { CalendarEvent } from '@/features/events/domain/types';
+import { formatCents } from '@/features/finance/domain/presentation';
+import { dueDatesBetween } from '@/features/finance/domain/schedule';
+import type { Bill } from '@/features/finance/domain/types';
+import { toDateKey } from '@/features/events/domain/dates';
 import { kindMeta, nextOccurrence } from '@/features/special-dates/domain/presentation';
 import type { SpecialDate } from '@/features/special-dates/domain/types';
 
@@ -10,6 +14,7 @@ export type ReminderSettings = {
   eventReminders: boolean;
   partnerEventReminders: boolean;
   specialDateReminders: boolean;
+  billReminders: boolean;
 };
 
 export type PlannedReminder = {
@@ -45,6 +50,7 @@ function when(start: Date, now: Date, allDay: boolean): string {
 export function planReminders(input: {
   events: readonly CalendarEvent[];
   specialDates: readonly SpecialDate[];
+  bills?: readonly Bill[];
   viewerId: string;
   settings: ReminderSettings;
   now?: Date;
@@ -109,6 +115,36 @@ export function planReminders(input: {
           body: 'Uma data especial para vocês dois.',
           href: `/special-date/${item.id}`,
         });
+      }
+    }
+  }
+
+  if (input.settings.billReminders) {
+    for (const bill of input.bills ?? []) {
+      if (bill.deletedAt || !bill.reminderDays.length) continue;
+      const maxLead = Math.max(...bill.reminderDays) * DAY;
+      for (const due of dueDatesBetween(bill, now, new Date(horizon.getTime() + maxLead))) {
+        const dueKey = toDateKey(due);
+        if (bill.paidPeriods.includes(dueKey)) continue; // já paga: não incomoda
+        for (const days of bill.reminderDays) {
+          const fireAt = new Date(due);
+          fireAt.setDate(fireAt.getDate() - days);
+          fireAt.setHours(ALL_DAY_REMINDER_HOUR, 0, 0, 0);
+          if (fireAt <= now || fireAt > horizon) continue;
+          const amount = bill.amountCents !== null ? ` · ${formatCents(bill.amountCents)}` : '';
+          planned.push({
+            id: `bill:${bill.id}:${dueKey}:${days}`,
+            fireAt,
+            title:
+              days === 0
+                ? `Vence hoje: ${bill.title} 💸`
+                : days === 1
+                  ? `Vence amanhã: ${bill.title} 💸`
+                  : `${bill.title} vence em ${days} dias 💸`,
+            body: `${bill.ownerScope === 'couple' ? 'Conta do casal' : 'Conta pessoal'}${amount}`,
+            href: `/bill/${bill.id}`,
+          });
+        }
       }
     }
   }

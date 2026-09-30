@@ -1,5 +1,6 @@
 import { eventFields } from '@/features/sync/testing/fixtures';
 import type { CalendarEvent } from '@/features/events/domain/types';
+import type { Bill } from '@/features/finance/domain/types';
 import type { SpecialDate } from '@/features/special-dates/domain/types';
 
 import { MAX_SCHEDULED, planReminders } from './planner';
@@ -7,7 +8,12 @@ import { MAX_SCHEDULED, planReminders } from './planner';
 const ANA = 'ana';
 const BRUNO = 'bruno';
 const now = new Date(2026, 8, 29, 8, 0); // terça, 29/09, 08:00
-const settings = { eventReminders: true, partnerEventReminders: false, specialDateReminders: true };
+const settings = {
+  eventReminders: true,
+  partnerEventReminders: false,
+  specialDateReminders: true,
+  billReminders: true,
+};
 
 let seq = 0;
 function event(overrides: Partial<CalendarEvent>): CalendarEvent {
@@ -176,9 +182,63 @@ describe('planejamento de lembretes', () => {
       events: [event({ startsAt: at(20), endsAt: at(21), reminderMinutes: [60] })],
       specialDates: [],
       viewerId: ANA,
-      settings: { eventReminders: false, partnerEventReminders: false, specialDateReminders: false },
+      settings: {
+        eventReminders: false,
+        partnerEventReminders: false,
+        specialDateReminders: false,
+        billReminders: false,
+      },
       now,
     });
     expect(plan).toEqual([]);
+  });
+
+  it('lembra das contas a pagar e para de lembrar quando já foi paga', () => {
+    const bill = {
+      id: 'aluguel',
+      coupleId: 'c1',
+      ownerScope: 'couple',
+      ownerUserId: null,
+      title: 'Aluguel',
+      category: 'housing',
+      amountCents: 180000,
+      frequency: 'monthly',
+      firstDueDate: '2026-09-02',
+      reminderDays: [0, 1],
+      paidPeriods: [],
+      notes: null,
+      version: 1,
+      createdBy: ANA,
+      updatedBy: ANA,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      deletedAt: null,
+    } as Bill;
+
+    const plan = planReminders({ events: [], specialDates: [], bills: [bill], viewerId: ANA, settings, now });
+    expect(plan.map((r) => [r.fireAt.getDate(), r.fireAt.getMonth(), r.title, r.body])).toEqual([
+      [1, 9, 'Vence amanhã: Aluguel 💸', 'Conta do casal · R$ 1.800,00'],
+      [2, 9, 'Vence hoje: Aluguel 💸', 'Conta do casal · R$ 1.800,00'],
+    ]);
+
+    const paid = planReminders({
+      events: [],
+      specialDates: [],
+      bills: [{ ...bill, paidPeriods: ['2026-10-02'] }],
+      viewerId: ANA,
+      settings,
+      now,
+    });
+    expect(paid).toEqual([]);
+
+    const off = planReminders({
+      events: [],
+      specialDates: [],
+      bills: [bill],
+      viewerId: ANA,
+      settings: { ...settings, billReminders: false },
+      now,
+    });
+    expect(off).toEqual([]);
   });
 });

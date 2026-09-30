@@ -39,6 +39,7 @@ export type AgendaRuntime = {
   engine: SyncEngine;
   events: SyncedMutations<'events'>;
   specialDates: SyncedMutations<'special_dates'>;
+  bills: SyncedMutations<'bills'>;
   requestSync: () => void;
 };
 
@@ -133,6 +134,7 @@ export async function startAgendaRuntime(userId: string, coupleId: string): Prom
       engine,
       events: createSyncedMutations('events', mutationDeps),
       specialDates: createSyncedMutations('special_dates', mutationDeps),
+      bills: createSyncedMutations('bills', mutationDeps),
       requestSync,
     };
 
@@ -149,6 +151,11 @@ export async function startAgendaRuntime(userId: string, coupleId: string): Prom
         { event: '*', schema: 'public', table: 'special_dates', filter: `couple_id=eq.${coupleId}` },
         requestSync,
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bills', filter: `couple_id=eq.${coupleId}` },
+        requestSync,
+      )
       .subscribe();
 
     const appState: NativeEventSubscription = AppState.addEventListener('change', (state) => {
@@ -163,7 +170,7 @@ export async function startAgendaRuntime(userId: string, coupleId: string): Prom
 
     runtime = instance;
     useAgendaStatus.setState({ ready: true });
-    notifyChanged(['events', 'special_dates']);
+    notifyChanged(['events', 'special_dates', 'bills']);
     requestSync();
     return instance;
   })();

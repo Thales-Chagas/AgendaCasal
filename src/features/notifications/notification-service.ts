@@ -46,7 +46,7 @@ export function configureNotifications(): void {
   if (Platform.OS === 'android') {
     void Notifications.setNotificationChannelAsync(CHANNEL_ID, {
       name: 'Lembretes',
-      description: 'Lembretes de compromissos e datas especiais',
+      description: 'Lembretes de compromissos, datas especiais e contas',
       importance: Notifications.AndroidImportance.HIGH,
       lightColor: '#B8385A',
     });
@@ -101,12 +101,13 @@ export async function rescheduleReminders(): Promise<void> {
   const runtime = getAgendaRuntime();
   if (!runtime || (await getPermissionState()) !== 'granted') return;
   try {
-    const [events, specialDates, settings] = await Promise.all([
+    const [events, specialDates, bills, settings] = await Promise.all([
       runtime.local.allActive('events'),
       runtime.local.allActive('special_dates'),
+      runtime.local.allActive('bills'),
       currentSettings(),
     ]);
-    const plan = planReminders({ events, specialDates, viewerId: runtime.userId, settings });
+    const plan = planReminders({ events, specialDates, bills, viewerId: runtime.userId, settings });
     await Notifications.cancelAllScheduledNotificationsAsync();
     for (const reminder of plan) {
       await Notifications.scheduleNotificationAsync({

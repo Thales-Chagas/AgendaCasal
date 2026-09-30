@@ -1,8 +1,10 @@
 # Pedidos de mudança
 
-Pedidos feitos depois de ver o app rodando no celular (30/09/2026). Nada disso foi feito ainda.
+Pedidos feitos depois de ver o app rodando no celular (30/09/2026).
 
-## 1. Cores dos compromissos
+Situação: ✅ 1 e 2 feitos · ⏳ 3 (foto) em andamento · 4 já existia · 5 medir antes de publicar.
+
+## 1. Cores dos compromissos ✅
 
 - Compromisso **do casal**: sempre a cor padrão do app (o rosa, `rose600`).
 - Compromisso **pessoal**: o fundo do quadradinho usa a cor que a pessoa escolheu em
@@ -11,15 +13,17 @@ Pedidos feitos depois de ver o app rodando no celular (30/09/2026). Nada disso f
 - Cada pessoa com a sua cor, diferente da do casal. A cor do casal (rosa) não deve estar entre
   as opções pessoais, para não confundir.
 
-## 2. Nova aba "Financeiro" (Notas continua como está)
+## 2. Nova aba "Finanças" (Notas continua como está) ✅
 
 - Cadastrar **contas fixas recorrentes** (ex.: aluguel, internet, cartão).
 - Cada conta é **do casal** (os dois veem) ou **pessoal/privada** (só quem criou vê).
 - Gera **lembrete** antes do vencimento.
 - Sugestão de campos: nome, valor, dia do vencimento, repetição (mensal, anual...), quantos
   dias antes avisar e "marcar como paga" no mês.
-- A decidir: contas privadas ficam no servidor, protegidas para só o dono ver (funcionam em
-  mais de um aparelho), ou só no aparelho, como as notas.
+- Decidido: contas privadas ficam **no servidor**, protegidas por RLS para só o dono ver.
+- Feito: tabela `bills` (migration `20260930120100_bills.sql`), sincronização offline, tela
+  Finanças (total do mês, pago/falta, marcar como paga, atrasadas), formulário, lembretes e
+  opção "Contas a pagar" em Notificações. Testes de privacidade no banco (`bills.test.ts`).
 
 ## 3. Foto de perfil
 

@@ -57,7 +57,8 @@
 9. iPhone depois.
 
 Pedidos de mudança do app (cores, aba Financeiro, foto de perfil, tema, lentidão): ver
-`docs/PEDIDOS.md`.
+`docs/PEDIDOS.md`. Cores e Finanças prontos; **antes de testar no celular, aplicar as novas
+migrations no TST**: `git pull`, `npm ci` e `npx supabase db push` (vale para produção também).
 
 Pendências do nome: conferir se "DuoDay" está livre na Play Store; criar os encaminhamentos
 `ajuda@duoday.com.br` e `privacidade@duoday.com.br`, que aparecem no app.

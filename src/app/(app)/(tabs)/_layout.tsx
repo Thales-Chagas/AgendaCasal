@@ -11,6 +11,7 @@ export default function TabsLayout() {
       screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.background } }}>
       <Tabs.Screen name="index" options={{ title: 'Início' }} />
       <Tabs.Screen name="agenda" options={{ title: 'Agenda' }} />
+      <Tabs.Screen name="finance" options={{ title: 'Finanças' }} />
       <Tabs.Screen name="notes" options={{ title: 'Notas' }} />
       <Tabs.Screen name="us" options={{ title: 'Nós' }} />
     </Tabs>

@@ -1,6 +1,8 @@
 import type { SqlValue } from '@/core/storage/sql';
 import { categoryMeta } from '@/features/events/domain/presentation';
 import { EDITABLE_EVENT_FIELDS, type CalendarEvent } from '@/features/events/domain/types';
+import { billCategoryMeta } from '@/features/finance/domain/presentation';
+import { EDITABLE_BILL_FIELDS, type Bill } from '@/features/finance/domain/types';
 import { EDITABLE_SPECIAL_DATE_FIELDS, type SpecialDate } from '@/features/special-dates/domain/types';
 
 /** Linha como vem do Supabase (snake_case). */
@@ -11,7 +13,7 @@ export type ServerRow = Record<string, unknown> & {
   updated_at: string;
 };
 
-export type EntityName = 'events' | 'special_dates';
+export type EntityName = 'events' | 'special_dates' | 'bills';
 
 export type SyncedEntity = {
   id: string;
@@ -90,4 +92,29 @@ export const specialDateEntity: EntityConfig<SpecialDate> = {
   localColumns: (s) => ({ date: s.date, search: normalizeSearch(s.title) }),
 };
 
-export const entityConfigs = { events: eventEntity, special_dates: specialDateEntity } as const;
+/** Contas (Financeiro). As pessoais só chegam ao aparelho do dono (RLS no servidor). */
+export const billEntity: EntityConfig<Bill> = {
+  name: 'bills',
+  editableFields: EDITABLE_BILL_FIELDS,
+  fromServer: (row) => {
+    const value = mapKeys<Bill>(row, camel);
+    return {
+      ...value,
+      reminderDays: (value.reminderDays ?? []) as number[],
+      paidPeriods: (value.paidPeriods ?? []) as string[],
+    };
+  },
+  toServer: (fields) => toServerColumns(fields as Record<string, unknown>),
+  localColumns: (b) => ({
+    first_due_date: b.firstDueDate,
+    search: normalizeSearch(
+      [b.title, billCategoryMeta[b.category]?.label, b.notes].filter(Boolean).join(' '),
+    ),
+  }),
+};
+
+export const entityConfigs = {
+  events: eventEntity,
+  special_dates: specialDateEntity,
+  bills: billEntity,
+} as const;
