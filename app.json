@@ -1,22 +1,22 @@
 {
   "expo": {
-    "name": "Nossa Agenda",
-    "slug": "nossa-agenda",
+    "name": "DuoDay",
+    "slug": "duoday",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "nossaagenda",
+    "scheme": "duoday",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#FBF8F6",
     "ios": {
-      "bundleIdentifier": "app.nossaagenda",
+      "bundleIdentifier": "app.duoday",
       "supportsTablet": false,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Use o Face ID para proteger suas notas privadas."
       }
     },
     "android": {
-      "package": "app.nossaagenda",
+      "package": "app.duoday",
       "allowBackup": false,
       "adaptiveIcon": {
         "backgroundColor": "#FBF8F6",

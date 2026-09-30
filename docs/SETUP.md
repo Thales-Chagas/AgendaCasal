@@ -52,7 +52,7 @@ npm run db:lint
    código `{{ .Token }}`, não links.
 5. **Authentication › SMTP**: configure um provedor transacional (Resend, Amazon SES...) com
    SPF e DKIM no domínio. O SMTP padrão do Supabase tem limites baixos.
-6. **Authentication › URL Configuration**: _Site URL_ `nossaagenda://`.
+6. **Authentication › URL Configuration**: _Site URL_ `duoday://`.
 7. **Database › Extensions**: confirme `pg_cron` (limpeza diária) e ative `pg_net` (push).
 
 ### Push para o parceiro (opcional, recomendado)
@@ -87,8 +87,8 @@ npx eas-cli@latest submit
   variáveis do EAS (visibilidade "plain text": são públicas por natureza).
 - Push: o EAS gerencia as credenciais APNs (iOS) e FCM (Android) em `eas credentials`.
 - Link universal (opcional): para o QR Code abrir o app direto pela câmera, configure um
-  domínio (ex.: `nossaagenda.app/convite/...`) com _Associated Domains_ e _App Links_.
-  Hoje o link usa o esquema `nossaagenda://`.
+  domínio (ex.: `duoday.app/convite/...`) com _Associated Domains_ e _App Links_.
+  Hoje o link usa o esquema `duoday://`.
 
 ## 4. Checklist antes de publicar
 

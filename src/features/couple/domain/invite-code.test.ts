@@ -23,7 +23,7 @@ describe('código de convite', () => {
   });
 
   it('gera link e mensagem de convite', () => {
-    expect(buildInviteLink('abcd-2345')).toBe('nossaagenda://convite/ABCD2345');
+    expect(buildInviteLink('abcd-2345')).toBe('duoday://convite/ABCD2345');
     const message = buildInviteMessage('Ana', 'ABCD2345');
     expect(message).toContain('Ana');
     expect(message).toContain('ABCD-2345');

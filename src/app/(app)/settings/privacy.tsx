@@ -16,7 +16,7 @@ export default function PrivacyScreen() {
     setExporting(true);
     try {
       const data = await getCoupleRepository().exportMyData();
-      await shareJsonFile(`nossa-agenda-meus-dados-${new Date().toISOString().slice(0, 10)}.json`, data);
+      await shareJsonFile(`duoday-meus-dados-${new Date().toISOString().slice(0, 10)}.json`, data);
     } catch (error) {
       toast.error(toAppError(error).userMessage);
     } finally {

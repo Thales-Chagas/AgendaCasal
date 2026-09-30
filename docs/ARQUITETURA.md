@@ -1,4 +1,4 @@
-# Nossa Agenda: arquitetura e decisões técnicas
+# DuoDay: arquitetura e decisões técnicas
 
 Documento vivo. Registra **o que** foi escolhido, **por quê** e **o que foi descartado**.
 Ordem de prioridade que guia qualquer decisão: facilidade de uso → segurança → clareza →
@@ -11,7 +11,7 @@ estabilidade → performance → beleza → novas funcionalidades.
 | Camada                  | Escolha                                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
 | App (Android + iOS)     | **Expo SDK 57** (React Native 0.86, Nova Arquitetura, Hermes) + **TypeScript estrito**                          |
-| Navegação / deep links  | **Expo Router** (rotas por arquivo, links `nossaagenda://`)                                                     |
+| Navegação / deep links  | **Expo Router** (rotas por arquivo, links `duoday://`)                                                          |
 | Backend                 | **Supabase**: PostgreSQL 17 + Auth + Realtime + Edge Functions                                                  |
 | Região                  | `sa-east-1` (São Paulo): dados no Brasil e baixa latência                                                       |
 | Autenticação            | Supabase Auth: e-mail e senha com código de 6 dígitos. Google e Apple ficam preparados para a fase 2            |
@@ -180,7 +180,7 @@ auth.users 1─N push_tokens
 
 1. A pessoa A toca em **"Conectar com meu parceiro"**, e o app gera um convite.
 2. O convite aparece como **código curto** (`ABCD-2345`, sem caracteres ambíguos como 0/O,
-   1/I), **QR Code** e botão **"Enviar pelo WhatsApp"** (link `nossaagenda://convite/CODIGO`).
+   1/I), **QR Code** e botão **"Enviar pelo WhatsApp"** (link `duoday://convite/CODIGO`).
 3. A pessoa B abre o link ou digita o código e vê _"Ana convidou você para compartilhar a
    agenda"_, com os botões **Aceitar** e **Agora não**.
 4. As duas veem **"Agora vocês estão conectados ❤️"**.

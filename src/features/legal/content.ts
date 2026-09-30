@@ -46,7 +46,7 @@ export const privacyPolicy: LegalDoc = {
       body:
         'No app você pode ver e corrigir seus dados, exportar tudo (Perfil › Privacidade › Exportar meus dados) ' +
         'e excluir sua conta a qualquer momento (Perfil › Minha conta › Excluir conta). ' +
-        'Dúvidas: privacidade@nossaagenda.app.',
+        'Dúvidas: privacidade@duoday.app.',
     },
     {
       heading: 'Por quanto tempo guardamos',
@@ -63,7 +63,7 @@ export const termsOfUse: LegalDoc = {
   sections: [
     {
       heading: 'O serviço',
-      body: 'O Nossa Agenda é uma agenda compartilhada entre duas pessoas, com um espaço de notas privadas por aparelho.',
+      body: 'O DuoDay é uma agenda compartilhada entre duas pessoas, com um espaço de notas privadas por aparelho.',
     },
     {
       heading: 'Sua conta',

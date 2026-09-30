@@ -5,7 +5,7 @@ import { isValidInviteCode, normalizeInviteCode } from '@/features/couple/domain
 import { usePendingInvite } from '@/features/couple/pending-invite-store';
 
 /**
- * Deep link `nossaagenda://convite/CODIGO`.
+ * Deep link `duoday://convite/CODIGO`.
  * Logado: abre a tela de aceite. Sem conta: guarda o código (em memória) e leva ao cadastro.
  */
 export default function InviteLinkScreen() {

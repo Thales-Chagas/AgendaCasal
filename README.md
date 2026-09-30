@@ -1,4 +1,4 @@
-# Nossa Agenda ❤️
+# DuoDay ❤️
 
 Agenda compartilhada para casais. Cada pessoa tem sua conta, e duas contas formam um casal
 com uma agenda sincronizada. Cada um ainda tem um espaço de **notas privadas que nunca saem

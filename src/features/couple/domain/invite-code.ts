@@ -19,12 +19,12 @@ export function formatInviteCode(code: string): string {
 }
 
 export function buildInviteLink(code: string): string {
-  return `nossaagenda://convite/${normalizeInviteCode(code)}`;
+  return `duoday://convite/${normalizeInviteCode(code)}`;
 }
 
 export function buildInviteMessage(inviterName: string, code: string): string {
   return [
-    `${inviterName} quer organizar a agenda com você no Nossa Agenda ❤️`,
+    `${inviterName} quer organizar a agenda com você no DuoDay ❤️`,
     '',
     `Código do convite: ${formatInviteCode(code)}`,
     `Ou toque no link: ${buildInviteLink(code)}`,

@@ -11,6 +11,8 @@
 
 ## Decisões tomadas
 
+- **Nome do app: DuoDay.** Pacote Android/iOS `app.duoday` (não muda depois de publicado),
+  esquema de links `duoday://` (no Supabase: _Site URL_ `duoday://`).
 - **Supabase online, plano grátis** (sem mensalidade). Aguenta com folga ~200 usuários.
   Sem Docker: o banco local (caminho B) foi descartado.
 - Dois projetos criados na região São Paulo (`sa-east-1`):
@@ -36,6 +38,10 @@
    o _Data safety_.
 8. Publicar na Play Store.
 9. iPhone depois.
+
+Pendências do nome: conferir se "DuoDay" e o pacote `app.duoday` estão livres na Play Store;
+os e-mails `ajuda@duoday.app` e `privacidade@duoday.app` que aparecem no app ainda não existem
+(trocar por um e-mail real antes de publicar).
 
 Pendências conhecidas do plano grátis: backup semanal (sugerido via GitHub Actions,
 criptografado) e o projeto pausa após 7 dias sem uso (reativar no painel).

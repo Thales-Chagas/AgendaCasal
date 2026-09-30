@@ -28,7 +28,7 @@ export function getSupabase(): AppSupabaseClient {
       persistSession: true,
       detectSessionInUrl: false,
     },
-    global: { headers: { 'x-client-info': `nossa-agenda/${Platform.OS}` } },
+    global: { headers: { 'x-client-info': `duoday/${Platform.OS}` } },
   });
 
   // Renova o token só com o app em primeiro plano (recomendação do Supabase para mobile).

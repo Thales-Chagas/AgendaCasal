@@ -12,7 +12,7 @@ export default function AboutScreen() {
       <ScreenHeader title="Sobre" />
       <View style={{ alignItems: 'center', gap: spacing.sm, marginVertical: spacing.xl }}>
         <Heart size={40} color={colors.primary} fill={colors.primarySoft} />
-        <AppText variant="title2">Nossa Agenda</AppText>
+        <AppText variant="title2">DuoDay</AppText>
         <AppText variant="callout" color="textSecondary">
           Versão {Application.nativeApplicationVersion ?? '1.0.0'}
           {Application.nativeBuildVersion ? ` (${Application.nativeBuildVersion})` : ''}
