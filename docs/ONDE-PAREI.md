@@ -35,7 +35,10 @@
 2. ✅ Criar os 2 projetos no Supabase.
 3. ⏳ Ligar o app no projeto de teste e rodar no celular Android.
    - Feito: SMTP Brevo, modelos de e-mail novos (código de 6 dígitos) e _Site URL_.
-   - Falta: `supabase link` + `db push` no TST, `.env.local`, build de desenvolvimento no EAS.
+   - Feito: `supabase link` + `db push` no TST (8 tabelas criadas; ref `ytwkgqpfmvibfhbpbjbl`)
+     e projeto no Expo (`@thaleschagas-team/duoday`, ID `3738207b-…-12ae005003c6`, já no
+     `app.json`).
+   - Falta: `.env.local`, build de desenvolvimento no EAS e testar no celular.
    - Travou no 3.3: no plano grátis o Supabase só deixa editar os modelos de e-mail com SMTP
      próprio. O app precisa do modelo com o código de 6 dígitos (`{{ .Token }}`), então o
      SMTP (Brevo, grátis) foi adiantado e vale para os dois projetos.
