@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   ListRow,
+  PERSONAL_COLORS,
   Screen,
   ScreenHeader,
   TextField,
@@ -23,9 +24,9 @@ import { getAuthRepository } from '@/features/auth/auth-service';
 import { changePasswordSchema, displayNameSchema } from '@/features/auth/schemas';
 import { useSession } from '@/features/auth/session-store';
 import { usePeople, useUpdateProfile } from '@/features/couple/hooks';
+import { resolvePersonalColor } from '@/features/events/domain/person-color';
 import { useZodForm } from '@/shared/forms';
 
-const COLORS: AvatarColor[] = ['rose', 'plum', 'indigo', 'teal', 'amber', 'sage'];
 const COLOR_NAMES: Record<AvatarColor, string> = {
   rose: 'Rosa',
   plum: 'Ameixa',
@@ -40,6 +41,7 @@ export default function AccountScreen() {
   const email = useSession((s) => s.email) ?? '';
   const userId = useSession((s) => s.userId) ?? '';
   const { me } = usePeople();
+  const myColor = resolvePersonalColor(me?.avatarColor, 'indigo');
   const updateProfile = useUpdateProfile();
   const [name, setName] = useState(me?.displayName ?? '');
   const [nameError, setNameError] = useState<string>();
@@ -67,7 +69,7 @@ export default function AccountScreen() {
       <ScreenHeader title="Minha conta" />
       <View style={{ gap: spacing.xl }}>
         <View style={{ alignItems: 'center' }}>
-          <Avatar name={name || me?.displayName || ''} color={me?.avatarColor} size={88} />
+          <Avatar name={name || me?.displayName || ''} color={myColor} size={88} />
         </View>
 
         <View style={{ gap: spacing.sm }}>
@@ -86,19 +88,22 @@ export default function AccountScreen() {
 
         <View style={{ gap: spacing.sm }}>
           <AppText variant="label" color="textSecondary">
-            COR DO AVATAR
+            SUA COR
+          </AppText>
+          <AppText variant="caption" color="textSecondary">
+            Aparece no seu avatar e nos seus compromissos. O rosa é reservado para o que é do casal.
           </AppText>
           <View style={{ flexDirection: 'row', gap: spacing.md, flexWrap: 'wrap' }}>
-            {COLORS.map((color) => (
+            {PERSONAL_COLORS.map((color) => (
               <Pressable
                 key={color}
                 accessibilityRole="radio"
-                accessibilityState={{ selected: me?.avatarColor === color }}
+                accessibilityState={{ selected: myColor === color }}
                 accessibilityLabel={COLOR_NAMES[color]}
                 onPress={() => updateProfile.mutate({ avatarColor: color })}>
                 <View>
                   <Avatar name={name || '·'} color={color} size={48} />
-                  {me?.avatarColor === color ? (
+                  {myColor === color ? (
                     <View
                       style={{
                         position: 'absolute',

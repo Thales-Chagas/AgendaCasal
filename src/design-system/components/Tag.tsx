@@ -27,25 +27,29 @@ export type TagProps = {
   /** Emoji opcional antes do texto (ex.: ❤️). */
   emoji?: string;
   tone?: ToneKey;
+  /** Cores próprias (ex.: a cor que a pessoa escolheu). Têm prioridade sobre `tone`. */
+  customColors?: { fg: string; bg: string };
 };
 
 /** Selo pequeno. Nunca depende só de cor: sempre tem texto (e, quando útil, ícone). */
-export function Tag({ label, icon: IconComponent, emoji, tone = 'neutral' }: TagProps) {
+export function Tag({ label, icon: IconComponent, emoji, tone = 'neutral', customColors }: TagProps) {
   const { colors, radius, spacing } = useTheme();
-  const [fg, bg] = toneMap[tone];
+  const [fgKey, bgKey] = toneMap[tone];
+  const fg = customColors?.fg ?? colors[fgKey];
+  const bg = customColors?.bg ?? colors[bgKey];
   return (
     <View
       style={[
         styles.tag,
         {
-          backgroundColor: colors[bg],
+          backgroundColor: bg,
           borderRadius: radius.pill,
           paddingHorizontal: spacing.sm + 2,
           gap: spacing.xs,
         },
       ]}>
-      {IconComponent ? <IconComponent size={13} color={colors[fg]} strokeWidth={2.4} /> : null}
-      <AppText variant="caption" compact style={{ color: colors[fg] }} numberOfLines={1}>
+      {IconComponent ? <IconComponent size={13} color={fg} strokeWidth={2.4} /> : null}
+      <AppText variant="caption" compact style={{ color: fg }} numberOfLines={1}>
         {emoji ? `${emoji} ${label}` : label}
       </AppText>
     </View>

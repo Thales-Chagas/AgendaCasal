@@ -14,6 +14,15 @@ const avatarPalette: Record<AvatarColor, { light: [string, string]; dark: [strin
   sage: { light: ['#E4F0E6', '#35684A'], dark: ['#1F3326', '#A8D8B6'] },
 };
 
+/** Cores que uma pessoa pode escolher. O rosé fica reservado para o que é "do casal". */
+export const PERSONAL_COLORS: readonly AvatarColor[] = ['indigo', 'teal', 'plum', 'amber', 'sage'];
+
+/** Tons da cor de uma pessoa: `soft` para fundos, `strong` para destaques e texto. */
+export function personTone(color: AvatarColor, scheme: 'light' | 'dark'): { soft: string; strong: string } {
+  const [soft, strong] = avatarPalette[color][scheme];
+  return { soft, strong };
+}
+
 export function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   const first = parts[0]?.[0] ?? '';

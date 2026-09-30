@@ -1,5 +1,12 @@
 export { AppText, type AppTextProps } from './components/AppText';
-export { Avatar, CoupleAvatar, initialsOf, type AvatarColor } from './components/Avatar';
+export {
+  Avatar,
+  CoupleAvatar,
+  initialsOf,
+  PERSONAL_COLORS,
+  personTone,
+  type AvatarColor,
+} from './components/Avatar';
 export { BottomSheet } from './components/BottomSheet';
 export { Button, type ButtonProps } from './components/Button';
 export { Card } from './components/Card';

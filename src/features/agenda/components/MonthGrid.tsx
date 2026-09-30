@@ -15,6 +15,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText, useTheme } from '@/design-system';
 import { toDateKey } from '@/features/events/domain/dates';
 import type { Responsibility } from '@/features/events/domain/types';
+import { useResponsibilityTones } from '@/features/events/tones';
 
 const WEEK_OPTIONS = { weekStartsOn: 0 as const };
 const WEEKDAY_LABELS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
@@ -31,6 +32,7 @@ type Props = {
 /** Calendário mensal com pontinhos coloridos (e contagem para leitores de tela). */
 export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, marks }: Props) {
   const { colors, radius, spacing } = useTheme();
+  const tones = useResponsibilityTones();
   const today = new Date();
 
   const weeks = useMemo(() => {
@@ -99,7 +101,7 @@ export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, ma
                 </View>
                 <View style={[styles.dots, { gap: spacing.xxs }]}>
                   {unique.map((owner) => (
-                    <View key={owner} style={[styles.dot, { backgroundColor: colors[owner] }]} />
+                    <View key={owner} style={[styles.dot, { backgroundColor: tones[owner].strong }]} />
                   ))}
                 </View>
               </Pressable>

@@ -4,6 +4,7 @@ import { AppText, PressableScale, useTheme } from '@/design-system';
 import { Heart, User, UserRound, type Icon } from '@/design-system/icons';
 
 import type { Responsibility } from '../domain/types';
+import { useResponsibilityTones } from '../tones';
 
 type Props = {
   value: Responsibility;
@@ -14,6 +15,7 @@ type Props = {
 /** "De quem é?": três opções grandes, com ícone e texto (não depende de cor). */
 export function ScopePicker({ value, onChange, partnerName }: Props) {
   const { colors, radius, spacing } = useTheme();
+  const tones = useResponsibilityTones();
   const options: { key: Responsibility; label: string; icon: Icon; disabled?: boolean }[] = [
     { key: 'mine', label: 'Meu', icon: User },
     {
@@ -33,7 +35,7 @@ export function ScopePicker({ value, onChange, partnerName }: Props) {
       {options.map((option) => {
         const selected = value === option.key;
         const IconComponent = option.icon;
-        const tone = colors[option.key];
+        const tone = tones[option.key].strong;
         return (
           <PressableScale
             key={option.key}
@@ -50,7 +52,7 @@ export function ScopePicker({ value, onChange, partnerName }: Props) {
                 borderRadius: radius.lg,
                 gap: spacing.xs,
                 borderColor: selected ? tone : colors.border,
-                backgroundColor: selected ? colors[`${option.key}Soft`] : colors.surface,
+                backgroundColor: selected ? tones[option.key].soft : colors.surface,
                 opacity: option.disabled ? 0.45 : 1,
               },
             ]}>

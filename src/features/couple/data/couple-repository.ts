@@ -27,7 +27,9 @@ export type InvitePreview = { inviterName: string; expiresAt: string; myEventCou
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 function toPerson(row: ProfileRow): Person {
-  return { id: row.id, displayName: row.display_name, avatarColor: row.avatar_color as AvatarColorKey };
+  // O rosé é reservado para o casal: perfis antigos com rosé aparecem em índigo.
+  const color = row.avatar_color === 'rose' ? 'indigo' : (row.avatar_color as AvatarColorKey);
+  return { id: row.id, displayName: row.display_name, avatarColor: color };
 }
 
 /** Espaço do casal, convites e perfil. Autorização real: RLS + RPCs no servidor. */

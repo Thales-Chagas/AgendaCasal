@@ -7,6 +7,7 @@ import { CloudOff, MapPin, Repeat } from '@/design-system/icons';
 
 import { categoryMeta, formatOccurrenceTime, responsibilityFor } from '../domain/presentation';
 import type { Occurrence } from '../domain/types';
+import { useResponsibilityTones } from '../tones';
 import { ResponsibilityTag } from './ResponsibilityTag';
 
 export type EventCardProps = {
@@ -24,12 +25,13 @@ export const EventCard = memo(function EventCard({ occurrence, viewerId, partner
   const responsibility = responsibilityFor(event, viewerId);
   const category = categoryMeta[event.category];
   const time = formatOccurrenceTime(occurrence, day);
-  const accent = colors[responsibility];
+  const tone = useResponsibilityTones()[responsibility];
   const pendingSync = event.version === 0;
 
   return (
     <Card
       padded={false}
+      style={{ backgroundColor: tone.soft }}
       testID={`event-card-${event.id}`}
       onPress={() =>
         router.push({ pathname: '/event/[id]', params: { id: event.id, date: occurrence.localDate } })
@@ -39,7 +41,7 @@ export const EventCard = memo(function EventCard({ occurrence, viewerId, partner
       }`}
       accessibilityHint="Abre os detalhes do compromisso">
       <View style={[styles.row, { padding: spacing.lg, gap: spacing.md }]}>
-        <View style={[styles.accent, { backgroundColor: accent, borderRadius: radius.pill }]} />
+        <View style={[styles.accent, { backgroundColor: tone.strong, borderRadius: radius.pill }]} />
         <View style={[styles.body, { gap: spacing.xs }]}>
           <View style={[styles.line, { gap: spacing.sm }]}>
             <AppText variant="caption" color="textSecondary" tabular>
@@ -60,7 +62,7 @@ export const EventCard = memo(function EventCard({ occurrence, viewerId, partner
             </View>
           ) : null}
           <View style={{ marginTop: spacing.xs }}>
-            <ResponsibilityTag responsibility={responsibility} partnerName={partnerName} />
+            <ResponsibilityTag responsibility={responsibility} partnerName={partnerName} onTinted />
           </View>
         </View>
       </View>
