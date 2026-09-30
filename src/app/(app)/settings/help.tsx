@@ -69,7 +69,7 @@ export default function HelpScreen() {
         ))}
       </View>
       <AppText variant="caption" color="textSecondary" style={{ marginTop: spacing.xl }}>
-        Ainda com dúvida? Escreva para ajuda@duoday.app
+        Ainda com dúvida? Escreva para ajuda@duoday.com.br
       </AppText>
     </Screen>
   );

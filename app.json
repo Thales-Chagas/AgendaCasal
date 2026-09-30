@@ -9,14 +9,14 @@
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#FBF8F6",
     "ios": {
-      "bundleIdentifier": "app.duoday",
+      "bundleIdentifier": "br.com.duoday",
       "supportsTablet": false,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Use o Face ID para proteger suas notas privadas."
       }
     },
     "android": {
-      "package": "app.duoday",
+      "package": "br.com.duoday",
       "allowBackup": false,
       "adaptiveIcon": {
         "backgroundColor": "#FBF8F6",

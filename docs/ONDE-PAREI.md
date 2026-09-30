@@ -11,8 +11,12 @@
 
 ## Decisões tomadas
 
-- **Nome do app: DuoDay.** Pacote Android/iOS `app.duoday` (não muda depois de publicado),
-  esquema de links `duoday://` (no Supabase: _Site URL_ `duoday://`).
+- **Nome do app: DuoDay.** Domínio `duoday.com.br` (registrado). Pacote Android/iOS
+  `br.com.duoday` (não muda depois de publicado), esquema de links `duoday://` (no Supabase:
+  _Site URL_ `duoday://`).
+- Domínio: DNS na Cloudflare (grátis), com _Email Routing_ encaminhando `ajuda@` e
+  `privacidade@duoday.com.br` para o Gmail. Brevo autenticado no domínio, remetente
+  `noreply@duoday.com.br`.
 - **Supabase online, plano grátis** (sem mensalidade). Aguenta com folga ~200 usuários.
   Sem Docker: o banco local (caminho B) foi descartado.
 - Dois projetos criados na região São Paulo (`sa-east-1`):
@@ -27,6 +31,8 @@
 1. ✅ Instalar Git e Node.
 2. ✅ Criar os 2 projetos no Supabase.
 3. ⏳ Ligar o app no projeto de teste e rodar no celular Android.
+   - Feito: SMTP Brevo, modelos de e-mail novos (código de 6 dígitos) e _Site URL_.
+   - Falta: `supabase link` + `db push` no TST, `.env.local`, build de desenvolvimento no EAS.
    - Travou no 3.3: no plano grátis o Supabase só deixa editar os modelos de e-mail com SMTP
      próprio. O app precisa do modelo com o código de 6 dígitos (`{{ .Token }}`), então o
      SMTP (Brevo, grátis) foi adiantado e vale para os dois projetos.
@@ -39,9 +45,8 @@
 8. Publicar na Play Store.
 9. iPhone depois.
 
-Pendências do nome: conferir se "DuoDay" e o pacote `app.duoday` estão livres na Play Store;
-os e-mails `ajuda@duoday.app` e `privacidade@duoday.app` que aparecem no app ainda não existem
-(trocar por um e-mail real antes de publicar).
+Pendências do nome: conferir se "DuoDay" está livre na Play Store; criar os encaminhamentos
+`ajuda@duoday.com.br` e `privacidade@duoday.com.br`, que aparecem no app.
 
 Pendências conhecidas do plano grátis: backup semanal (sugerido via GitHub Actions,
 criptografado) e o projeto pausa após 7 dias sem uso (reativar no painel).

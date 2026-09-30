@@ -87,7 +87,7 @@ npx eas-cli@latest submit
   variáveis do EAS (visibilidade "plain text": são públicas por natureza).
 - Push: o EAS gerencia as credenciais APNs (iOS) e FCM (Android) em `eas credentials`.
 - Link universal (opcional): para o QR Code abrir o app direto pela câmera, configure um
-  domínio (ex.: `duoday.app/convite/...`) com _Associated Domains_ e _App Links_.
+  domínio (ex.: `duoday.com.br/convite/...`) com _Associated Domains_ e _App Links_.
   Hoje o link usa o esquema `duoday://`.
 
 ## 4. Checklist antes de publicar

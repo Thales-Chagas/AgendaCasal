@@ -46,7 +46,7 @@ export const privacyPolicy: LegalDoc = {
       body:
         'No app você pode ver e corrigir seus dados, exportar tudo (Perfil › Privacidade › Exportar meus dados) ' +
         'e excluir sua conta a qualquer momento (Perfil › Minha conta › Excluir conta). ' +
-        'Dúvidas: privacidade@duoday.app.',
+        'Dúvidas: privacidade@duoday.com.br.',
     },
     {
       heading: 'Por quanto tempo guardamos',
