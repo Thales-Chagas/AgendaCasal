@@ -47,6 +47,7 @@ npm run db:lint
    ```
 3. **Authentication › Providers › Email**: ative _Confirm email_, _Secure password change_,
    mínimo de 8 caracteres com letras e números e _Leaked password protection_.
+   **Email OTP Length: 6** (projetos novos vêm com 8, e o app pede exatamente 6 números).
 4. **Authentication › Email Templates**: copie `supabase/templates/confirmation.html`
    ("Confirm signup") e `supabase/templates/recovery.html` ("Reset password"). Eles usam o
    código `{{ .Token }}`, não links.

@@ -40,7 +40,10 @@
      `app.json`).
    - Feito: build de desenvolvimento Android (EAS, perfil `development`), com `expo-updates`.
      Link: https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/49ef39a9-75d8-46ac-a982-d0e385817e50
-   - Falta: instalar no celular, `npx expo start` e testar cadastro/casal.
+   - Feito: app instalado no celular, conectado ao TST; e-mail de confirmação chegando.
+   - Achado: o Supabase online gera código de 8 dígitos por padrão; o app pede 6. Ajustar
+     _Email OTP Length_ para 6 nos dois projetos (TST e produção).
+   - Falta: testar cadastro completo e o vínculo do casal.
    - Travou no 3.3: no plano grátis o Supabase só deixa editar os modelos de e-mail com SMTP
      próprio. O app precisa do modelo com o código de 6 dígitos (`{{ .Token }}`), então o
      SMTP (Brevo, grátis) foi adiantado e vale para os dois projetos.
