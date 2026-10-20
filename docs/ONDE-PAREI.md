@@ -1,10 +1,11 @@
 # Onde parei
 
-Última atualização: 01/10/2026.
+Última atualização: 20/10/2026.
 
 ## Estado do projeto
 
-- Todo o código está na branch **`claude/busy-darwin-7lbh10`** (ainda não foi para a `main`).
+- Todo o código está na branch **`claude/compassionate-faraday-kwzzf6`** (continuação da
+  `claude/busy-darwin-7lbh10`; ainda não foi para a `main`).
 - 10 migrations. Testes: `npm run check` passa 162/162, `npm run test:db` passa 77/77 e
   `npm run db:lint` não acha erros (rodados contra um Supabase local).
 - Pronto e salvo nesta etapa (ver `docs/PEDIDOS.md`):
@@ -12,6 +13,8 @@
   2. **Aba Finanças**: contas fixas do casal ou privadas, com lembrete e "marcar como paga".
   3. **Foto de perfil**: escolher, ajustar (zoom e enquadramento) e enviar; bucket privado.
 - Ainda **não testado no celular**: só no navegador, com dados de teste.
+- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. As 3 migrations novas
+  (`personal_colors`, `bills`, `avatars`) **ainda não estão no TST** (ele tem só as 7 primeiras).
 
 ## Decisões tomadas
 
@@ -27,20 +30,30 @@
 
 ## Próximo passo (começar por aqui)
 
-No PowerShell, na pasta `AgendaCasal`, um comando por vez:
+A sessão na nuvem do Claude agora tem acesso à Expo e ao Supabase por **segredos de rede**
+(o Claude nunca vê os valores):
+
+- Expo: robô **`claude-nuvem`** (papel Developer) na conta `thaleschagas-team`, site `api.expo.dev`.
+- Supabase: token **`claude-nuvem`**, limitado ao projeto TST, site `api.supabase.com`.
+  **Falta** trocar a permissão de _Database_ para leitura e escrita (hoje só lê, por isso as
+  migrations não entraram).
+
+Depois disso, o Claude faz sozinho: aplica as 3 migrations no TST, gera um build
+**`preview`** do Android (app completo, sem precisar do `npx expo start`) e manda o link.
+Para o build, ele precisa da **chave publicável** (`sb_publishable_...`, do `.env.local`).
+
+Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 
 ```powershell
-git pull
+git fetch
+git checkout claude/compassionate-faraday-kwzzf6
 npm ci
 npx supabase db push
 npx eas-cli@latest build --profile development --platform android
 ```
 
-- `db push`: aplica 3 migrations novas no TST (cores, contas, fotos). Responder **Y**.
-- O build novo é obrigatório (entraram módulos nativos para a foto). Na pergunta do emulador,
-  responder **n**. Instalar o app novo pelo link e depois rodar `npx expo start`.
-- Testar no celular: cores na agenda, aba Finanças (criar conta, marcar paga, lembrete),
-  foto de perfil (pinça para zoom) e o cadastro/vínculo do casal com uma segunda conta.
+Testar no celular: cores na agenda, aba Finanças (criar conta, marcar paga, lembrete),
+foto de perfil (pinça para zoom) e o cadastro/vínculo do casal com uma segunda conta.
 
 ## Pendências
 
@@ -53,6 +66,7 @@ npx eas-cli@latest build --profile development --platform android
   `duoday://`, o OTP de 6 dígitos e o `db push`.
 - Medir a velocidade real com um build `--profile preview` antes de publicar.
 - Conferir se "DuoDay" está livre na Play Store.
+- Apagar o token `claude-nuvem` do Supabase quando não precisar mais dele.
 - Plano grátis: backup semanal (sugerido via GitHub Actions, criptografado); o projeto pausa
   após 7 dias sem uso (reativar no painel).
 
