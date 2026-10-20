@@ -13,8 +13,10 @@
   2. **Aba Finanças**: contas fixas do casal ou privadas, com lembrete e "marcar como paga".
   3. **Foto de perfil**: escolher, ajustar (zoom e enquadramento) e enviar; bucket privado.
 - Ainda **não testado no celular**: só no navegador, com dados de teste.
-- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. As 3 migrations novas
-  (`personal_colors`, `bills`, `avatars`) **ainda não estão no TST** (ele tem só as 7 primeiras).
+- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. As 10 migrations estão
+  aplicadas e registradas no TST.
+- 20/10: primeiro build **`preview`** do Android pronto (aponta para o TST):
+  https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/2b100ba1-28c6-47a1-8f7d-e42f8d56fbb1
 
 ## Decisões tomadas
 
@@ -35,12 +37,12 @@ A sessão na nuvem do Claude agora tem acesso à Expo e ao Supabase por **segred
 
 - Expo: robô **`claude-nuvem`** (papel Developer) na conta `thaleschagas-team`, site `api.expo.dev`.
 - Supabase: token **`claude-nuvem`**, limitado ao projeto TST, site `api.supabase.com`.
-  **Falta** trocar a permissão de _Database_ para leitura e escrita (hoje só lê, por isso as
-  migrations não entraram).
+  Permissões: _Project_ só leitura, _Database_ leitura e escrita.
 
-Depois disso, o Claude faz sozinho: aplica as 3 migrations no TST, gera um build
-**`preview`** do Android (app completo, sem precisar do `npx expo start`) e manda o link.
-Para o build, ele precisa da **chave publicável** (`sb_publishable_...`, do `.env.local`).
+Com isso o Claude aplica migrations no TST e gera builds `preview` sozinho. O perfil `preview`
+do `eas.json` já tem a URL e a chave publicável do TST.
+
+**Agora:** instalar o build `preview` no celular (link acima) e testar.
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 
