@@ -7,8 +7,11 @@
     "render:principal": "remotion render src/index.ts Principal out/duoday-principal-16x9.mp4 && ./finalize.sh out/duoday-principal-16x9.mp4",
     "render:vertical": "remotion render src/index.ts Vertical out/duoday-vertical-9x16.mp4 && ./finalize.sh out/duoday-vertical-9x16.mp4",
     "render:completo": "remotion render src/index.ts Completo out/duoday-demonstracao-completa-16x9.mp4 && ./finalize.sh out/duoday-demonstracao-completa-16x9.mp4",
-    "render": "npm run render:principal && npm run render:vertical && npm run render:completo",
-    "audio": "python3 audio/make_audio.py 134"
+    "render": "npm run render:principal && npm run render:vertical && npm run render:completo && npm run render:principal-narrado && npm run render:vertical-narrado",
+    "audio": "python3 audio/make_audio.py 134",
+    "render:principal-narrado": "remotion render src/index.ts PrincipalNarrado out/duoday-principal-narrado-16x9.mp4 && ./finalize.sh out/duoday-principal-narrado-16x9.mp4",
+    "render:vertical-narrado": "remotion render src/index.ts VerticalNarrado out/duoday-vertical-narrado-9x16.mp4 && ./finalize.sh out/duoday-vertical-narrado-9x16.mp4",
+    "voz": "python3 audio/make_voice.py"
   },
   "dependencies": {
     "@remotion/cli": "4.0.532",

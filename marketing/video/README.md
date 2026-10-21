@@ -9,6 +9,8 @@ do DuoDay (a versão web do mesmo código, no tamanho de um celular de 390 × 84
 | Principal (campanha)      | `Principal` | 1920 × 1080, 30 fps, H.264    | 62 s    | `out/duoday-principal-16x9.mp4`               |
 | Vertical (Reels/TikTok)   | `Vertical`  | 1080 × 1920, 30 fps, H.264    | 62 s    | `out/duoday-vertical-9x16.mp4`                |
 | Demonstração completa     | `Completo`  | 1920 × 1080, 30 fps, H.264    | 2 min 14 s | `out/duoday-demonstracao-completa-16x9.mp4` |
+| Principal com narração    | `PrincipalNarrado` | 1920 × 1080, 30 fps, H.264 | 62 s | `out/duoday-principal-narrado-16x9.mp4`   |
+| Vertical com narração     | `VerticalNarrado`  | 1080 × 1920, 30 fps, H.264 | 62 s | `out/duoday-vertical-narrado-9x16.mp4`    |
 
 ## Como reproduzir
 
@@ -19,6 +21,21 @@ npm run audio            # gera public/audio/*.wav (trilha e efeitos, determiní
 npm run studio           # pré-visualizar e ajustar
 npm run render           # gera os três MP4 em out/
 ```
+
+### Narração (voz feminina)
+
+Gerada localmente com o [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M) (voz `pf_dora`, pt-BR):
+
+```bash
+pip install kokoro-onnx soundfile
+# baixe kokoro-v1.0.int8.onnx e voices-v1.0.bin para audio/models/
+# https://github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files-v1.0
+npm run voz              # gera public/audio/vo-XX.wav e src/narration.json
+```
+
+O texto e o momento de cada fala ficam em `audio/make_voice.py`. A música abaixa sozinha
+enquanto a narradora fala. Para trocar por uma voz paga (ex.: ElevenLabs) ou gravada, basta
+gerar os mesmos `vo-XX.wav` e rodar o script só para atualizar os tempos.
 
 O Remotion usa o `chrome-headless-shell` indicado em `remotion.config.ts` (ou em `CHROME_PATH`).
 
@@ -42,6 +59,8 @@ Nada disso toca no banco de teste (TST) ou de produção.
 
 - **Música e efeitos sonoros:** sintetizados do zero por `audio/make_audio.py` (sem amostras de
   terceiros). Uso livre pelo dono do projeto.
+- **Narração:** Kokoro-82M e suas vozes são Apache 2.0 (uso comercial permitido). É uma voz
+  sintética; vale avisar isso se a plataforma onde for publicar pedir.
 - **Fonte:** Plus Jakarta Sans (SIL Open Font License 1.1), a mesma do app.
 - **Remotion:** gratuito para pessoas físicas e empresas com até 3 pessoas; acima disso exige a
   licença da empresa (remotion.pro). Isso vale para quem renderiza, não para quem assiste.

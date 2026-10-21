@@ -1,0 +1,79 @@
+[
+  {
+    "file": "vo-01.wav",
+    "at": 122,
+    "frames": 74,
+    "text": "Sábado à noite. Jantar na casa da sogra.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-02.wav",
+    "at": 244,
+    "frames": 109,
+    "text": "Agora vocês dois sabem. Este é o Dúo Dêi, a agenda do casal.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-03.wav",
+    "at": 364,
+    "frames": 111,
+    "text": "Conectar é rápido. Um código, e a agenda de vocês vira uma só.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-04.wav",
+    "at": 546,
+    "frames": 85,
+    "text": "Hoje, semana, mês ou próximos: tudo num lugar só.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-05.wav",
+    "at": 726,
+    "frames": 106,
+    "text": "Criou um compromisso? Ele aparece na hora, no celular do outro.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-06.wav",
+    "at": 994,
+    "frames": 44,
+    "text": "Cada um com a sua cor.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-07.wav",
+    "at": 1084,
+    "frames": 101,
+    "text": "E as suas notas são só suas. Essas, ninguém mais vê.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-08.wav",
+    "at": 1264,
+    "frames": 108,
+    "text": "As contas do casal ficam em dia, com aviso antes de vencer.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-09.wav",
+    "at": 1413,
+    "frames": 83,
+    "text": "E as datas especiais ganham contagem regressiva.",
+    "speed": 1.15
+  },
+  {
+    "file": "vo-10.wav",
+    "at": 1504,
+    "frames": 95,
+    "text": "E tem mais: busca, lembretes, tema claro ou escuro.",
+    "speed": 1.0
+  },
+  {
+    "file": "vo-11.wav",
+    "at": 1684,
+    "frames": 94,
+    "text": "Dúo Dêi. Porque, eu achei que você sabia, não cola mais.",
+    "speed": 1.0
+  }
+]

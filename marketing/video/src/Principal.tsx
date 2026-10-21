@@ -4,6 +4,7 @@ import { Background } from './components/Background';
 import { Caption } from './components/Caption';
 import { Phone, type Shot } from './components/Phone';
 import { PhoneStage, Sfx, TapSounds, TextBlock, useLayout } from './components/Stage';
+import narration from './narration.json';
 import taps from './taps.json';
 import { colors, FONT, Fonts, pop, prism, ramp, screen } from './theme';
 
@@ -498,7 +499,26 @@ function Outro() {
   );
 }
 
-export function Principal() {
+type Line = { file: string; at: number; frames: number };
+const LINES = narration as Line[];
+
+/** Música mais baixa enquanto a narradora fala (com rampas curtas para não "bombear"). */
+function musicVolume(f: number, narrated: boolean) {
+  if (!narrated) return 0.72;
+  const near = Math.max(
+    0,
+    ...LINES.map((l) =>
+      interpolate(f, [l.at - 8, l.at, l.at + l.frames, l.at + l.frames + 12], [0, 1, 1, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      }),
+    ),
+  );
+  return 0.72 * (1 - 0.62 * near);
+}
+
+/** `narrated`: inclui a narração feminina (audio/make_voice.py). */
+export function Principal({ narrated = false }: { narrated?: boolean }) {
   const frame = useCurrentFrame();
   const energy = frame < 240 ? 0.55 + 0.45 * ramp(frame, 200, 240) : 1;
   return (
@@ -543,7 +563,14 @@ export function Principal() {
         <Sfx name="riser" at={0} volume={0.35} />
         <Sfx name="impact" at={30} volume={0.9} />
       </Scene>
-      <Audio src={staticFile('audio/music-main.wav')} volume={0.72} />
+      <Audio src={staticFile('audio/music-main.wav')} volume={(f) => musicVolume(f, narrated)} />
+      {narrated
+        ? LINES.map((l) => (
+            <Sequence key={l.file} from={l.at} durationInFrames={l.frames + 15} name={`voz ${l.file}`}>
+              <Audio src={staticFile(`audio/${l.file}`)} volume={1} />
+            </Sequence>
+          ))
+        : null}
     </AbsoluteFill>
   );
 }
