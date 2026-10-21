@@ -1,6 +1,6 @@
 # Onde parei
 
-Última atualização: 21/10/2026.
+Última atualização: 21/10/2026 (noite).
 
 ## Estado do projeto
 
@@ -15,7 +15,10 @@
   4. **Seletor de cor prismático** (21/10): 15 opções; degradê só no seletor, cor sólida no
      avatar e nos compromissos. Testado no web; build `preview` de 21/10 pronto para o celular.
   5. **Vídeo de apresentação** (21/10): `marketing/video` (Remotion). Principal 16:9 (62 s),
-     vertical 9:16 e demonstração completa (2 min 14 s). Ver `marketing/video/README.md`.
+     vertical 9:16 e demonstração completa (2 min 14 s), e as duas primeiras também **com
+     narração feminina** (voz gratuita Kokoro `pf_dora`). Ver `marketing/video/README.md`.
+     Os MP4 não ficam no git (foram enviados no chat); para gerar de novo: `npm run render`.
+  6. **QR code** do APK de teste: `marketing/qr/duoday-apk-qrcode.png`.
 - Ainda **não testado no celular**: só no navegador, com dados de teste.
 - 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. 21/10: as 11 migrations estão
   aplicadas no TST (inclusive a das cores).
@@ -46,8 +49,18 @@ A sessão na nuvem do Claude agora tem acesso à Expo e ao Supabase por **segred
 Com isso o Claude aplica migrations no TST e gera builds `preview` sozinho. O perfil `preview`
 do `eas.json` já tem a URL e a chave publicável do TST.
 
-**Agora:** instalar o build `preview` de 21/10 (já com o seletor de cor prismático) e testar:
-https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/14090ca1-1dc0-4c0f-94ae-738579c8cbd3
+**Agora (retomar em 22/10):**
+
+1. Assistir às versões **narradas** e decidir a voz: manter a gratuita (Kokoro) ou trocar por
+   uma paga (ElevenLabs: plano que permita uso comercial + chave no segredo de rede
+   `api.elevenlabs.io`, cabeçalho `xi-api-key` sem prefixo). O roteiro está em
+   `marketing/video/audio/make_voice.py`.
+2. Instalar no celular o build `preview` de 21/10 (QR code acima) e testar o seletor de cor:
+   https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/14090ca1-1dc0-4c0f-94ae-738579c8cbd3
+3. Corrigir o campo "Como podemos te chamar?" que abre vazio quando "Minha conta" é aberta
+   direto pelo endereço (problema antigo, anotado nos testes).
+4. A sessão na nuvem é temporária: o Supabase local, os perfis de navegador e os vídeos
+   renderizados somem. Tudo pode ser refeito pelos scripts de `marketing/video`.
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 
