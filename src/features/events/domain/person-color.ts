@@ -1,4 +1,4 @@
-import type { AvatarColor } from '@/design-system/components/Avatar';
+import type { AvatarColor } from '@/design-system/tokens/person-colors';
 
 /**
  * Cor pessoal efetiva. O rosé é reservado para o que é "do casal": quem ainda está com ele

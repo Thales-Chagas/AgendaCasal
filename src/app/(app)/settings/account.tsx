@@ -11,7 +11,6 @@ import {
   Button,
   Card,
   ListRow,
-  PERSONAL_COLORS,
   Screen,
   ScreenHeader,
   TextField,
@@ -19,24 +18,16 @@ import {
   useTheme,
   type AvatarColor,
 } from '@/design-system';
-import { Camera, Check, ImagePlus, KeyRound, Mail, Trash } from '@/design-system/icons';
+import { Camera, ImagePlus, KeyRound, Mail, Trash } from '@/design-system/icons';
 import { deleteAccount } from '@/features/account/account-actions';
 import { getAuthRepository } from '@/features/auth/auth-service';
 import { changePasswordSchema, displayNameSchema } from '@/features/auth/schemas';
 import { useSession } from '@/features/auth/session-store';
 import { pickAvatarImage } from '@/features/couple/avatar-picker';
+import { PrismColorPicker } from '@/features/couple/components/PrismColorPicker';
 import { usePeople, useAvatarUri, useRemoveAvatar, useUpdateProfile } from '@/features/couple/hooks';
 import { resolvePersonalColor } from '@/features/events/domain/person-color';
 import { useZodForm } from '@/shared/forms';
-
-const COLOR_NAMES: Record<AvatarColor, string> = {
-  rose: 'Rosa',
-  plum: 'Ameixa',
-  indigo: 'Índigo',
-  teal: 'Verde-azulado',
-  amber: 'Âmbar',
-  sage: 'Sálvia',
-};
 
 export default function AccountScreen() {
   const { spacing, colors } = useTheme();
@@ -57,6 +48,11 @@ export default function AccountScreen() {
     setPhotoOpen(false);
     const uri = await pickAvatarImage(from);
     if (uri) router.push({ pathname: '/settings/avatar-crop', params: { uri } });
+  };
+
+  const chooseColor = (color: AvatarColor) => {
+    if (color === myColor) return;
+    updateProfile.mutate({ avatarColor: color }, { onError: (e) => toast.error(toAppError(e).userMessage) });
   };
 
   const saveName = () => {
@@ -129,35 +125,10 @@ export default function AccountScreen() {
             SUA COR
           </AppText>
           <AppText variant="caption" color="textSecondary">
-            Aparece no seu avatar e nos seus compromissos. O rosa é reservado para o que é do casal.
+            Aparece no seu avatar e nos seus compromissos, sempre na cor sólida indicada. O rosa é reservado
+            para o que é do casal.
           </AppText>
-          <View style={{ flexDirection: 'row', gap: spacing.md, flexWrap: 'wrap' }}>
-            {PERSONAL_COLORS.map((color) => (
-              <Pressable
-                key={color}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: myColor === color }}
-                accessibilityLabel={COLOR_NAMES[color]}
-                onPress={() => updateProfile.mutate({ avatarColor: color })}>
-                <View>
-                  <Avatar name={name || '·'} color={color} size={48} />
-                  {myColor === color ? (
-                    <View
-                      style={{
-                        position: 'absolute',
-                        right: -2,
-                        bottom: -2,
-                        backgroundColor: colors.primary,
-                        borderRadius: 10,
-                        padding: 2,
-                      }}>
-                      <Check size={14} color={colors.textOnPrimary} strokeWidth={3} />
-                    </View>
-                  ) : null}
-                </View>
-              </Pressable>
-            ))}
-          </View>
+          <PrismColorPicker value={myColor} name={name || me?.displayName || ''} onChange={chooseColor} />
         </View>
 
         <Card padded={false}>

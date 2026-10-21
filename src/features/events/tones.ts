@@ -6,7 +6,8 @@ import { usePeople } from '@/features/couple/hooks';
 import { resolvePersonalColor } from './domain/person-color';
 import type { Responsibility } from './domain/types';
 
-export type ResponsibilityTone = { soft: string; strong: string };
+/** `soft`: fundo; `strong`: texto e ícones; `solid`: a cor que identifica (barras, pontos). */
+export type ResponsibilityTone = { soft: string; strong: string; solid: string };
 
 /**
  * Cor de cada "dono": o que é do casal usa sempre o rosé do app; o que é pessoal usa a cor
@@ -24,7 +25,7 @@ export function useResponsibilityTones(): Record<Responsibility, ResponsibilityT
 
   return useMemo(
     () => ({
-      ours: { soft: colors.oursSoft, strong: colors.ours },
+      ours: { soft: colors.oursSoft, strong: colors.ours, solid: colors.ours },
       mine: personTone(myColor, scheme),
       partner: personTone(partnerColor, scheme),
     }),

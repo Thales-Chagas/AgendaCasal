@@ -3,6 +3,7 @@ import * as Crypto from 'expo-crypto';
 
 import { AppError, toAppError } from '@/core/errors/app-error';
 import type { Database } from '@/core/supabase/database.types';
+import { isAvatarColor, type AvatarColor } from '@/design-system/tokens/person-colors';
 
 import { normalizeInviteCode } from '../domain/invite-code';
 
@@ -10,7 +11,7 @@ const AVATAR_BUCKET = 'avatars';
 /** Validade das URLs assinadas das fotos (o app renova antes de vencer). */
 export const AVATAR_URL_TTL_S = 24 * 60 * 60;
 
-export type AvatarColorKey = 'rose' | 'plum' | 'indigo' | 'teal' | 'amber' | 'sage';
+export type AvatarColorKey = AvatarColor;
 
 export type Person = {
   id: string;
@@ -34,8 +35,9 @@ export type InvitePreview = { inviterName: string; expiresAt: string; myEventCou
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 function toPerson(row: ProfileRow): Person {
-  // O rosé é reservado para o casal: perfis antigos com rosé aparecem em índigo.
-  const color = row.avatar_color === 'rose' ? 'indigo' : (row.avatar_color as AvatarColorKey);
+  // O rosé é reservado para o casal: perfis antigos com rosé aparecem em índigo. Valores que esta
+  // versão não conhece (ex.: cor nova escolhida num app mais novo) também.
+  const color = row.avatar_color !== 'rose' && isAvatarColor(row.avatar_color) ? row.avatar_color : 'indigo';
   return { id: row.id, displayName: row.display_name, avatarColor: color, avatarPath: row.avatar_path };
 }
 

@@ -41,7 +41,7 @@ export const EventCard = memo(function EventCard({ occurrence, viewerId, partner
       }`}
       accessibilityHint="Abre os detalhes do compromisso">
       <View style={[styles.row, { padding: spacing.lg, gap: spacing.md }]}>
-        <View style={[styles.accent, { backgroundColor: tone.strong, borderRadius: radius.pill }]} />
+        <View style={[styles.accent, { backgroundColor: tone.solid, borderRadius: radius.pill }]} />
         <View style={[styles.body, { gap: spacing.xs }]}>
           <View style={[styles.line, { gap: spacing.sm }]}>
             <AppText variant="caption" color="textSecondary" tabular>

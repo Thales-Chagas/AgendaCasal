@@ -1,28 +1,9 @@
 import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
+import { personColor, type AvatarColor } from '../tokens/person-colors';
 import { useTheme } from '../theme/theme';
 import { AppText } from './AppText';
-
-export type AvatarColor = 'rose' | 'plum' | 'indigo' | 'teal' | 'amber' | 'sage';
-
-const avatarPalette: Record<AvatarColor, { light: [string, string]; dark: [string, string] }> = {
-  rose: { light: ['#F9E4EA', '#8E2644'], dark: ['#4A2231', '#F7B8C8'] },
-  plum: { light: ['#EEE7F3', '#5A3F6E'], dark: ['#35283F', '#D9C4EA'] },
-  indigo: { light: ['#E7E9FA', '#3F4FB0'], dark: ['#262B52', '#B7C0F8'] },
-  teal: { light: ['#DDF2F0', '#12716D'], dark: ['#173634', '#8FDCD5'] },
-  amber: { light: ['#FBEFD9', '#8F5205'], dark: ['#3D2D14', '#F5CB8A'] },
-  sage: { light: ['#E4F0E6', '#35684A'], dark: ['#1F3326', '#A8D8B6'] },
-};
-
-/** Cores que uma pessoa pode escolher. O rosé fica reservado para o que é "do casal". */
-export const PERSONAL_COLORS: readonly AvatarColor[] = ['indigo', 'teal', 'plum', 'amber', 'sage'];
-
-/** Tons da cor de uma pessoa: `soft` para fundos, `strong` para destaques e texto. */
-export function personTone(color: AvatarColor, scheme: 'light' | 'dark'): { soft: string; strong: string } {
-  const [soft, strong] = avatarPalette[color][scheme];
-  return { soft, strong };
-}
 
 export function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -40,10 +21,10 @@ export type AvatarProps = {
   photoUri?: string | null;
 };
 
-/** Avatar com foto ou iniciais: a foto é opcional (minimização de dados). */
+/** Avatar com foto ou iniciais na cor sólida da pessoa (a foto é opcional: minimização de dados). */
 export function Avatar({ name, color = 'rose', size = 44, ring, photoUri }: AvatarProps) {
-  const { scheme, colors } = useTheme();
-  const [bg, fg] = avatarPalette[color][scheme];
+  const { colors } = useTheme();
+  const { solid: bg, onSolid: fg } = personColor(color);
   return (
     <View
       accessibilityRole="image"

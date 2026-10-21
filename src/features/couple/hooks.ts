@@ -12,6 +12,7 @@ import {
   type ActiveInvite,
   type AvatarColorKey,
   type CoupleRepository,
+  type MySpace,
 } from './data/couple-repository';
 
 let repository: CoupleRepository | null = null;
@@ -134,13 +135,26 @@ export function useLeaveCouple() {
   });
 }
 
+/** Atualiza nome/cor. A cor aparece na hora em todo o app e volta atrás se o servidor recusar. */
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
   const userId = useSession((s) => s.userId);
+  const key = spaceKeys.space(userId);
   return useMutation({
     mutationFn: (input: { displayName?: string; avatarColor?: AvatarColorKey }) =>
       getCoupleRepository().updateMyProfile(userId as string, input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: spaceKeys.space(userId) }),
+    onMutate: async ({ avatarColor }) => {
+      if (!avatarColor) return { previous: undefined };
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<MySpace>(key);
+      if (previous)
+        queryClient.setQueryData<MySpace>(key, { ...previous, me: { ...previous.me, avatarColor } });
+      return { previous };
+    },
+    onError: (_error, _input, context) => {
+      if (context?.previous) queryClient.setQueryData(key, context.previous);
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: key }),
   });
 }
 

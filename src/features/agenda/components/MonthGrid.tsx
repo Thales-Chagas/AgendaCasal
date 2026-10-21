@@ -101,7 +101,7 @@ export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, ma
                 </View>
                 <View style={[styles.dots, { gap: spacing.xxs }]}>
                   {unique.map((owner) => (
-                    <View key={owner} style={[styles.dot, { backgroundColor: tones[owner].strong }]} />
+                    <View key={owner} style={[styles.dot, { backgroundColor: tones[owner].solid }]} />
                   ))}
                 </View>
               </Pressable>

@@ -1,12 +1,5 @@
 export { AppText, type AppTextProps } from './components/AppText';
-export {
-  Avatar,
-  CoupleAvatar,
-  initialsOf,
-  PERSONAL_COLORS,
-  personTone,
-  type AvatarColor,
-} from './components/Avatar';
+export { Avatar, CoupleAvatar, initialsOf } from './components/Avatar';
 export { BottomSheet } from './components/BottomSheet';
 export { Button, type ButtonProps } from './components/Button';
 export { Card } from './components/Card';
@@ -17,6 +10,7 @@ export { DateTimeField } from './components/DateTimeField';
 export { IconButton } from './components/IconButton';
 export { ListRow } from './components/ListRow';
 export { PressableScale } from './components/PressableScale';
+export { PrismSwatch } from './components/PrismSwatch';
 export { PrivateBadge } from './components/PrivateBadge';
 export { Screen } from './components/Screen';
 export { ScreenHeader } from './components/ScreenHeader';
