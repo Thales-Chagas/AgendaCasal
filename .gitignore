@@ -47,3 +47,9 @@ supabase/.temp
 supabase/.branches
 .env
 .claude/settings.local.json
+
+# Vídeo de apresentação (marketing/video): dependências, perfis de navegador e renderizações
+marketing/video/node_modules/
+marketing/video/capture/.profiles/
+marketing/video/out/
+marketing/video/public/audio/*.wav

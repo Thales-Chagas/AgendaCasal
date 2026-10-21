@@ -15,8 +15,8 @@
   4. **Seletor de cor prismático** (21/10): 15 opções; degradê só no seletor, cor sólida no
      avatar e nos compromissos. Testado no web (Supabase local), ainda não no celular.
 - Ainda **não testado no celular**: só no navegador, com dados de teste.
-- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. As 10 primeiras migrations
-  estão aplicadas no TST; a 11ª (`20261021120000_prismatic_colors.sql`) **ainda não**.
+- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. 21/10: as 11 migrations estão
+  aplicadas no TST (inclusive a das cores).
 - 20/10: primeiro build **`preview`** do Android pronto (aponta para o TST):
   https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/2b100ba1-28c6-47a1-8f7d-e42f8d56fbb1
 
@@ -44,8 +44,8 @@ A sessão na nuvem do Claude agora tem acesso à Expo e ao Supabase por **segred
 Com isso o Claude aplica migrations no TST e gera builds `preview` sozinho. O perfil `preview`
 do `eas.json` já tem a URL e a chave publicável do TST.
 
-**Agora:** aplicar a migration das cores no TST e gerar um build `preview` novo para testar
-no celular o seletor de cor (o build de 20/10 ainda tem o seletor antigo).
+**Agora:** instalar o build `preview` de 21/10 (já com o seletor de cor prismático) e testar:
+https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/14090ca1-1dc0-4c0f-94ae-738579c8cbd3
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 

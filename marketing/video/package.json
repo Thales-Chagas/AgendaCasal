@@ -1,0 +1,24 @@
+{
+  "name": "duoday-video",
+  "private": true,
+  "description": "Vídeo de apresentação do DuoDay (Remotion). Separado do app.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:principal": "remotion render src/index.ts Principal out/duoday-principal-16x9.mp4",
+    "render:vertical": "remotion render src/index.ts Vertical out/duoday-vertical-9x16.mp4",
+    "render:completo": "remotion render src/index.ts Completo out/duoday-demonstracao-completa-16x9.mp4",
+    "render": "npm run render:principal && npm run render:vertical && npm run render:completo",
+    "audio": "python3 audio/make_audio.py 134"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.532",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.532"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "playwright-core": "1.56.1",
+    "typescript": "5.9.3"
+  }
+}
