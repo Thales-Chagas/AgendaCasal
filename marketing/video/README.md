@@ -33,7 +33,8 @@ O Remotion usa o `chrome-headless-shell` indicado em `remotion.config.ts` (ou em
      o código de confirmação é lido do Mailpit local);
    - `docker exec -i supabase_db_agendacasal psql -U postgres < seed.sql` (compromissos, datas e contas);
    - `node 02-tour.js`, `node 03-ajustes.js`, `node 04-tema-claro.js` (telas) e `node 05-posicoes.js`
-     (posições reais dos botões para os toques animados → `src/taps.json`).
+     (posições reais dos botões para os toques animados → `src/taps.json`);
+   - `node 06-conta.js` ("Minha conta" aberta pelo caminho normal, com o nome preenchido: cor e foto).
 
 Nada disso toca no banco de teste (TST) ou de produção.
 

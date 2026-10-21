@@ -4,9 +4,9 @@
   "description": "Vídeo de apresentação do DuoDay (Remotion). Separado do app.",
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "render:principal": "remotion render src/index.ts Principal out/duoday-principal-16x9.mp4",
-    "render:vertical": "remotion render src/index.ts Vertical out/duoday-vertical-9x16.mp4",
-    "render:completo": "remotion render src/index.ts Completo out/duoday-demonstracao-completa-16x9.mp4",
+    "render:principal": "remotion render src/index.ts Principal out/duoday-principal-16x9.mp4 && ./finalize.sh out/duoday-principal-16x9.mp4",
+    "render:vertical": "remotion render src/index.ts Vertical out/duoday-vertical-9x16.mp4 && ./finalize.sh out/duoday-vertical-9x16.mp4",
+    "render:completo": "remotion render src/index.ts Completo out/duoday-demonstracao-completa-16x9.mp4 && ./finalize.sh out/duoday-demonstracao-completa-16x9.mp4",
     "render": "npm run render:principal && npm run render:vertical && npm run render:completo",
     "audio": "python3 audio/make_audio.py 134"
   },

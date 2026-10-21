@@ -13,7 +13,9 @@
   2. **Aba Finanças**: contas fixas do casal ou privadas, com lembrete e "marcar como paga".
   3. **Foto de perfil**: escolher, ajustar (zoom e enquadramento) e enviar; bucket privado.
   4. **Seletor de cor prismático** (21/10): 15 opções; degradê só no seletor, cor sólida no
-     avatar e nos compromissos. Testado no web (Supabase local), ainda não no celular.
+     avatar e nos compromissos. Testado no web; build `preview` de 21/10 pronto para o celular.
+  5. **Vídeo de apresentação** (21/10): `marketing/video` (Remotion). Principal 16:9 (62 s),
+     vertical 9:16 e demonstração completa (2 min 14 s). Ver `marketing/video/README.md`.
 - Ainda **não testado no celular**: só no navegador, com dados de teste.
 - 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. 21/10: as 11 migrations estão
   aplicadas no TST (inclusive a das cores).
