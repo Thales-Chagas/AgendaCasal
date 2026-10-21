@@ -1,20 +1,22 @@
 # Onde parei
 
-Última atualização: 20/10/2026.
+Última atualização: 21/10/2026.
 
 ## Estado do projeto
 
 - Todo o código está na branch **`claude/compassionate-faraday-kwzzf6`** (continuação da
   `claude/busy-darwin-7lbh10`; ainda não foi para a `main`).
-- 10 migrations. Testes: `npm run check` passa 162/162, `npm run test:db` passa 77/77 e
-  `npm run db:lint` não acha erros (rodados contra um Supabase local).
+- 11 migrations. Testes: `npm run check` passa 231/231, `npm run test:db` passa 78/78 e
+  `npm run db:lint` não acha erros (rodados contra um Supabase local, na nuvem do Claude).
 - Pronto e salvo nesta etapa (ver `docs/PEDIDOS.md`):
   1. **Cores**: compromissos do casal em rosa; os pessoais na cor de cada pessoa.
   2. **Aba Finanças**: contas fixas do casal ou privadas, com lembrete e "marcar como paga".
   3. **Foto de perfil**: escolher, ajustar (zoom e enquadramento) e enviar; bucket privado.
+  4. **Seletor de cor prismático** (21/10): 15 opções; degradê só no seletor, cor sólida no
+     avatar e nos compromissos. Testado no web (Supabase local), ainda não no celular.
 - Ainda **não testado no celular**: só no navegador, com dados de teste.
-- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. As 10 migrations estão
-  aplicadas e registradas no TST.
+- 20/10: o TST tinha pausado (7 dias sem uso) e foi reativado. As 10 primeiras migrations
+  estão aplicadas no TST; a 11ª (`20261021120000_prismatic_colors.sql`) **ainda não**.
 - 20/10: primeiro build **`preview`** do Android pronto (aponta para o TST):
   https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/2b100ba1-28c6-47a1-8f7d-e42f8d56fbb1
 
@@ -42,7 +44,8 @@ A sessão na nuvem do Claude agora tem acesso à Expo e ao Supabase por **segred
 Com isso o Claude aplica migrations no TST e gera builds `preview` sozinho. O perfil `preview`
 do `eas.json` já tem a URL e a chave publicável do TST.
 
-**Agora:** instalar o build `preview` no celular (link acima) e testar.
+**Agora:** aplicar a migration das cores no TST e gerar um build `preview` novo para testar
+no celular o seletor de cor (o build de 20/10 ainda tem o seletor antigo).
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 

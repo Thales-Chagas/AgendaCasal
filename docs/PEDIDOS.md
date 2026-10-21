@@ -2,7 +2,7 @@
 
 Pedidos feitos depois de ver o app rodando no celular (30/09/2026).
 
-Situação: ✅ 1, 2 e 3 feitos · 4 já existia · 5 medir antes de publicar.
+Situação: ✅ 1, 2, 3 e 6 feitos · 4 já existia · 5 medir antes de publicar.
 
 ## 1. Cores dos compromissos ✅
 
@@ -47,3 +47,18 @@ Situação: ✅ 1, 2 e 3 feitos · 4 já existia · 5 medir antes de publicar.
   Wi-Fi, sem otimização e com verificações extras. A versão da loja é bem mais rápida.
 - Antes de publicar, gerar um build de pré-visualização (`--profile preview`) para medir a
   velocidade real e corrigir o que ainda estiver lento.
+
+## 6. Seletor de cor prismático (21/10/2026) ✅
+
+- "Sua cor" com visual prismático (degradês, faixas diagonais de luz, profundidade) num palco
+  escuro, 15 opções, prévia em tempo real (avatar, nome da cor, código hex, ✓).
+- **Separação**: o degradê é só a apresentação no seletor; o que identifica a pessoa (avatar,
+  barra e ponto dos compromissos, calendário) é a **cor sólida** de cada opção. Textos usam um
+  tom derivado com contraste de 4.5:1 garantido em teste.
+- Feito: `src/design-system/tokens/person-colors.ts` (as 15 opções), `PrismSwatch`,
+  `PrismColorPicker`, atualização otimista no `useUpdateProfile`. As 6 chaves antigas continuam
+  válidas e com os mesmos tons. Migration `20261021120000_prismatic_colors.sql` só amplia a lista
+  aceita em `profiles.avatar_color` (nenhum dado muda).
+- Acessibilidade: grupo de rádio com nomes, setas/Espaço/Enter no teclado (web), anel de foco,
+  "reduzir movimento" respeitado.
+- Para testar no celular: aplicar a migration no TST e gerar um build novo (ou `eas update`).

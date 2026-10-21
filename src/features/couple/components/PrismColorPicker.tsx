@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type Ref } from 'react';
 import { Platform, Pressable, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -47,24 +47,38 @@ export function PrismColorPicker({ value, onChange, name }: PrismColorPickerProp
   const columns = width > 0 && width < 260 ? 3 : 5;
   const tile = Math.min(MAX_TILE, Math.floor((width - GAP * (columns - 1)) / columns));
   const selected = personColor(value);
+  const optionRefs = useRef(new Map<AvatarColor, View>());
+
+  // Teclado (web): setas trocam a cor e levam o foco junto, como num grupo de rádio nativo.
+  const move = (from: AvatarColor, delta: number) => {
+    const count = PERSONAL_COLORS.length;
+    const next = PERSONAL_COLORS[(PERSONAL_COLORS.indexOf(from) + delta + count) % count] as AvatarColor;
+    onChange(next);
+    (optionRefs.current.get(next) as unknown as HTMLElement | undefined)?.focus?.();
+  };
 
   return (
     <View style={styles.stage} testID="prism-color-picker">
       <AmbientGlow colors={selected.prism} />
       <PreviewCard color={value} name={name} />
       <View
-        accessibilityRole="radiogroup"
-        accessibilityLabel="Sua cor"
+        role="radiogroup"
+        aria-label="Sua cor"
         onLayout={(e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width)}
         style={[styles.grid, { gap: GAP }]}>
         {width > 0
           ? PERSONAL_COLORS.map((color) => (
               <PrismOption
                 key={color}
+                ref={(node) => {
+                  if (node) optionRefs.current.set(color, node);
+                  else optionRefs.current.delete(color);
+                }}
                 color={color}
                 size={tile}
                 selected={color === value}
                 onPress={() => onChange(color)}
+                onMove={(delta) => move(color, delta)}
               />
             ))
           : null}
@@ -79,8 +93,8 @@ function PreviewCard({ color, name }: { color: AvatarColor; name: string }) {
     <View
       style={styles.preview}
       accessible
-      accessibilityLabel={`Cor selecionada: ${option.name}, código ${option.solid}`}
-      accessibilityLiveRegion="polite"
+      aria-label={`Cor selecionada: ${option.name}, código ${option.solid}`}
+      aria-live="polite"
       testID="prism-preview">
       <View style={styles.previewLine} pointerEvents="none">
         <PrismSwatch colors={option.prism} />
@@ -99,26 +113,29 @@ function PreviewCard({ color, name }: { color: AvatarColor; name: string }) {
           </AppText>
         </View>
       </View>
-      <View style={[styles.selectedPill, { backgroundColor: option.solid }]}>
-        <Check size={14} color={option.onSolid} strokeWidth={3} />
-        <AppText variant="label" compact style={{ color: option.onSolid }}>
-          Selecionada
-        </AppText>
+      <View style={[styles.selectedBadge, { backgroundColor: option.solid }]}>
+        <Check size={16} color={option.onSolid} strokeWidth={3} />
       </View>
     </View>
   );
 }
 
+const KEY_DELTAS: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
 function PrismOption({
+  ref,
   color,
   size,
   selected,
   onPress,
+  onMove,
 }: {
+  ref: Ref<View>;
   color: AvatarColor;
   size: number;
   selected: boolean;
   onPress: () => void;
+  onMove: (delta: number) => void;
 }) {
   const option = personColor(color);
   const reduceMotion = useReducedMotion();
@@ -131,18 +148,42 @@ function PrismOption({
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.get() }] }));
 
   const ringColor = selected ? '#FFFFFF' : focused ? stage.focusRing : 'transparent';
+  // Brilho da cor quando marcada; anel de foco arredondado (no lugar do contorno quadrado do web).
+  const shadows = [
+    selected && `0 0 18px 2px ${option.solid}`,
+    focused && `0 0 0 3px ${stage.focusRing}`,
+  ].filter(Boolean);
+  // Só o web recebe teclas aqui; o Pressable do web aceita onKeyDown, mas o tipo não declara.
+  const keyboard =
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: (e: { key: string; preventDefault: () => void }) => {
+            if (e.key === ' ') {
+              e.preventDefault();
+              onPress();
+            } else if (KEY_DELTAS[e.key]) {
+              e.preventDefault();
+              onMove(KEY_DELTAS[e.key] as number);
+            }
+          },
+        }
+      : {};
   return (
     <Pressable
-      accessibilityRole="radio"
-      accessibilityState={{ selected, checked: selected }}
-      accessibilityLabel={option.name}
+      ref={ref}
+      {...keyboard}
+      // Só a opção marcada entra no Tab; as setas percorrem as outras (padrão de grupo de rádio).
+      tabIndex={selected ? 0 : -1}
+      role="radio"
+      aria-checked={selected}
+      aria-label={option.name}
       accessibilityHint={`Cor ${option.solid} nos seus compromissos e no avatar`}
       onPress={onPress}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       hitSlop={4}
       testID={`color-${color}`}
-      style={[styles.option, { width: size }]}>
+      style={[styles.option, { width: size, outlineWidth: 0 }]}>
       <Animated.View
         style={[
           styles.ring,
@@ -150,7 +191,7 @@ function PrismOption({
             width: size,
             height: size,
             borderColor: ringColor,
-            boxShadow: selected ? `0 0 18px 2px ${option.solid}` : undefined,
+            boxShadow: shadows.length ? shadows.join(', ') : undefined,
           },
           animatedStyle,
         ]}>
@@ -180,6 +221,8 @@ function AmbientGlow({ colors }: { colors: readonly string[] }) {
   return (
     <Svg
       style={StyleSheet.absoluteFill}
+      width="100%"
+      height="100%"
       pointerEvents="none"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants">
@@ -228,13 +271,14 @@ const styles = StyleSheet.create({
   previewText: { flex: 1, gap: spacing.xxs },
   hexRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   hexDot: { width: 10, height: 10, borderRadius: 5, borderWidth: 1, borderColor: hairline },
-  selectedPill: {
-    flexDirection: 'row',
+  selectedBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
-    gap: spacing.xxs,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.pill,
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.85)',
   },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
   option: { alignItems: 'center', gap: spacing.xs, minHeight: 48 },

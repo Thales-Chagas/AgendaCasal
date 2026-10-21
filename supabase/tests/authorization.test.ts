@@ -187,6 +187,14 @@ describe('integridade dos vínculos', () => {
     expect(error).not.toBeNull();
   });
 
+  it('escolhe uma das cores pessoais, mas não um valor fora da lista', async () => {
+    const ok = await ana.client.from('profiles').update({ avatar_color: 'coral' }).eq('id', ana.id).select();
+    expect(ok.error).toBeNull();
+    expect(ok.data?.[0]?.avatar_color).toBe('coral');
+    const { error } = await ana.client.from('profiles').update({ avatar_color: '#FF00FF' }).eq('id', ana.id);
+    expect(error).not.toBeNull();
+  });
+
   it('não lê preferências nem tokens do parceiro', async () => {
     const { data } = await ana.client.from('notification_settings').select('user_id');
     expect(data).toEqual([{ user_id: ana.id }]);
