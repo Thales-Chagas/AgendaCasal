@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{{TITLE}} · DuoDay</title>
+    <meta name="description" content="{{TITLE}} do DuoDay, a agenda do casal." />
+    <meta name="theme-color" content="#FBF8F6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#161216" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a class="brand" href="/" aria-label="DuoDay, início"
+          ><img src="/img/icone.png" alt="" width="36" height="36" /><span>DuoDay</span></a
+        >
+      </div>
+    </header>
+    <main class="legal">
+      <div class="wrap narrow">
+        <a class="back" href="/">← Voltar</a>
+        <h1>{{TITLE}}</h1>
+        <p class="updated">Atualizado em {{UPDATED}} · versão {{VERSION}}</p>
+        {{SECTIONS}}
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <nav aria-label="Rodapé">
+          <a href="/privacidade/">Privacidade</a>
+          <a href="/termos/">Termos de Uso</a>
+          <a href="mailto:ajuda@duoday.com.br">ajuda@duoday.com.br</a>
+        </nav>
+        <p class="footer-note">© 2026 DuoDay.</p>
+      </div>
+    </footer>
+  </body>
+</html>

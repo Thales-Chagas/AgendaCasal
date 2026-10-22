@@ -1,0 +1,8 @@
+# Link do APK do Android. TROCAR pelo endereço do APK de PRODUÇÃO (ver docs/WEB.md).
+# Enquanto isso, aponta para a página do build de teste na Expo.
+/baixar/android  https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/14090ca1-1dc0-4c0f-94ae-738579c8cbd3  302
+
+# Atalhos
+/app  https://app.duoday.com.br  302
+/privacidade  /privacidade/  301
+/termos  /termos/  301

@@ -54,3 +54,4 @@ marketing/video/capture/.profiles/
 marketing/video/out/
 marketing/video/public/audio/*.wav
 marketing/video/audio/models/
+dist-site/
