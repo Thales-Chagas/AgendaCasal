@@ -93,7 +93,22 @@ Deno.serve(async (req) => {
         },
       ];
     });
-    await sendWebPushes(admin, vapid, webMessages);
+    await sendWebPushes(
+      {
+        list: async (userIds) =>
+          (
+            await admin
+              .from('web_push_subscriptions')
+              .select('user_id, endpoint, p256dh, auth')
+              .in('user_id', userIds)
+          ).data ?? [],
+        remove: async (endpoints) => {
+          await admin.from('web_push_subscriptions').delete().in('endpoint', endpoints);
+        },
+      },
+      vapid,
+      webMessages,
+    );
   }
 
   if (messages.length === 0) return new Response('nothing to send');

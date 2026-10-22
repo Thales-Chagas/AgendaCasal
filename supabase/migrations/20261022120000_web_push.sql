@@ -149,8 +149,12 @@ begin
     return;
   end if;
 
-  -- O esquema do pg_net (normalmente `net`) é lido na hora: ele não existe em todo ambiente.
-  select extnamespace::regnamespace::text into v_net from pg_extension where extname = 'pg_net';
+  -- As funções do pg_net ficam no esquema `net`, que só existe com a extensão ativa (por isso a
+  -- chamada é dinâmica, como no aviso do parceiro).
+  select nspname into v_net from pg_namespace where nspname = 'net';
+  if v_net is null then
+    return;
+  end if;
   execute format('select %s.http_post(url := $1, body := $2, headers := $3)', v_net)
   using v_url, '{}'::jsonb,
         jsonb_build_object('Content-Type', 'application/json', 'x-webhook-secret', v_secret);
