@@ -61,4 +61,6 @@ export const motion = {
   duration: { fast: 150, normal: 220, slow: 320 },
   spring: { damping: 18, stiffness: 220, mass: 0.9 },
   pressScale: 0.97,
+  /** Folhas: entrada com desaceleração longa (curva das folhas do iOS), saída mais curta. */
+  sheet: { enter: 420, exit: 260, backdropIn: 320, backdropOut: 240 },
 } as const;

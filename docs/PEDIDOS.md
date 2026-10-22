@@ -2,7 +2,7 @@
 
 Pedidos feitos depois de ver o app rodando no celular (30/09/2026).
 
-Situação: ✅ 1, 2, 3 e 6 feitos · 4 já existia · 5 medir antes de publicar.
+Situação: ✅ 1, 2, 3, 6, 7, 8, 9 e 10 feitos · 4 já existia · 5 medir antes de publicar.
 
 ## 1. Cores dos compromissos ✅
 
@@ -62,3 +62,31 @@ Situação: ✅ 1, 2, 3 e 6 feitos · 4 já existia · 5 medir antes de publicar
 - Acessibilidade: grupo de rádio com nomes, setas/Espaço/Enter no teclado (web), anel de foco,
   "reduzir movimento" respeitado.
 - Para testar no celular: aplicar a migration no TST e gerar um build novo (ou `eas update`).
+
+## Rodada de 22/10/2026
+
+### 7. Animação mais elegante nas folhas ✅
+
+- Todas as folhas que sobem de baixo (Alterar senha, Excluir conta, "+", confirmações, foto…)
+  usam o mesmo `BottomSheet`: agora sobem com desaceleração longa, sem quique (curva das folhas
+  do iOS, 420 ms), o fundo escurece junto, e **descem animadas ao fechar** (antes o Modal sumia
+  de uma vez). "Reduzir movimento" do sistema continua respeitado. Tempos em `motion.sheet`.
+
+### 8. Termos, Política de Privacidade e LGPD ✅ (falta revisão jurídica)
+
+- Texto conferido contra o código e reescrito. Detalhes e pendências da auditoria em
+  `docs/PRIVACIDADE.md` ("Revisão de 22/10/2026"). Versão dos termos: `2026-10`.
+
+### 9. Barra de navegação ✅
+
+- Antes: 5 abas + "+" no meio = 6 espaços, com o "+" fora do centro (3 de um lado, 2 do outro).
+- Agora: cápsula flutuante com as 5 abas igualmente espaçadas e o destaque deslizando até a
+  aba escolhida; o "+" virou um botão redondo flutuante ao lado da cápsula.
+
+### 10. Dias em destaque na Agenda ✅
+
+- Semana e Próximos: cada dia tem um cabeçalho com selo (DOM / 18), nome do dia em destaque,
+  data por extenso e a quantidade de compromissos. Hoje tem o selo cheio na cor do app; dias
+  que já passaram ficam um pouco apagados.
+- Mês: o dia com compromisso ganha fundo suave e leve brilho na cor de quem marcou (rosé quando
+  é do casal); com mais de um dono, o fundo se divide em faixas. Saíram os pontinhos.

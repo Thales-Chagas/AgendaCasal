@@ -56,7 +56,14 @@ do `eas.json` já tem a URL e a chave publicável do TST.
   pelo endereço (o campo só lia o nome no primeiro render, antes do perfil carregar).
 - Narração: o usuário **quer trocar a voz**, mas só depois das próximas mudanças no app, porque
   o vídeo também vai mudar. O roteiro está em `marketing/video/audio/make_voice.py`.
-- **Próximo:** nova rodada de mudanças no app (a combinar e registrar em `docs/PEDIDOS.md`).
+- ✅ Rodada de mudanças (pedidos 7 a 10 em `docs/PEDIDOS.md`): animação das folhas, revisão
+  LGPD dos textos legais, barra de navegação flutuante e dias em destaque na Agenda. Testado no
+  navegador (claro e escuro) com o casal fictício; **falta testar no celular** (precisa de build
+  novo ou `eas update`).
+- **Próximo:** testar no celular; continuar as mudanças no app; depois refazer o vídeo (telas
+  mudaram) com voz nova; site do DuoDay com download do APK.
+- Pendências da auditoria LGPD: ver `docs/PRIVACIDADE.md` (preencher o controlador, limpeza
+  dos registros de acesso após 6 meses, novo aceite quando os termos mudarem etc.).
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 

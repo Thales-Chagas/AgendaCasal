@@ -12,7 +12,7 @@ import { ptBR } from 'date-fns/locale';
 import { memo, useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { AppText, useTheme } from '@/design-system';
+import { AppText, fontFamilies, useTheme } from '@/design-system';
 import { toDateKey } from '@/features/events/domain/dates';
 import type { Responsibility } from '@/features/events/domain/types';
 import { useResponsibilityTones } from '@/features/events/tones';
@@ -20,18 +20,28 @@ import { useResponsibilityTones } from '@/features/events/tones';
 const WEEK_OPTIONS = { weekStartsOn: 0 as const };
 const WEEKDAY_LABELS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 const WEEKDAY_NAMES = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+const OWNER_ORDER: readonly Responsibility[] = ['ours', 'mine', 'partner'];
+
+/** `#RRGGBB` + opacidade → `rgba(...)`. */
+function withAlpha(hex: string, alpha: number): string {
+  const n = Number.parseInt(hex.slice(1, 7), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
 
 type Props = {
   month: Date;
   selected: Date;
   onSelect: (day: Date) => void;
-  /** Por dia (YYYY-MM-DD): quais "donos" têm compromissos (para os pontinhos). */
+  /** Por dia (YYYY-MM-DD): quais "donos" têm compromissos (para tingir o dia com a cor de cada um). */
   marks: Record<string, Responsibility[]>;
 };
 
-/** Calendário mensal com pontinhos coloridos (e contagem para leitores de tela). */
+/**
+ * Calendário mensal. Dia com compromisso ganha um fundo suave e um leve brilho na cor de quem
+ * marcou (rosé quando é do casal); com mais de um dono, o fundo se divide em faixas.
+ */
 export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, marks }: Props) {
-  const { colors, radius, spacing } = useTheme();
+  const { colors, radius } = useTheme();
   const tones = useResponsibilityTones();
   const today = new Date();
 
@@ -64,7 +74,9 @@ export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, ma
             const inMonth = isSameMonth(day, month);
             const isSelected = isSameDay(day, selected);
             const isToday = isSameDay(day, today);
-            const unique = [...new Set(owners)].slice(0, 3);
+            const unique = OWNER_ORDER.filter((owner) => owners.includes(owner));
+            const lead = unique[0] ? tones[unique[0]] : undefined;
+            const marked = !!lead && !isSelected;
             return (
               <Pressable
                 key={key}
@@ -79,12 +91,24 @@ export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, ma
                   style={[
                     styles.day,
                     {
-                      borderRadius: radius.pill,
+                      borderRadius: radius.md,
                       backgroundColor: isSelected ? colors.primary : 'transparent',
-                      borderWidth: isToday && !isSelected ? 1.5 : 0,
-                      borderColor: colors.primary,
+                      opacity: inMonth || isSelected ? 1 : 0.55,
                     },
+                    marked && {
+                      borderWidth: 1,
+                      borderColor: withAlpha(lead.solid, 0.4),
+                      boxShadow: `0 2px 8px ${withAlpha(lead.solid, 0.28)}`,
+                    },
+                    isToday && !isSelected && { borderWidth: 2, borderColor: colors.primary },
                   ]}>
+                  {marked ? (
+                    <View style={[StyleSheet.absoluteFill, styles.bands, { borderRadius: radius.md }]}>
+                      {unique.map((owner) => (
+                        <View key={owner} style={[styles.band, { backgroundColor: tones[owner].soft }]} />
+                      ))}
+                    </View>
+                  ) : null}
                   <AppText
                     variant="callout"
                     compact
@@ -92,17 +116,15 @@ export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, ma
                     style={{
                       color: isSelected
                         ? colors.textOnPrimary
-                        : inMonth
-                          ? colors.textPrimary
-                          : colors.textTertiary,
+                        : marked && unique.length === 1
+                          ? lead.strong
+                          : inMonth
+                            ? colors.textPrimary
+                            : colors.textTertiary,
+                      fontFamily: marked || isToday || isSelected ? fontFamilies.bold : undefined,
                     }}>
                     {day.getDate()}
                   </AppText>
-                </View>
-                <View style={[styles.dots, { gap: spacing.xxs }]}>
-                  {unique.map((owner) => (
-                    <View key={owner} style={[styles.dot, { backgroundColor: tones[owner].solid }]} />
-                  ))}
                 </View>
               </Pressable>
             );
@@ -116,7 +138,7 @@ export const MonthGrid = memo(function MonthGrid({ month, selected, onSelect, ma
 const styles = StyleSheet.create({
   row: { flexDirection: 'row' },
   cell: { flex: 1, alignItems: 'center', minHeight: 48, justifyContent: 'center', paddingVertical: 2 },
-  day: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  dots: { flexDirection: 'row', height: 6, marginTop: 2 },
-  dot: { width: 5, height: 5, borderRadius: 3 },
+  day: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  bands: { flexDirection: 'row', overflow: 'hidden' },
+  band: { flex: 1 },
 });

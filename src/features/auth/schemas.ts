@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /** Versão vigente dos Termos de Uso e da Política de Privacidade (registrada no aceite). */
-export const TERMS_VERSION = '2026-09';
+export const TERMS_VERSION = '2026-10';
 
 export const emailSchema = z
   .string()

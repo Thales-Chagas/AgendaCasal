@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { toAppError } from '@/core/errors/app-error';
 import { shareJsonFile } from '@/core/sharing/share-file';
 import { AppText, Card, ListRow, Screen, ScreenHeader, toast, useTheme } from '@/design-system';
-import { CalendarHeart, Download, FileText, Lock, UserRound, type Icon } from '@/design-system/icons';
+import { CalendarHeart, Download, FileText, Lock, UserRound, Wallet, type Icon } from '@/design-system/icons';
 import { getCoupleRepository } from '@/features/couple/hooks';
 
 export default function PrivacyScreen() {
@@ -34,6 +34,11 @@ export default function PrivacyScreen() {
           text="Compartilhada com seu parceiro. Vocês dois veem e podem editar os compromissos e as datas especiais."
         />
         <Explain
+          icon={Wallet}
+          title="Finanças"
+          text='As contas do casal os dois veem. As marcadas como "só minha" ficam visíveis só para você.'
+        />
+        <Explain
           icon={Lock}
           title="Notas"
           text="Somente neste aparelho. Não vão para a internet, não vão para o parceiro e ficam criptografadas no celular."
@@ -41,7 +46,7 @@ export default function PrivacyScreen() {
         <Explain
           icon={UserRound}
           title="Conta"
-          text="Informações privadas. Seu parceiro vê apenas seu nome. Seu e-mail nunca é mostrado a ninguém."
+          text="Seu parceiro vê seu nome, sua cor e sua foto, se você colocar uma. Seu e-mail nunca é mostrado a ninguém."
         />
       </View>
 
