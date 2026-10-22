@@ -64,6 +64,12 @@ do `eas.json` já tem a URL e a chave publicável do TST.
 
 **Próximo (começar por aqui):**
 
+Combinado em 22/10 à noite: **23/10 subir tudo**. Para isso, ter em mãos:
+
+- acesso da sessão à **Cloudflare** (token com permissão de Pages no domínio `duoday.com.br`);
+- **autorização** para o Claude aplicar a migration `web_push` no TST (foi bloqueada nesta sessão);
+- nome/razão social e CPF/CNPJ do responsável, para a Política de Privacidade.
+
 1. Publicar: seguir `docs/WEB.md` (Cloudflare Pages para `duoday.com.br` e `app.duoday.com.br`,
    `pg_net`, migration, segredos VAPID e Vault). Pode ser feito pelo Claude com acesso à Cloudflare.
 2. Testar num iPhone: instalar pelo Safari, criar PIN, digital/rosto, bloqueio e um lembrete real.
