@@ -1,6 +1,11 @@
-import * as LocalAuthentication from 'expo-local-authentication';
-import { AppState, Platform } from 'react-native';
+import { AppState } from 'react-native';
 import { create } from 'zustand';
+
+import { usePreferences } from '@/core/preferences/preferences-store';
+import { isBiometricAvailable, verifyBiometrics } from '@/features/security/biometrics';
+
+import { closeNotes } from './notes-service';
+import { lockNotesVault, notesUsePin } from './vault';
 
 type LockState = { unlocked: boolean; setUnlocked: (value: boolean) => void };
 
@@ -11,25 +16,24 @@ export const useNotesLock = create<LockState>((set) => ({
 }));
 
 AppState.addEventListener('change', (state) => {
-  if (state === 'background') useNotesLock.getState().setUnlocked(false);
+  if (state !== 'background') return;
+  useNotesLock.getState().setUnlocked(false);
+  // Web: grava o que faltar, fecha o banco e descarta a chave da memória.
+  if (notesUsePin) void closeNotes().finally(lockNotesVault);
 });
 
-export async function canUseBiometrics(): Promise<boolean> {
-  if (Platform.OS === 'web') return false;
-  const [hardware, enrolled] = await Promise.all([
-    LocalAuthentication.hasHardwareAsync(),
-    LocalAuthentication.isEnrolledAsync(),
-  ]);
-  return hardware && enrolled;
+/** Notas trancadas agora? No web sempre pedem PIN/biometria; no celular, se a pessoa ativou. */
+export function useNotesLocked(): boolean {
+  const lockEnabled = usePreferences((s) => s.lockNotes);
+  const unlocked = useNotesLock((s) => s.unlocked);
+  return (notesUsePin || lockEnabled) && !unlocked;
 }
 
-/** Pede Face ID / digital / senha do aparelho. */
-export async function unlockNotes(): Promise<boolean> {
-  const result = await LocalAuthentication.authenticateAsync({
-    promptMessage: 'Desbloquear notas privadas',
-    cancelLabel: 'Cancelar',
-    disableDeviceFallback: false,
-  });
-  if (result.success) useNotesLock.getState().setUnlocked(true);
-  return result.success;
+export const canUseBiometrics = isBiometricAvailable;
+
+/** Celular: pede Face ID / digital / senha do aparelho. */
+export async function unlockNotes(userId: string): Promise<boolean> {
+  const { ok } = await verifyBiometrics(userId, 'Desbloquear notas privadas');
+  if (ok) useNotesLock.getState().setUnlocked(true);
+  return ok;
 }

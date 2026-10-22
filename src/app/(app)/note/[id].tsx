@@ -17,12 +17,28 @@ import { Archive, ArchiveRestore, Check, Pin, PinOff, Trash } from '@/design-sys
 import { useSession } from '@/features/auth/session-store';
 import { isEmptyNote } from '@/features/notes/domain/types';
 import { useNote } from '@/features/notes/hooks';
+import { NotesUnlock } from '@/features/notes/components/NotesUnlock';
+import { useNotesLocked } from '@/features/notes/lock';
 import { invalidateNotes, openNotes } from '@/features/notes/notes-service';
 import { goBackOrHome } from '@/shared/navigation';
 
 const AUTOSAVE_MS = 500;
 
-export default function NoteEditorScreen() {
+/** Nota aberta direto (atalho, link): se as notas estiverem trancadas, pede o desbloqueio antes. */
+export default function NoteEditorRoute() {
+  const userId = useSession((s) => s.userId);
+  const locked = useNotesLocked();
+  if (locked && userId) {
+    return (
+      <Screen>
+        <NotesUnlock userId={userId} />
+      </Screen>
+    );
+  }
+  return <NoteEditorScreen />;
+}
+
+function NoteEditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const userId = useSession((s) => s.userId);
   const { colors, spacing, typography } = useTheme();

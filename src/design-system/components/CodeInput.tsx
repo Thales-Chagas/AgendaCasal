@@ -11,13 +11,25 @@ export type CodeInputProps = {
   error?: string;
   autoFocus?: boolean;
   onComplete?: (value: string) => void;
+  /** PIN: mostra bolinhas em vez dos números e não usa o preenchimento de código do sistema. */
+  secure?: boolean;
+  accessibilityLabel?: string;
 };
 
 /**
  * Código numérico (ex.: 6 dígitos do e-mail). Um único campo invisível recebe o texto,
  * o que permite colar e o preenchimento automático do sistema ("one-time-code").
  */
-export function CodeInput({ value, onChange, length = 6, error, autoFocus, onComplete }: CodeInputProps) {
+export function CodeInput({
+  value,
+  onChange,
+  length = 6,
+  error,
+  autoFocus,
+  onComplete,
+  secure,
+  accessibilityLabel,
+}: CodeInputProps) {
   const { colors, radius, spacing, typography } = useTheme();
   const inputRef = useRef<TextInput>(null);
   const [focused, setFocused] = useState(false);
@@ -43,7 +55,7 @@ export function CodeInput({ value, onChange, length = 6, error, autoFocus, onCom
                 },
               ]}>
               <AppText variant="title2" tabular>
-                {char}
+                {secure && char ? '•' : char}
               </AppText>
             </View>
           );
@@ -61,10 +73,11 @@ export function CodeInput({ value, onChange, length = 6, error, autoFocus, onCom
           if (digits.length === length) onComplete?.(digits);
         }}
         keyboardType="number-pad"
-        textContentType="oneTimeCode"
-        autoComplete="one-time-code"
+        textContentType={secure ? 'none' : 'oneTimeCode'}
+        autoComplete={secure ? 'off' : 'one-time-code'}
+        secureTextEntry={secure}
         maxLength={length}
-        accessibilityLabel={`Código de ${length} números`}
+        accessibilityLabel={accessibilityLabel ?? `Código de ${length} números`}
         caretHidden
         style={[typography.body, styles.hiddenInput]}
       />

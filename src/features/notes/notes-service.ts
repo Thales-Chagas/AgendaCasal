@@ -6,14 +6,12 @@
 import * as Crypto from 'expo-crypto';
 
 import { queryClient } from '@/core/query/query-client';
-import { deleteEncryptedDatabase, openEncryptedDatabase } from '@/core/storage/encrypted-database';
 
 import { createNotesRepository, type NotesRepository } from './data/notes-repository';
+import { deleteNotesDatabase, openNotesDatabase } from './notes-database';
 
 let current: { userId: string; repository: NotesRepository } | null = null;
 let opening: Promise<NotesRepository> | null = null;
-
-const dbName = (userId: string) => `notes-${userId}`;
 
 export const notesKeys = { all: ['notes'] as const };
 
@@ -22,8 +20,8 @@ export async function openNotes(userId: string): Promise<NotesRepository> {
   if (opening) return opening;
   opening = (async () => {
     if (current) await closeNotes();
-    // Chave acessível só com o aparelho desbloqueado e só neste aparelho.
-    const db = await openEncryptedDatabase(dbName(userId), 'foreground');
+    // Celular: chave só com o aparelho desbloqueado. Web: só depois do PIN ou da biometria.
+    const db = await openNotesDatabase(userId);
     const repository = await createNotesRepository(db, { newId: () => Crypto.randomUUID() });
     current = { userId, repository: Object.assign(repository, { close: () => db.closeAsync() }) };
     return repository;
@@ -45,7 +43,7 @@ export async function closeNotes(): Promise<void> {
 /** Apaga TODAS as notas desta conta neste aparelho (usado ao excluir a conta). */
 export async function destroyNotes(userId: string): Promise<void> {
   if (current?.userId === userId) await closeNotes();
-  await deleteEncryptedDatabase(dbName(userId));
+  await deleteNotesDatabase(userId);
 }
 
 export function invalidateNotes() {

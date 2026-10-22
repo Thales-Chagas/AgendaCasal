@@ -1,8 +1,7 @@
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 
-import { usePreferences } from '@/core/preferences/preferences-store';
 import { shareJsonFile } from '@/core/sharing/share-file';
 import {
   AppText,
@@ -20,33 +19,23 @@ import {
   toast,
   useTheme,
 } from '@/design-system';
-import {
-  Archive,
-  ArrowUpDown,
-  Check,
-  Download,
-  Lock,
-  NotebookPen,
-  Plus,
-  Search,
-} from '@/design-system/icons';
+import { Archive, ArrowUpDown, Check, Download, NotebookPen, Plus, Search } from '@/design-system/icons';
 import { useSession } from '@/features/auth/session-store';
 import { NoteCard } from '@/features/notes/components/NoteCard';
 import { NOTE_SORT_LABELS, type NoteSort } from '@/features/notes/domain/types';
 import { useNotes, useNotesCount } from '@/features/notes/hooks';
-import { unlockNotes, useNotesLock } from '@/features/notes/lock';
+import { NotesUnlock } from '@/features/notes/components/NotesUnlock';
+import { useNotesLocked } from '@/features/notes/lock';
 import { openNotes } from '@/features/notes/notes-service';
 
 export default function NotesScreen() {
   const { spacing, colors } = useTheme();
   const userId = useSession((s) => s.userId);
-  const lockEnabled = usePreferences((s) => s.lockNotes);
-  const unlocked = useNotesLock((s) => s.unlocked);
+  const locked = useNotesLocked();
   const [search, setSearch] = useState('');
   const [archived, setArchived] = useState(false);
   const [sort, setSort] = useState<NoteSort>('updated');
   const [sortOpen, setSortOpen] = useState(false);
-  const locked = lockEnabled && !unlocked;
 
   const {
     data: notes,
@@ -59,10 +48,6 @@ export default function NotesScreen() {
     search: search.trim() || undefined,
   });
   const { data: count } = useNotesCount(locked ? null : userId);
-
-  useEffect(() => {
-    if (locked) void unlockNotes();
-  }, [locked]);
 
   const exportNotes = async () => {
     if (!userId) return;
@@ -77,16 +62,10 @@ export default function NotesScreen() {
     }
   };
 
-  if (locked) {
+  if (locked && userId) {
     return (
       <Screen edges={['top']}>
-        <EmptyState
-          icon={Lock}
-          tone="private"
-          title="Notas protegidas"
-          message="Desbloqueie para ver suas notas privadas."
-          action={{ label: 'Desbloquear', onPress: () => void unlockNotes() }}
-        />
+        <NotesUnlock userId={userId} />
       </Screen>
     );
   }

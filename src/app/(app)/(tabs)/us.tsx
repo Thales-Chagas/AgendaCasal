@@ -19,6 +19,7 @@ import {
 import {
   Bell,
   CircleQuestionMark,
+  FingerprintPattern,
   Gift,
   HeartHandshake,
   Info,
@@ -136,6 +137,13 @@ export default function UsScreen() {
               icon={Bell}
               title="Notificações"
               onPress={() => router.push('/settings/notifications')}
+            />
+            <ListRow
+              icon={FingerprintPattern}
+              title="Segurança"
+              subtitle="Digital, rosto e PIN das notas"
+              onPress={() => router.push('/settings/security')}
+              testID="settings-security"
             />
             <ListRow
               icon={Shield}

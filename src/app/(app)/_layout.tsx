@@ -11,6 +11,7 @@ import {
   registerPushToken,
   scheduleRescheduling,
 } from '@/features/notifications/notification-service';
+import { AppLockGate } from '@/features/security/components/AppLockGate';
 import { getAgendaRuntime, startAgendaRuntime } from '@/features/sync/agenda-runtime';
 
 /** Área autenticada. O acesso é garantido pelo `Stack.Protected` do layout raiz. */
@@ -55,20 +56,22 @@ export default function AppLayout() {
   }, [pendingCode]);
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="event/new" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="event/edit/[id]" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="special-date/new" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="bill/new" options={{ presentation: 'modal' }} />
-      <Stack.Screen
-        name="settings/avatar-crop"
-        options={{ presentation: 'fullScreenModal', gestureEnabled: false, animation: 'fade' }}
-      />
-      <Stack.Screen
-        name="couple/connected"
-        options={{ presentation: 'fullScreenModal', gestureEnabled: false }}
-      />
-    </Stack>
+    <AppLockGate userId={userId ?? ''}>
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="event/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="event/edit/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="special-date/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="bill/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen
+          name="settings/avatar-crop"
+          options={{ presentation: 'fullScreenModal', gestureEnabled: false, animation: 'fade' }}
+        />
+        <Stack.Screen
+          name="couple/connected"
+          options={{ presentation: 'fullScreenModal', gestureEnabled: false }}
+        />
+      </Stack>
+    </AppLockGate>
   );
 }

@@ -10,11 +10,14 @@ type PreferencesState = {
   hasSeenOnboarding: boolean;
   /** Pede biometria ao abrir as notas privadas. */
   lockNotes: boolean;
+  /** Pede digital ou rosto para abrir o app neste aparelho. */
+  appLock: boolean;
   /** Usuários (IDs) que já passaram pela tela "Como você quer começar?". */
   startChoiceDone: Record<string, true>;
   setTheme: (theme: ThemePreference) => void;
   completeOnboarding: () => void;
   setLockNotes: (value: boolean) => void;
+  setAppLock: (value: boolean) => void;
   markStartChoiceDone: (userId: string) => void;
 };
 
@@ -25,10 +28,12 @@ export const usePreferences = create<PreferencesState>()(
       theme: 'system',
       hasSeenOnboarding: false,
       lockNotes: false,
+      appLock: false,
       startChoiceDone: {},
       setTheme: (theme) => set({ theme }),
       completeOnboarding: () => set({ hasSeenOnboarding: true }),
       setLockNotes: (lockNotes) => set({ lockNotes }),
+      setAppLock: (appLock) => set({ appLock }),
       markStartChoiceDone: (userId) =>
         set((s) => ({ startChoiceDone: { ...s.startChoiceDone, [userId]: true } })),
     }),
@@ -36,10 +41,11 @@ export const usePreferences = create<PreferencesState>()(
       name: 'preferences',
       version: 1,
       storage: createJSONStorage(() => preferencesStorage),
-      partialize: ({ theme, hasSeenOnboarding, lockNotes, startChoiceDone }) => ({
+      partialize: ({ theme, hasSeenOnboarding, lockNotes, appLock, startChoiceDone }) => ({
         theme,
         hasSeenOnboarding,
         lockNotes,
+        appLock,
         startChoiceDone,
       }),
     },
