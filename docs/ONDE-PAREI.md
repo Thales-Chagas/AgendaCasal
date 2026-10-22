@@ -70,6 +70,9 @@ do `eas.json` já tem a URL e a chave publicável do TST.
 3. Testar no celular o build `preview` de 22/10 (QR em `marketing/qr/`):
    https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/9a8100f8-4ebb-46f5-a3ad-3db8f686efec
    Migration `web_push` ainda **não** aplicada no TST (o app Android não depende dela).
+   Atualização pelo ar (`eas update`, canal `preview`) de 22/10 à noite: avatar do topo, molduras
+   dos cartões no Android e dica da busca. Para enviar outra: `eas update --channel preview
+--platform android --environment preview` com as variáveis `EXPO_PUBLIC_*` do TST no terminal.
 4. Trocar o link do APK em `site/_redirects` pelo de produção quando existir.
 5. Continuar as mudanças no app; depois refazer o vídeo com a voz nova.
 6. Pendências LGPD em `docs/PRIVACIDADE.md` (preencher o controlador, logs de 6 meses etc.).
