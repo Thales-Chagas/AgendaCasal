@@ -36,7 +36,10 @@ export default function AccountScreen() {
   const { me } = usePeople();
   const myColor = resolvePersonalColor(me?.avatarColor, 'indigo');
   const updateProfile = useUpdateProfile();
-  const [name, setName] = useState(me?.displayName ?? '');
+  // Rascunho só existe depois que a pessoa digita; até lá o campo mostra o nome salvo, que pode
+  // chegar depois do primeiro render (ex.: tela aberta direto pelo endereço).
+  const [draftName, setName] = useState<string>();
+  const name = draftName ?? me?.displayName ?? '';
   const [nameError, setNameError] = useState<string>();
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -115,7 +118,7 @@ export default function AccountScreen() {
             maxLength={40}
             helper="É o nome que seu parceiro vê."
           />
-          {name.trim() !== me?.displayName ? (
+          {me && name.trim() !== me.displayName ? (
             <Button label="Salvar nome" size="md" onPress={saveName} loading={updateProfile.isPending} />
           ) : null}
         </View>

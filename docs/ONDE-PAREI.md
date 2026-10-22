@@ -1,11 +1,11 @@
 # Onde parei
 
-Última atualização: 21/10/2026 (noite).
+Última atualização: 22/10/2026.
 
 ## Estado do projeto
 
-- Todo o código está na branch **`claude/compassionate-faraday-kwzzf6`** (continuação da
-  `claude/busy-darwin-7lbh10`; ainda não foi para a `main`).
+- Todo o código está na branch **`claude/trusting-dirac-shrp4a`** (continuação da
+  `claude/compassionate-faraday-kwzzf6`; ainda não foi para a `main`).
 - 11 migrations. Testes: `npm run check` passa 231/231, `npm run test:db` passa 78/78 e
   `npm run db:lint` não acha erros (rodados contra um Supabase local, na nuvem do Claude).
 - Pronto e salvo nesta etapa (ver `docs/PEDIDOS.md`):
@@ -49,24 +49,20 @@ A sessão na nuvem do Claude agora tem acesso à Expo e ao Supabase por **segred
 Com isso o Claude aplica migrations no TST e gera builds `preview` sozinho. O perfil `preview`
 do `eas.json` já tem a URL e a chave publicável do TST.
 
-**Agora (retomar em 22/10):**
+**22/10:**
 
-1. Assistir às versões **narradas** e decidir a voz: manter a gratuita (Kokoro) ou trocar por
-   uma paga (ElevenLabs: plano que permita uso comercial + chave no segredo de rede
-   `api.elevenlabs.io`, cabeçalho `xi-api-key` sem prefixo). O roteiro está em
-   `marketing/video/audio/make_voice.py`.
-2. Instalar no celular o build `preview` de 21/10 (QR code acima) e testar o seletor de cor:
-   https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/14090ca1-1dc0-4c0f-94ae-738579c8cbd3
-3. Corrigir o campo "Como podemos te chamar?" que abre vazio quando "Minha conta" é aberta
-   direto pelo endereço (problema antigo, anotado nos testes).
-4. A sessão na nuvem é temporária: o Supabase local, os perfis de navegador e os vídeos
-   renderizados somem. Tudo pode ser refeito pelos scripts de `marketing/video`.
+- ✅ Seletor de cor testado no celular pelo usuário: aprovado.
+- ✅ Corrigido: "Como podemos te chamar?" abria vazio quando "Minha conta" era aberta direto
+  pelo endereço (o campo só lia o nome no primeiro render, antes do perfil carregar).
+- Narração: o usuário **quer trocar a voz**, mas só depois das próximas mudanças no app, porque
+  o vídeo também vai mudar. O roteiro está em `marketing/video/audio/make_voice.py`.
+- **Próximo:** nova rodada de mudanças no app (a combinar e registrar em `docs/PEDIDOS.md`).
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 
 ```powershell
 git fetch
-git checkout claude/compassionate-faraday-kwzzf6
+git checkout claude/trusting-dirac-shrp4a
 npm ci
 npx supabase db push
 npx eas-cli@latest build --profile development --platform android
