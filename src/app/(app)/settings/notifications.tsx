@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Linking, View } from 'react-native';
+import { Linking, Platform, View } from 'react-native';
 
 import { toAppError } from '@/core/errors/app-error';
 import {
@@ -24,6 +24,7 @@ import {
   requestPermission,
   scheduleRescheduling,
 } from '@/features/notifications/notification-service';
+import { webPushHint } from '@/features/notifications/web-push-client';
 
 export default function NotificationsScreen() {
   const { spacing } = useTheme();
@@ -57,10 +58,13 @@ export default function NotificationsScreen() {
       toast.success('Notificações ativadas ✓');
       scheduleRescheduling(0);
       void registerPushToken();
+    } else if (Platform.OS === 'web') {
+      toast.info('As notificações estão bloqueadas. Libere nas configurações do navegador ou do aparelho.');
     } else {
       void Linking.openSettings();
     }
   };
+  const hint = webPushHint();
 
   const s = settings.data;
   const toggle = (key: keyof NotificationSettings) =>
@@ -70,7 +74,22 @@ export default function NotificationsScreen() {
     <Screen>
       <ScreenHeader title="Notificações" />
 
-      {permission.data && permission.data !== 'granted' ? (
+      {hint ? (
+        <Card tone="primarySoft" style={{ marginBottom: spacing.xl }}>
+          <View style={{ gap: spacing.sm }}>
+            <AppText variant="bodyStrong">
+              {hint === 'install-required'
+                ? 'Adicione o DuoDay à Tela de Início'
+                : 'Avisos indisponíveis neste navegador'}
+            </AppText>
+            <AppText variant="callout" color="textSecondary">
+              {hint === 'install-required'
+                ? 'No iPhone, os lembretes chegam quando o DuoDay está instalado: no Safari, toque em Compartilhar › Adicionar à Tela de Início e abra o app por lá.'
+                : 'Use o Chrome ou o Safari atualizados, ou o app para Android, para receber lembretes.'}
+            </AppText>
+          </View>
+        </Card>
+      ) : permission.data && permission.data !== 'granted' ? (
         <Card tone="primarySoft" style={{ marginBottom: spacing.xl }}>
           <View style={{ gap: spacing.md }}>
             <AppText variant="bodyStrong">As notificações estão desligadas</AppText>
@@ -131,8 +150,9 @@ export default function NotificationsScreen() {
               </View>
             </Card>
             <AppText variant="caption" color="textSecondary">
-              Desligado, os avisos do parceiro dizem apenas “Você tem um novo compromisso compartilhado”. Os
-              lembretes são criados no próprio celular.
+              {Platform.OS === 'web'
+                ? 'Desligado, os avisos dizem só “Lembrete do DuoDay” ou “Você tem um novo compromisso compartilhado”. No app pelo navegador, quem envia os lembretes é o nosso servidor, e ele só recebe esse texto genérico.'
+                : 'Desligado, os avisos do parceiro dizem apenas “Você tem um novo compromisso compartilhado”. Os lembretes são criados no próprio celular.'}
             </AppText>
           </View>
         </View>

@@ -3,7 +3,7 @@ import type { CalendarEvent } from '@/features/events/domain/types';
 import type { Bill } from '@/features/finance/domain/types';
 import type { SpecialDate } from '@/features/special-dates/domain/types';
 
-import { MAX_SCHEDULED, planReminders } from './planner';
+import { MAX_SCHEDULED, planReminders, reminderForServer } from './planner';
 
 const ANA = 'ana';
 const BRUNO = 'bruno';
@@ -240,5 +240,38 @@ describe('planejamento de lembretes', () => {
       now,
     });
     expect(off).toEqual([]);
+  });
+});
+
+describe('lembretes enviados pelo servidor (app web)', () => {
+  const reminder = {
+    id: 'event:e1:2026-09-29:60',
+    fireAt: new Date(2026, 8, 29, 19),
+    title: '🍽️ Jantar com a Ana hoje às 20h',
+    body: 'Nosso compromisso ❤️ · Restaurante Sol',
+    href: '/event/e1?date=2026-09-29',
+  };
+
+  it('sem consentimento, o servidor só recebe um texto genérico', () => {
+    const generic = reminderForServer(reminder, false);
+    expect(generic.title).toBe('Lembrete do DuoDay');
+    expect(`${generic.title} ${generic.body}`).not.toMatch(/Jantar|Ana|Sol|20h/);
+    expect(generic.fireAt).toBe(reminder.fireAt);
+    expect(generic.href).toBe(reminder.href);
+  });
+
+  it('com consentimento, vai o texto completo', () => {
+    expect(reminderForServer(reminder, true)).toEqual(reminder);
+  });
+
+  it('datas especiais e contas também ficam genéricas', () => {
+    expect(
+      reminderForServer({ ...reminder, id: 'special:s1:2026:0', title: 'Hoje é Aniversário da Ana' }, false)
+        .title,
+    ).toBe('Uma data especial está chegando ❤️');
+    expect(
+      reminderForServer({ ...reminder, id: 'bill:b1:2026-10-05:1', title: 'Aluguel vence amanhã' }, false)
+        .title,
+    ).toBe('Tem conta para pagar em breve');
   });
 });

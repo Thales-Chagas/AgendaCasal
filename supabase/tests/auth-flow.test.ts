@@ -6,6 +6,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { createAuthRepository } from '../../src/features/auth/data/auth-repository';
+import { TERMS_VERSION } from '../../src/features/auth/schemas';
 import { anonClient } from './helpers';
 
 const MAILPIT = process.env.MAILPIT_URL ?? 'http://127.0.0.1:54324';
@@ -44,7 +45,7 @@ describe('cadastro e login', () => {
     expect(session.user.email).toBe(email);
 
     const { data: profile } = await client.from('profiles').select('display_name, terms_version').single();
-    expect(profile).toEqual({ display_name: 'Júlia', terms_version: '2026-09' });
+    expect(profile).toEqual({ display_name: 'Júlia', terms_version: TERMS_VERSION });
 
     await auth.signOut();
     expect(await auth.getSession()).toBeNull();

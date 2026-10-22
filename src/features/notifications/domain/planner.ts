@@ -152,3 +152,20 @@ export function planReminders(input: {
 
   return planned.sort((a, b) => a.fireAt.getTime() - b.fireAt.getTime()).slice(0, MAX_SCHEDULED);
 }
+
+/**
+ * Texto que vai para o servidor no app web (Web Push). Sem o consentimento "Mostrar detalhes
+ * nos avisos", o servidor e o serviço de push recebem só um aviso genérico, sem o nome do
+ * compromisso, da data ou da conta.
+ */
+export function reminderForServer(reminder: PlannedReminder, showDetails: boolean): PlannedReminder {
+  if (showDetails) return reminder;
+  const kind = reminder.id.split(':')[0];
+  const generic =
+    kind === 'special'
+      ? { title: 'Uma data especial está chegando ❤️', body: 'Abra o DuoDay para ver.' }
+      : kind === 'bill'
+        ? { title: 'Tem conta para pagar em breve', body: 'Abra o DuoDay para ver.' }
+        : { title: 'Lembrete do DuoDay', body: 'Você tem um compromisso chegando.' };
+  return { ...reminder, ...generic };
+}

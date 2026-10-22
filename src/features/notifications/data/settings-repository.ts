@@ -61,5 +61,33 @@ export function createNotificationSettingsRepository(client: SupabaseClient<Data
       const { error } = await client.rpc('unregister_push_token', { p_token: token });
       if (error) throw toAppError(error);
     },
+    /** App pelo navegador: inscrição de Web Push deste aparelho. */
+    async registerWebPush(subscription: { endpoint: string; p256dh: string; auth: string }): Promise<void> {
+      const { error } = await client.rpc('register_web_push', {
+        p_endpoint: subscription.endpoint,
+        p_p256dh: subscription.p256dh,
+        p_auth: subscription.auth,
+      });
+      if (error) throw toAppError(error);
+    },
+    async unregisterWebPush(endpoint: string): Promise<void> {
+      const { error } = await client.rpc('unregister_web_push', { p_endpoint: endpoint });
+      if (error) throw toAppError(error);
+    },
+    /** App pelo navegador: troca a lista dos próximos lembretes que o servidor vai enviar. */
+    async replaceScheduledPushes(
+      items: { key: string; fireAt: Date; title: string; body: string; href: string }[],
+    ): Promise<void> {
+      const { error } = await client.rpc('replace_scheduled_pushes', {
+        p_items: items.map((i) => ({
+          key: i.key,
+          fire_at: i.fireAt.toISOString(),
+          title: i.title,
+          body: i.body,
+          href: i.href,
+        })),
+      });
+      if (error) throw toAppError(error);
+    },
   };
 }

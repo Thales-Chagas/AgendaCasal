@@ -4,16 +4,11 @@
 // (notification_settings.show_details_in_push).
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+import { sendWebPushes, timingSafeEqual, vapidFromEnv } from '../_shared/web-push-sender.ts';
+
 type Payload = { event_id: string; couple_id: string; author_id: string | null };
 
 const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
-
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return new Response('method not allowed', { status: 405 });
@@ -78,6 +73,28 @@ Deno.serve(async (req) => {
       },
     ];
   });
+
+  // App pelo navegador (iPhone/Android): o mesmo aviso por Web Push.
+  const vapid = vapidFromEnv();
+  if (vapid) {
+    const webMessages = partnerIds.flatMap((userId) => {
+      const pref = settings?.find((s) => s.user_id === userId);
+      if (pref && !pref.partner_new_event) return [];
+      const details = pref?.show_details_in_push === true;
+      return [
+        {
+          userId,
+          title: 'Nova atualização na agenda ❤️',
+          body: details
+            ? `${author?.display_name ?? 'Seu parceiro'} adicionou: ${event.title}`
+            : 'Você tem um novo compromisso compartilhado.',
+          href: `/event/${event.id}`,
+          tag: `new-event-${event.id}`.slice(0, 32),
+        },
+      ];
+    });
+    await sendWebPushes(admin, vapid, webMessages);
+  }
 
   if (messages.length === 0) return new Response('nothing to send');
 

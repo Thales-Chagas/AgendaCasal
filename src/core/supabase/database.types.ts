@@ -282,31 +282,31 @@ export type Database = {
       };
       notification_settings: {
         Row: {
+          bill_reminders: boolean;
           event_reminders: boolean;
           partner_event_reminders: boolean;
           partner_new_event: boolean;
           show_details_in_push: boolean;
-          bill_reminders: boolean;
           special_date_reminders: boolean;
           updated_at: string;
           user_id: string;
         };
         Insert: {
+          bill_reminders?: boolean;
           event_reminders?: boolean;
           partner_event_reminders?: boolean;
           partner_new_event?: boolean;
           show_details_in_push?: boolean;
-          bill_reminders?: boolean;
           special_date_reminders?: boolean;
           updated_at?: string;
           user_id: string;
         };
         Update: {
+          bill_reminders?: boolean;
           event_reminders?: boolean;
           partner_event_reminders?: boolean;
           partner_new_event?: boolean;
           show_details_in_push?: boolean;
-          bill_reminders?: boolean;
           special_date_reminders?: boolean;
           updated_at?: string;
           user_id?: string;
@@ -373,6 +373,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      scheduled_pushes: {
+        Row: {
+          body: string;
+          fire_at: string;
+          href: string;
+          id: string;
+          reminder_key: string;
+          sent_at: string | null;
+          title: string;
+          user_id: string;
+        };
+        Insert: {
+          body: string;
+          fire_at: string;
+          href: string;
+          id?: string;
+          reminder_key: string;
+          sent_at?: string | null;
+          title: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          fire_at?: string;
+          href?: string;
+          id?: string;
+          reminder_key?: string;
+          sent_at?: string | null;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       special_dates: {
         Row: {
           couple_id: string;
@@ -429,6 +462,36 @@ export type Database = {
           },
         ];
       };
+      web_push_subscriptions: {
+        Row: {
+          auth: string;
+          created_at: string;
+          endpoint: string;
+          id: string;
+          last_seen_at: string;
+          p256dh: string;
+          user_id: string;
+        };
+        Insert: {
+          auth: string;
+          created_at?: string;
+          endpoint: string;
+          id?: string;
+          last_seen_at?: string;
+          p256dh: string;
+          user_id: string;
+        };
+        Update: {
+          auth?: string;
+          created_at?: string;
+          endpoint?: string;
+          id?: string;
+          last_seen_at?: string;
+          p256dh?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -436,6 +499,17 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { p_bring_events?: boolean; p_code: string }; Returns: string };
       accept_terms: { Args: { p_version: string }; Returns: undefined };
+      claim_due_web_pushes: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          body: string;
+          href: string;
+          id: string;
+          reminder_key: string;
+          title: string;
+          user_id: string;
+        }[];
+      };
       create_couple_invite: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -455,8 +529,14 @@ export type Database = {
         }[];
       };
       register_push_token: { Args: { p_platform: string; p_token: string }; Returns: undefined };
+      register_web_push: {
+        Args: { p_auth: string; p_endpoint: string; p_p256dh: string };
+        Returns: undefined;
+      };
+      replace_scheduled_pushes: { Args: { p_items: Json }; Returns: undefined };
       revoke_couple_invites: { Args: Record<PropertyKey, never>; Returns: undefined };
       unregister_push_token: { Args: { p_token: string }; Returns: undefined };
+      unregister_web_push: { Args: { p_endpoint: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

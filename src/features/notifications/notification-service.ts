@@ -15,10 +15,19 @@ import {
   DEFAULT_NOTIFICATION_SETTINGS,
   type NotificationSettings,
 } from './data/settings-repository';
-import { planReminders } from './domain/planner';
+import { planReminders, reminderForServer } from './domain/planner';
+import {
+  getWebPushSubscription,
+  onNotificationNavigate,
+  requestWebPermission,
+  unsubscribeWebPush,
+  webPermissionState,
+} from './web-push-client';
 
 const CHANNEL_ID = 'reminders';
 const PUSH_TOKEN_KEY = 'push.token';
+const WEB_PUSH_ENDPOINT_KEY = 'push.web-endpoint';
+const isWeb = Platform.OS === 'web';
 export const notificationSettingsKey = ['notification-settings'] as const;
 
 let repository: ReturnType<typeof createNotificationSettingsRepository> | null = null;
@@ -31,8 +40,12 @@ let configured = false;
 
 /** Configuração única: exibição em primeiro plano, canal Android e toque na notificação. */
 export function configureNotifications(): void {
-  if (configured || Platform.OS === 'web') return;
+  if (configured) return;
   configured = true;
+  if (isWeb) {
+    onNotificationNavigate((href) => router.push(href as never));
+    return;
+  }
 
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -61,14 +74,14 @@ export function configureNotifications(): void {
 export type PermissionState = 'granted' | 'denied' | 'undetermined';
 
 export async function getPermissionState(): Promise<PermissionState> {
-  if (Platform.OS === 'web') return 'denied';
+  if (isWeb) return webPermissionState();
   const { status } = await Notifications.getPermissionsAsync();
   return status as PermissionState;
 }
 
 /** Pede permissão só em contexto (ex.: depois de criar um lembrete), nunca na abertura. */
 export async function requestPermission(): Promise<PermissionState> {
-  if (Platform.OS === 'web') return 'denied';
+  if (isWeb) return requestWebPermission();
   const { status } = await Notifications.requestPermissionsAsync();
   return status as PermissionState;
 }
@@ -92,7 +105,6 @@ let rescheduling: ReturnType<typeof setTimeout> | null = null;
 
 /** Reprograma os lembretes locais a partir da agenda no aparelho (agrupa chamadas). */
 export function scheduleRescheduling(delayMs = 1500): void {
-  if (Platform.OS === 'web') return;
   if (rescheduling) clearTimeout(rescheduling);
   rescheduling = setTimeout(() => void rescheduleReminders(), delayMs);
 }
@@ -108,6 +120,13 @@ export async function rescheduleReminders(): Promise<void> {
       currentSettings(),
     ]);
     const plan = planReminders({ events, specialDates, bills, viewerId: runtime.userId, settings });
+    if (isWeb) {
+      // Navegador: quem envia é o servidor, na hora certa (texto genérico sem consentimento).
+      await getNotificationSettingsRepository().replaceScheduledPushes(
+        plan.map((r) => ({ ...reminderForServer(r, settings.showDetailsInPush), key: r.id })),
+      );
+      return;
+    }
     await Notifications.cancelAllScheduledNotificationsAsync();
     for (const reminder of plan) {
       await Notifications.scheduleNotificationAsync({
@@ -132,7 +151,18 @@ export async function rescheduleReminders(): Promise<void> {
 
 /** Registra este aparelho para receber avisos do parceiro (se houver permissão). */
 export async function registerPushToken(): Promise<void> {
-  if (Platform.OS === 'web' || (await getPermissionState()) !== 'granted') return;
+  if ((await getPermissionState()) !== 'granted') return;
+  if (isWeb) {
+    try {
+      const subscription = await getWebPushSubscription();
+      if (!subscription) return;
+      await getNotificationSettingsRepository().registerWebPush(subscription);
+      await secureStorage.setItem(WEB_PUSH_ENDPOINT_KEY, subscription.endpoint);
+    } catch (error) {
+      logger.warn('Web push registration failed', { error });
+    }
+    return;
+  }
   const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
   if (!projectId) return; // sem projeto EAS configurado (desenvolvimento)
   try {
@@ -152,7 +182,14 @@ export async function registerPushToken(): Promise<void> {
  * avisos da conta e os lembretes locais são apagados.
  */
 export async function prepareSignOut(): Promise<void> {
-  if (Platform.OS === 'web') return;
+  if (isWeb) {
+    const repository = getNotificationSettingsRepository();
+    await repository.replaceScheduledPushes([]).catch(() => undefined);
+    const endpoint = (await unsubscribeWebPush()) ?? (await secureStorage.getItem(WEB_PUSH_ENDPOINT_KEY));
+    if (endpoint) await repository.unregisterWebPush(endpoint).catch(() => undefined);
+    await secureStorage.removeItem(WEB_PUSH_ENDPOINT_KEY).catch(() => undefined);
+    return;
+  }
   const token = await secureStorage.getItem(PUSH_TOKEN_KEY).catch(() => null);
   if (token) {
     await getNotificationSettingsRepository()
@@ -165,7 +202,7 @@ export async function prepareSignOut(): Promise<void> {
 
 // Garantia extra (ex.: sessão expirada): nenhum lembrete da conta anterior fica no aparelho.
 onSignOut(async () => {
-  if (Platform.OS !== 'web') await Notifications.cancelAllScheduledNotificationsAsync();
+  if (!isWeb) await Notifications.cancelAllScheduledNotificationsAsync();
 });
 
 // Agenda mudou (edição local ou sincronização) → reprograma lembretes.
