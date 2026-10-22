@@ -39,6 +39,9 @@ export const privacyPolicy: LegalDoc = {
         'aparelho para enviá-las.\n' +
         'Registro do aceite: versão, data e hora em que você aceitou estes termos.\n' +
         'Registros de acesso: endereço IP, data e hora de entradas na conta, gerados pelo servidor.\n' +
+        'No app pelo navegador: a inscrição de notificações do navegador e a lista dos próximos lembretes ' +
+        '(horário e texto genérico, ou o nome do compromisso se você autorizar), que o servidor guarda só ' +
+        'até enviar.\n' +
         'Não coletamos localização, contatos, outras fotos da galeria, identificador de publicidade nem ' +
         'dados de uso para análise de comportamento.',
     },
@@ -58,8 +61,8 @@ export const privacyPolicy: LegalDoc = {
       body:
         'O DuoDay não pede dados sensíveis (como saúde ou religião). Se você escrever algo assim num ' +
         'compromisso, isso fica visível só para vocês dois e é tratado apenas para mostrar a agenda.\n' +
-        'O desbloqueio por digital ou rosto das notas é feito pelo sistema do celular: o app nunca recebe ' +
-        'nem guarda sua biometria.',
+        'O desbloqueio por digital ou rosto é feito pelo sistema do aparelho (no navegador, por uma chave de ' +
+        'acesso, a "passkey", guardada no próprio aparelho): o DuoDay nunca recebe nem guarda sua biometria.',
     },
     {
       heading: 'Com quem compartilhamos',
@@ -68,8 +71,9 @@ export const privacyPolicy: LegalDoc = {
         'Com prestadores que operam o serviço em nosso nome, só para isso:\n' +
         '• Supabase (servidor e banco de dados; os dados ficam na região de São Paulo, Brasil);\n' +
         '• Brevo (envio dos e-mails da conta);\n' +
-        '• Expo (envio das notificações e das atualizações do app);\n' +
-        '• Apple e Google (entrega das notificações no aparelho).\n' +
+        '• Expo (envio das notificações e das atualizações do app de celular);\n' +
+        '• Cloudflare (hospedagem do site e do app pelo navegador);\n' +
+        '• Apple, Google e Mozilla (entrega das notificações no aparelho e no navegador).\n' +
         'Também podemos fornecer dados quando houver ordem judicial ou obrigação legal. Não vendemos dados.',
     },
     {
@@ -84,8 +88,9 @@ export const privacyPolicy: LegalDoc = {
       heading: 'Notas privadas',
       body:
         'As notas nunca saem do seu aparelho: não são enviadas aos nossos servidores nem ao seu parceiro, ' +
-        'e ficam criptografadas no celular. Se o app for desinstalado, elas são perdidas; use ' +
-        '"Exportar minhas notas" na tela de Notas para guardar uma cópia.',
+        'e ficam criptografadas no aparelho. No app pelo navegador, elas só abrem com o seu PIN ou com a sua ' +
+        'digital ou rosto. Se o app for desinstalado ou os dados do navegador forem apagados, elas são ' +
+        'perdidas; use "Exportar minhas notas" na tela de Notas para guardar uma cópia.',
     },
     {
       heading: 'Seus direitos',
@@ -106,6 +111,7 @@ export const privacyPolicy: LegalDoc = {
         'do aparelho, suas contas pessoais e os compromissos sob sua responsabilidade. O que é do casal ' +
         '(compromissos "Nosso", datas especiais e contas do casal) continua com seu parceiro, porque ' +
         'também pertence a ele, sem a indicação de quem criou.\n' +
+        'Lembretes do app pelo navegador são apagados do servidor até 2 dias depois de enviados.\n' +
         'Registros de acesso são guardados por 6 meses, como exige o Marco Civil da Internet. Cópias de ' +
         'segurança podem conter dados excluídos por até 30 dias, até serem substituídas.',
     },
@@ -115,6 +121,13 @@ export const privacyPolicy: LegalDoc = {
         'Usamos conexão criptografada, controle de acesso no banco de dados (um casal nunca vê os dados de ' +
         'outro) e criptografia no aparelho. Se acontecer um incidente de segurança que possa causar risco ' +
         'ou dano relevante, avisaremos você e a ANPD, como manda a lei.',
+    },
+    {
+      heading: 'Cookies e armazenamento no aparelho',
+      body:
+        'O site e o app não usam cookies de propaganda nem de rastreamento. O app pelo navegador guarda no ' +
+        'próprio aparelho o que precisa para funcionar: sua sessão, a cópia da agenda e as notas ' +
+        'criptografadas. Ao sair da conta, a sessão e a cópia da agenda são apagadas deste aparelho.',
     },
     {
       heading: 'Idade mínima',

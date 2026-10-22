@@ -94,6 +94,21 @@ compromissos sob responsabilidade da pessoa) e fotos apagadas antes; exportaçã
 preferências, casal, compromissos, datas e contas visíveis à pessoa); push genérico por padrão;
 notas só no aparelho; logs do app mascarando dados pessoais e sem envio para fora.
 
+## App pelo navegador (22/10/2026)
+
+- O texto do app foi atualizado: lembretes guardados no servidor até o envio (genéricos sem
+  consentimento), passkey para digital/rosto, notas cifradas no aparelho com PIN, Cloudflare e os
+  serviços de push dos navegadores, e a seção "Cookies e armazenamento no aparelho".
+- Medidas: CSP restrita no site e no app web (scripts só do próprio domínio), notas com
+  AES-256-GCM e chave derivada do PIN (PBKDF2-SHA-256, 600 mil iterações, espera crescente após 5
+  erros) ou da passkey (PRF + HKDF); a chave só existe em memória e some ao sair do app.
+- Web Push cifrado de ponta a ponta para o navegador (RFC 8291): Apple/Google/Mozilla só
+  transportam. Cada lembrete é enviado uma única vez (`claim_due_web_pushes`).
+- Limitação a registrar: no navegador não há cofre de hardware como o Keychain. Um PIN de 6 números
+  protege bem contra quem pega o aparelho, mas não contra quem copia os arquivos do navegador e
+  tenta todos os PINs fora do aparelho; a passkey não tem essa fraqueza. Por isso o app oferece a
+  biometria logo depois do PIN.
+
 ## Pendências antes de publicar (para a auditoria)
 
 1. **Preencher o controlador** em `src/features/legal/content.ts` (`CONTROLLER`: nome ou razão
@@ -109,5 +124,6 @@ notas só no aparelho; logs do app mascarando dados pessoais e sem envio para fo
 7. Encarregado: agente de pequeno porte pode dispensar a nomeação (Resolução CD/ANPD nº 2/2022,
    art. 11), mas precisa manter o canal de contato. Decidir e registrar.
 8. Registro das operações de tratamento (art. 37) e contratos/DPAs com os operadores.
-9. Revisão jurídica e publicação da política e dos termos em URL pública (`duoday.com.br`), que
-   a Play Store exige, e o formulário _Data safety_ coerente com esta tabela.
+9. Revisão jurídica e publicação da política e dos termos em URL pública (`duoday.com.br`, já
+   pronta em `site/`), que a Play Store exige, e o formulário _Data safety_ coerente com esta tabela.
+10. Contratos/DPAs também com a Cloudflare.

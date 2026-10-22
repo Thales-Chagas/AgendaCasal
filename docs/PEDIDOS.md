@@ -2,7 +2,7 @@
 
 Pedidos feitos depois de ver o app rodando no celular (30/09/2026).
 
-Situação: ✅ 1, 2, 3, 6, 7, 8, 9 e 10 feitos · 4 já existia · 5 medir antes de publicar.
+Situação: ✅ 1, 2, 3, 6 a 15 feitos · 4 já existia · 5 medir antes de publicar.
 
 ## 1. Cores dos compromissos ✅
 
@@ -90,3 +90,38 @@ Situação: ✅ 1, 2, 3, 6, 7, 8, 9 e 10 feitos · 4 já existia · 5 medir ante
   que já passaram ficam um pouco apagados.
 - Mês: o dia com compromisso ganha fundo suave e leve brilho na cor de quem marcou (rosé quando
   é do casal); com mais de um dono, o fundo se divide em faixas. Saíram os pontinhos.
+
+## Rodada de 22/10/2026 (tarde): web, iPhone e segurança
+
+Ideia do usuário: como o iPhone não instala APK, ter um site de apresentação e o próprio app pelo
+navegador para o iPhone (Android continua com o APK). Detalhes e publicação em `docs/WEB.md`.
+
+### 11. App pelo navegador (PWA) ✅
+
+- Instalável no iPhone pelo Safari (Adicionar à Tela de Início), com ícone, tela cheia e abertura
+  instantânea (service worker guarda a versão no aparelho). `npm run build:web`.
+
+### 12. Login rápido ✅
+
+- No navegador o login fica salvo. Nos dois (celular e web) o último "espaço do casal" fica guardado,
+  então a agenda abre do aparelho na hora, sem esperar a internet.
+- Corrigido junto: sem internet a agenda aparecia vazia (consultas locais eram pausadas).
+- Pacote menor e mais rápido de abrir: ícones e datas importados um a um (web: 7,3 → 4,0 MB).
+
+### 13. Notas com PIN e digital/rosto ✅
+
+- Web: PIN de 6 números (cria no primeiro uso, recusa PIN óbvio, espera crescente após erros) e
+  digital/rosto pela passkey do aparelho. Notas cifradas no aparelho. "Esqueci o PIN" apaga as notas.
+- Celular: opção "Pedir digital ou rosto nas notas" agora aparece em Nós › Segurança.
+
+### 14. Desbloquear o app com digital ou rosto ✅
+
+- Nós › Segurança › Bloquear o DuoDay (celular e web): pede a biometria ao abrir e ao voltar depois
+  de 30 segundos fora. Alternativa: entrar com e-mail e senha.
+
+### 15. Lembretes no iPhone (Web Push) e site ✅
+
+- O servidor envia os lembretes de quem usa o app pelo navegador (texto genérico sem consentimento)
+  e o aviso "novo compromisso do parceiro" também chega por Web Push.
+- Site `duoday.com.br` (`site/`, `npm run build:site`): apresentação, telas, privacidade, instalação
+  no iPhone e no Android, perguntas frequentes, Privacidade e Termos.

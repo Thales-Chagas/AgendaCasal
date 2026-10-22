@@ -1,13 +1,17 @@
 # Onde parei
 
-Última atualização: 22/10/2026.
+Última atualização: 22/10/2026 (fim da tarde).
 
 ## Estado do projeto
 
 - Todo o código está na branch **`claude/trusting-dirac-shrp4a`** (continuação da
   `claude/compassionate-faraday-kwzzf6`; ainda não foi para a `main`).
-- 11 migrations. Testes: `npm run check` passa 231/231, `npm run test:db` passa 78/78 e
+- 12 migrations. Testes: `npm run check` passa 245/245, `npm run test:db` passa 85/85 e
   `npm run db:lint` não acha erros (rodados contra um Supabase local, na nuvem do Claude).
+- **22/10: web e iPhone** (pedidos 11 a 15, guia em `docs/WEB.md`): app pelo navegador (PWA) para o
+  iPhone, login rápido, notas com PIN e digital/rosto, bloqueio do app por biometria, lembretes por
+  Web Push e o site `duoday.com.br` (`site/`). Testado no navegador local; **falta publicar** e
+  testar num iPhone de verdade.
 - Pronto e salvo nesta etapa (ver `docs/PEDIDOS.md`):
   1. **Cores**: compromissos do casal em rosa; os pessoais na cor de cada pessoa.
   2. **Aba Finanças**: contas fixas do casal ou privadas, com lembrete e "marcar como paga".
@@ -34,7 +38,9 @@
   `Agenda_Casal` (produção).
 - **E-mail**: SMTP do Brevo (grátis) no TST, com os modelos novos do DuoDay (código de 6 dígitos).
 - **Expo/EAS**: projeto `@thaleschagas-team/duoday` (ID já no `app.json`), com `expo-updates`.
-- **Lançar primeiro só na Play Store**; iPhone depois, quando der para pagar a Apple.
+- **Lançar primeiro só na Play Store**; iPhone pelo **app web (PWA)** em `app.duoday.com.br`
+  enquanto não der para pagar a Apple. Android: APK pelo site até a Play Store.
+- **Hospedagem dos dois sites**: Cloudflare Pages (grátis; domínio já está lá).
 - Contas pessoais do Financeiro ficam **no servidor**, visíveis só para o dono.
 
 ## Próximo passo (começar por aqui)
@@ -51,19 +57,20 @@ do `eas.json` já tem a URL e a chave publicável do TST.
 
 **22/10:**
 
-- ✅ Seletor de cor testado no celular pelo usuário: aprovado.
-- ✅ Corrigido: "Como podemos te chamar?" abria vazio quando "Minha conta" era aberta direto
-  pelo endereço (o campo só lia o nome no primeiro render, antes do perfil carregar).
-- Narração: o usuário **quer trocar a voz**, mas só depois das próximas mudanças no app, porque
-  o vídeo também vai mudar. O roteiro está em `marketing/video/audio/make_voice.py`.
-- ✅ Rodada de mudanças (pedidos 7 a 10 em `docs/PEDIDOS.md`): animação das folhas, revisão
-  LGPD dos textos legais, barra de navegação flutuante e dias em destaque na Agenda. Testado no
-  navegador (claro e escuro) com o casal fictício; **falta testar no celular** (precisa de build
-  novo ou `eas update`).
-- **Próximo:** testar no celular; continuar as mudanças no app; depois refazer o vídeo (telas
-  mudaram) com voz nova; site do DuoDay com download do APK.
-- Pendências da auditoria LGPD: ver `docs/PRIVACIDADE.md` (preencher o controlador, limpeza
-  dos registros de acesso após 6 meses, novo aceite quando os termos mudarem etc.).
+- ✅ Seletor de cor aprovado no celular; corrigido o nome vazio em "Minha conta".
+- ✅ Rodada 1 (pedidos 7 a 10): animação das folhas, revisão LGPD, barra flutuante, dias em destaque.
+- ✅ Rodada 2 (pedidos 11 a 15): web/iPhone, segurança e site. Ver `docs/WEB.md`.
+- Narração: o usuário **quer trocar a voz**, depois das mudanças no app (o vídeo vai mudar).
+
+**Próximo (começar por aqui):**
+
+1. Publicar: seguir `docs/WEB.md` (Cloudflare Pages para `duoday.com.br` e `app.duoday.com.br`,
+   `pg_net`, migration, segredos VAPID e Vault). Pode ser feito pelo Claude com acesso à Cloudflare.
+2. Testar num iPhone: instalar pelo Safari, criar PIN, digital/rosto, bloqueio e um lembrete real.
+3. Gerar um build novo do Android (`preview`) e testar as novidades no celular.
+4. Trocar o link do APK em `site/_redirects` pelo de produção quando existir.
+5. Continuar as mudanças no app; depois refazer o vídeo com a voz nova.
+6. Pendências LGPD em `docs/PRIVACIDADE.md` (preencher o controlador, logs de 6 meses etc.).
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
 
