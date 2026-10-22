@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { personColor, type AvatarColor } from '../tokens/person-colors';
@@ -25,6 +26,9 @@ export type AvatarProps = {
 export function Avatar({ name, color = 'rose', size = 44, ring, photoUri }: AvatarProps) {
   const { colors } = useTheme();
   const { solid: bg, onSolid: fg } = personColor(color);
+  // Foto que não carregou (link vencido, sem internet) volta para as iniciais, nunca um círculo vazio.
+  const [failedUri, setFailedUri] = useState<string | null>(null);
+  const showPhoto = !!photoUri && photoUri !== failedUri;
   return (
     <View
       accessibilityRole="image"
@@ -38,25 +42,29 @@ export function Avatar({ name, color = 'rose', size = 44, ring, photoUri }: Avat
           backgroundColor: bg,
           borderWidth: ring ? 3 : 0,
           borderColor: colors.surface,
+          // O círculo recorta a foto (mais confiável no Android do que arredondar a própria imagem).
+          overflow: 'hidden',
         },
       ]}>
-      {photoUri ? (
+      {/* Iniciais sempre embaixo: aparecem enquanto a foto carrega ou se ela falhar. */}
+      <AppText
+        compact
+        style={{ color: fg, fontSize: size * 0.38, lineHeight: size * 0.5 }}
+        variant="bodyStrong">
+        {initialsOf(name)}
+      </AppText>
+      {showPhoto ? (
         <Image
           source={{ uri: photoUri }}
-          style={{ width: size, height: size, borderRadius: size / 2 }}
+          recyclingKey={photoUri}
+          style={StyleSheet.absoluteFill}
           contentFit="cover"
           transition={150}
           cachePolicy="memory-disk"
+          onError={() => setFailedUri(photoUri)}
           accessibilityIgnoresInvertColors
         />
-      ) : (
-        <AppText
-          compact
-          style={{ color: fg, fontSize: size * 0.38, lineHeight: size * 0.5 }}
-          variant="bodyStrong">
-          {initialsOf(name)}
-        </AppText>
-      )}
+      ) : null}
     </View>
   );
 }

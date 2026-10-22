@@ -78,7 +78,8 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: ${supabaseOrigin}`,
   "font-src 'self' data:",
-  `connect-src 'self' ${supabaseOrigin} ${supabaseWs}`,
+  // blob:/data: — o app lê a foto escolhida (recortada no aparelho) antes de enviar.
+  `connect-src 'self' blob: data: ${supabaseOrigin} ${supabaseWs}`,
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "base-uri 'self'",

@@ -26,6 +26,16 @@ module.exports = defineConfig([
     },
   },
   {
+    // Scripts de build rodam no Node e conversam pelo terminal.
+    files: ['scripts/**'],
+    languageOptions: { globals: { Buffer: 'readonly', process: 'readonly', console: 'readonly' } },
+    rules: { 'no-console': 'off' },
+  },
+  {
+    // Site estático, service worker e Edge Functions (Deno): fora do app.
+    ignores: ['dist-site/*', 'site/*', 'web/*', 'public/register-sw.js', 'supabase/functions/*'],
+  },
+  {
     // O logger é o único lugar autorizado a usar console.
     files: ['src/core/logging/**'],
     rules: { 'no-console': 'off' },

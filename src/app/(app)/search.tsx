@@ -81,7 +81,7 @@ export default function SearchScreen() {
       <TextField
         label="O que você procura?"
         icon={Search}
-        placeholder="Palavra, lugar, categoria ou data (12/10)"
+        placeholder="Ex.: jantar, dentista, 25/12"
         value={term}
         onChangeText={setTerm}
         autoFocus
@@ -93,7 +93,7 @@ export default function SearchScreen() {
       <View style={{ gap: spacing.xl, marginTop: spacing.xl }}>
         {trimmed.length < 2 ? (
           <AppText variant="callout" color="textSecondary" align="center">
-            Busque em compromissos, datas especiais e nas suas notas.
+            Busque em compromissos, datas especiais e nas suas notas por palavra, lugar, categoria ou data.
           </AppText>
         ) : null}
 

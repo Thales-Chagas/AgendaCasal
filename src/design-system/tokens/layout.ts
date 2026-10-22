@@ -33,7 +33,11 @@ export const maxContentWidth = 560;
 
 type ShadowName = 'card' | 'raised';
 
-/** Apenas duas sombras, sempre suaves. No tema escuro, bordas substituem sombras. */
+/**
+ * Apenas duas sombras, sempre suaves. No tema escuro, bordas substituem sombras.
+ * Android usa `boxShadow` (como o web): a sombra nativa (`elevation`) desenhava um contorno
+ * quadrado em volta dos cartões arredondados.
+ */
 export const shadows: Record<ShadowName, ViewStyle> = {
   card: Platform.select<ViewStyle>({
     ios: {
@@ -42,7 +46,6 @@ export const shadows: Record<ShadowName, ViewStyle> = {
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
     },
-    android: { elevation: 1 },
     default: { boxShadow: '0 4px 12px rgba(42, 31, 40, 0.06)' },
   }),
   raised: Platform.select<ViewStyle>({
@@ -52,7 +55,6 @@ export const shadows: Record<ShadowName, ViewStyle> = {
       shadowRadius: 24,
       shadowOffset: { width: 0, height: 8 },
     },
-    android: { elevation: 6 },
     default: { boxShadow: '0 8px 24px rgba(42, 31, 40, 0.12)' },
   }),
 };
