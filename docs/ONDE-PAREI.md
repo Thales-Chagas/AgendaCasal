@@ -67,7 +67,9 @@ do `eas.json` já tem a URL e a chave publicável do TST.
 1. Publicar: seguir `docs/WEB.md` (Cloudflare Pages para `duoday.com.br` e `app.duoday.com.br`,
    `pg_net`, migration, segredos VAPID e Vault). Pode ser feito pelo Claude com acesso à Cloudflare.
 2. Testar num iPhone: instalar pelo Safari, criar PIN, digital/rosto, bloqueio e um lembrete real.
-3. Gerar um build novo do Android (`preview`) e testar as novidades no celular.
+3. Testar no celular o build `preview` de 22/10 (QR em `marketing/qr/`):
+   https://expo.dev/accounts/thaleschagas-team/projects/duoday/builds/9a8100f8-4ebb-46f5-a3ad-3db8f686efec
+   Migration `web_push` ainda **não** aplicada no TST (o app Android não depende dela).
 4. Trocar o link do APK em `site/_redirects` pelo de produção quando existir.
 5. Continuar as mudanças no app; depois refazer o vídeo com a voz nova.
 6. Pendências LGPD em `docs/PRIVACIDADE.md` (preencher o controlador, logs de 6 meses etc.).
