@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format } from 'date-fns/format';
 import { useLocalSearchParams } from 'expo-router';
 
 import { Button, ErrorState, Screen, ScreenHeader, Skeleton, toast } from '@/design-system';

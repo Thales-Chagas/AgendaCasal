@@ -1,5 +1,5 @@
-import { formatDistanceToNowStrict } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatDistanceToNowStrict } from 'date-fns/formatDistanceToNowStrict';
+import { ptBR } from 'date-fns/locale/pt-BR';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 

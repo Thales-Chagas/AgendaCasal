@@ -1,4 +1,4 @@
-import { isSameDay } from 'date-fns';
+import { isSameDay } from 'date-fns/isSameDay';
 import { Redirect, router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';

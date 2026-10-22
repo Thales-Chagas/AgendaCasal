@@ -1,4 +1,4 @@
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns/differenceInCalendarDays';
 
 import { fromDateKey, toDateKey } from '@/features/events/domain/dates';
 

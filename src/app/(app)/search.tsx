@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns';
+import { addDays } from 'date-fns/addDays';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';

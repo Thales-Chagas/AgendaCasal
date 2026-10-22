@@ -1,4 +1,5 @@
-import { differenceInCalendarDays, format } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns/differenceInCalendarDays';
+import { format } from 'date-fns/format';
 
 import { expandOccurrences } from '@/features/events/domain/recurrence';
 import { categoryMeta, responsibilityFor } from '@/features/events/domain/presentation';

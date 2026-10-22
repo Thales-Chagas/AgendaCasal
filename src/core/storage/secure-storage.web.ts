@@ -1,27 +1,29 @@
 import type { AsyncKeyValueStorage } from './types';
 
 /**
- * Web é apenas pré-visualização de desenvolvimento: sem Keychain disponível,
- * usamos sessionStorage (apagado ao fechar a aba).
+ * Web (app instalado pelo navegador): não existe Keychain, então a sessão fica no
+ * armazenamento do próprio site (localStorage), isolado por domínio. Assim o login dura entre
+ * aberturas, como no app. A Content-Security-Policy do build web (scripts só do próprio
+ * domínio) reduz o risco de outro código ler esses valores.
  */
 export const secureStorage: AsyncKeyValueStorage = {
   async getItem(key) {
     try {
-      return globalThis.sessionStorage?.getItem(key) ?? null;
+      return globalThis.localStorage?.getItem(key) ?? null;
     } catch {
       return null;
     }
   },
   async setItem(key, value) {
     try {
-      globalThis.sessionStorage?.setItem(key, value);
+      globalThis.localStorage?.setItem(key, value);
     } catch {
-      // armazenamento bloqueado
+      // armazenamento bloqueado (ex.: janela anônima): a sessão vale só enquanto a aba estiver aberta
     }
   },
   async removeItem(key) {
     try {
-      globalThis.sessionStorage?.removeItem(key);
+      globalThis.localStorage?.removeItem(key);
     } catch {
       // armazenamento bloqueado
     }

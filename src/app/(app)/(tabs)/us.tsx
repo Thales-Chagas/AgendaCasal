@@ -1,4 +1,4 @@
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns/differenceInCalendarDays';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';

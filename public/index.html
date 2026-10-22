@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>DuoDay</title>
+    <meta
+      name="description"
+      content="A agenda do casal: compromissos, datas especiais, contas e notas privadas." />
+
+    <!-- Instalável (PWA): no iPhone, Safari › Compartilhar › Adicionar à Tela de Início. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="DuoDay" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#FBF8F6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#161216" media="(prefers-color-scheme: dark)" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Busca as fontes e o servidor antes do JavaScript pedir (abre mais rápido). -->
+    <link rel="preconnect" href="%SUPABASE_ORIGIN%" crossorigin />
+
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      html,
+      body {
+        height: 100%;
+        background: #fbf8f6;
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior: none;
+      }
+      body {
+        overflow: hidden;
+        margin: 0;
+      }
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          background: #161216;
+        }
+      }
+      /* Abertura: o ícone aparece na hora, enquanto o app carrega. */
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        transition: opacity 200ms ease-out;
+      }
+      #boot img {
+        width: 88px;
+        height: 88px;
+        border-radius: 22px;
+      }
+      #root:not(:empty) + #boot {
+        opacity: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>Para usar o DuoDay, ative o JavaScript no navegador.</noscript>
+    <div id="root"></div>
+    <div id="boot" aria-hidden="true"><img src="/icons/icon-192.png" alt="" /></div>
+    <script src="/register-sw.js" defer></script>
+  </body>
+</html>

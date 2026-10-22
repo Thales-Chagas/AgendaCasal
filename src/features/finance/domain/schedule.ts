@@ -1,4 +1,8 @@
-import { addDays, differenceInCalendarDays, getDaysInMonth, startOfDay, startOfMonth } from 'date-fns';
+import { addDays } from 'date-fns/addDays';
+import { differenceInCalendarDays } from 'date-fns/differenceInCalendarDays';
+import { getDaysInMonth } from 'date-fns/getDaysInMonth';
+import { startOfDay } from 'date-fns/startOfDay';
+import { startOfMonth } from 'date-fns/startOfMonth';
 
 import { fromDateKey, toDateKey } from '@/features/events/domain/dates';
 

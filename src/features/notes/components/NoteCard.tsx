@@ -1,5 +1,6 @@
-import { format, isToday } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format } from 'date-fns/format';
+import { isToday } from 'date-fns/isToday';
+import { ptBR } from 'date-fns/locale/pt-BR';
 import { router } from 'expo-router';
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';

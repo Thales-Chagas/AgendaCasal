@@ -1,5 +1,7 @@
-import { differenceInCalendarDays, format, isSameDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { differenceInCalendarDays } from 'date-fns/differenceInCalendarDays';
+import { format } from 'date-fns/format';
+import { isSameDay } from 'date-fns/isSameDay';
+import { ptBR } from 'date-fns/locale/pt-BR';
 
 import type { CalendarEvent, Category, Occurrence, Priority, Responsibility } from './types';
 

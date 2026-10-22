@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { logger } from '@/core/logging/logger';
 import { toast, useTheme } from '@/design-system';
 import { useSession } from '@/features/auth/session-store';
-import { useMySpace, useSpaceRealtime } from '@/features/couple/hooks';
+import { primeSpaceCache, useMySpace, useSpaceRealtime } from '@/features/couple/hooks';
 import { usePendingInvite } from '@/features/couple/pending-invite-store';
 import {
   configureNotifications,
@@ -18,13 +18,19 @@ export default function AppLayout() {
   const { colors } = useTheme();
   const userId = useSession((s) => s.userId);
   const { data: space } = useMySpace();
-  useSpaceRealtime(space?.coupleId);
+  const coupleId = space?.coupleId;
+  useSpaceRealtime(coupleId);
+
+  // Abre com o último espaço conhecido enquanto o servidor responde (ou sem internet).
+  useEffect(() => {
+    if (userId) void primeSpaceCache(userId);
+  }, [userId]);
 
   // Abre a agenda local deste usuário e mantém sincronizada.
   useEffect(() => {
-    if (!userId || !space) return;
+    if (!userId || !coupleId) return;
     configureNotifications();
-    startAgendaRuntime(userId, space.coupleId)
+    startAgendaRuntime(userId, coupleId)
       .then(() => {
         scheduleRescheduling();
         void registerPushToken();
@@ -33,7 +39,7 @@ export default function AppLayout() {
         logger.error('Agenda start failed', { error });
         toast.error('Não conseguimos abrir a agenda neste aparelho. Reinicie o app.');
       });
-  }, [userId, space]);
+  }, [userId, coupleId]);
 
   // Mudança no casal (ex.: parceiro saiu) → sincroniza de novo.
   useEffect(() => {

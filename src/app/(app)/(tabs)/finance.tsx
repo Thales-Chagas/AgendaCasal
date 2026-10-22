@@ -1,5 +1,8 @@
-import { addMonths, format, isSameMonth, startOfMonth } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { addMonths } from 'date-fns/addMonths';
+import { format } from 'date-fns/format';
+import { isSameMonth } from 'date-fns/isSameMonth';
+import { startOfMonth } from 'date-fns/startOfMonth';
+import { ptBR } from 'date-fns/locale/pt-BR';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';

@@ -1,4 +1,4 @@
-import { addMonths } from 'date-fns';
+import { addMonths } from 'date-fns/addMonths';
 
 import { ScreenHeader, toast } from '@/design-system';
 import { useSession } from '@/features/auth/session-store';

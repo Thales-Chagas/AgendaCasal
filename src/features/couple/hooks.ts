@@ -2,8 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { logger } from '@/core/logging/logger';
+import { queryClient } from '@/core/query/query-client';
 import { secureStorage } from '@/core/storage/secure-storage';
 import { getSupabase } from '@/core/supabase/client';
+import { onSignOut } from '@/features/auth/auth-service';
 import { useSession } from '@/features/auth/session-store';
 
 import {
@@ -26,12 +28,48 @@ export const spaceKeys = {
   invite: (coupleId: string | undefined) => ['invite', coupleId] as const,
 };
 
+const spaceCacheKey = (userId: string) => `space.cache.${userId}`;
+let lastSavedSpace: string | null = null;
+
+/**
+ * Abertura rápida: o último "meu espaço" conhecido fica guardado no aparelho (armazenamento
+ * seguro, porque tem nomes). Assim a agenda local abre na hora, sem esperar a internet; a
+ * versão do servidor chega logo depois e substitui esta.
+ */
+export async function primeSpaceCache(userId: string): Promise<void> {
+  const key = spaceKeys.space(userId);
+  if (queryClient.getQueryData(key)) return;
+  const raw = await secureStorage.getItem(spaceCacheKey(userId)).catch(() => null);
+  if (!raw || queryClient.getQueryData(key)) return;
+  try {
+    lastSavedSpace = raw;
+    queryClient.setQueryData(key, JSON.parse(raw) as MySpace, { updatedAt: 0 });
+  } catch {
+    // cache corrompido: segue com a busca normal
+  }
+}
+
+async function fetchMySpace(userId: string): Promise<MySpace> {
+  const space = await getCoupleRepository().getMySpace(userId);
+  const raw = JSON.stringify(space);
+  if (raw !== lastSavedSpace) {
+    lastSavedSpace = raw;
+    void secureStorage.setItem(spaceCacheKey(userId), raw).catch(() => undefined);
+  }
+  return space;
+}
+
+onSignOut(async (userId) => {
+  lastSavedSpace = null;
+  await secureStorage.removeItem(spaceCacheKey(userId));
+});
+
 /** Meu espaço (casal): eu, parceiro (se houver) e metadados de sincronização. */
 export function useMySpace() {
   const userId = useSession((s) => s.userId);
   return useQuery({
     queryKey: spaceKeys.space(userId),
-    queryFn: () => getCoupleRepository().getMySpace(userId as string),
+    queryFn: () => fetchMySpace(userId as string),
     enabled: !!userId,
     staleTime: 5 * 60_000,
   });
