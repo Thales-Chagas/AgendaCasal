@@ -3,11 +3,13 @@
 // "reduzir movimento" ligado, o site continua igual, só sem animação (ver motion-boot.js).
 (function () {
   var root = document.documentElement;
-  if (!root.classList.contains('motion')) return;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (!window.gsap || !window.ScrollTrigger || !window.ScrollSmoother || !window.SplitText || !window.anime) {
     root.classList.remove('motion');
     return;
   }
+  // Se a rede foi lenta, o motion-boot.js já mostrou a página parada; liga as animações assim mesmo.
+  root.classList.add('motion');
 
   var A = window.anime;
   var gsap = window.gsap;
