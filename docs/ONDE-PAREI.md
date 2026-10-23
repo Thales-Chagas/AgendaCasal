@@ -1,6 +1,6 @@
 # Onde parei
 
-Última atualização: 23/10/2026 (noite).
+Última atualização: 23/10/2026 (noite, fim da sessão).
 
 ## Estado do projeto
 
@@ -75,6 +75,15 @@ do `eas.json` já tem a URL e a chave publicável do TST.
 - Narração: o usuário **quer trocar a voz**, depois das mudanças no app (o vídeo vai mudar).
 
 **Próximo (começar por aqui):**
+
+**24/10 — primeiro: narração da ElevenLabs.** O usuário escolheu gerar a narração no próprio
+computador (a conta grátis recusa pedidos vindos da nuvem). Passo a passo completo em
+`docs/NARRACAO-ELEVENLABS.md` (chave da API, Python + ffmpeg, `voz.py elevenlabs`, `git push`).
+Quando o usuário disser "pronto": `git pull`, conferir `src/apresentacao/narracao.json`
+(`"engine": "elevenlabs"`), `npm run apresentacao:trilha`, renderizar as três versões
+(`render:apresentacao`, `-vertical`, `-legendada`), `npm run apresentacao:site`, conferir quadros e
+volume (-16 LUFS), commit e push. Se der `detected_unusual_activity` no computador dele também, a
+saída é o plano Starter (US$ 5/mês) — aí roda direto da nuvem.
 
 Combinado em 22/10 à noite: **23/10 subir tudo**. Ordem combinada em 23/10: aprovar o site animado,
 dar à sessão acesso à Cloudflare, autorizar a migration `web_push` no TST, pular a Política (item 3)
