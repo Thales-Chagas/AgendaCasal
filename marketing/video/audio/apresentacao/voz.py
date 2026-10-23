@@ -29,7 +29,7 @@ ROOT = HERE.parents[1]
 OUT = ROOT / "public/apresentacao/voz"
 CA = "/root/.ccr/ca-bundle.crt"
 
-segs = json.loads((HERE / "roteiro.json").read_text())
+segs = json.loads((HERE / "roteiro.json").read_text(encoding="utf-8"))
 
 
 def duration(path):
@@ -65,14 +65,20 @@ def words_from_chars(chars, t0s, t1s):
 
 def elevenlabs(seg, i):
     voice = os.environ.get("ELEVEN_VOICE", "cgSgspJ2msm6clMCkdW9")
+    model = os.environ.get("ELEVEN_MODEL", "eleven_multilingual_v2")
     body = {
         "text": seg["say"],
-        "model_id": os.environ.get("ELEVEN_MODEL", "eleven_multilingual_v2"),
-        "language_code": "pt",
+        "model_id": model,
         "voice_settings": {"stability": 0.32, "similarity_boost": 0.8, "style": 0.55, "use_speaker_boost": True},
-        "previous_text": segs[i - 1]["say"] if i > 0 else None,
-        "next_text": segs[i + 1]["say"] if i + 1 < len(segs) else None,
     }
+    # Só os modelos Turbo/Flash aceitam fixar o idioma; o Multilingual detecta pelo texto.
+    if "turbo" in model or "flash" in model:
+        body["language_code"] = "pt"
+    # Contexto das falas vizinhas, para a entonação continuar de uma cena para a outra.
+    if i > 0:
+        body["previous_text"] = segs[i - 1]["say"]
+    if i + 1 < len(segs):
+        body["next_text"] = segs[i + 1]["say"]
     headers = {"Content-Type": "application/json"}
     if os.environ.get("ELEVENLABS_API_KEY"):
         headers["xi-api-key"] = os.environ["ELEVENLABS_API_KEY"]
@@ -124,8 +130,8 @@ def main():
         print(f"{seg['id']:<10} {dur:5.2f}s  {len(words)} palavras")
     meta = {"engine": engine, "segments": result}
     dest = ROOT / "src/apresentacao/narracao.json"
-    dest.write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
-    print("total", round(sum(s["dur"] for s in result), 2), "s →", dest.relative_to(ROOT))
+    dest.write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print("total", round(sum(s["dur"] for s in result), 2), "s ->", dest.relative_to(ROOT))
 
 
 if __name__ == "__main__":
