@@ -1,11 +1,13 @@
 # Onde parei
 
-Última atualização: 22/10/2026 (fim da tarde).
+Última atualização: 23/10/2026.
 
 ## Estado do projeto
 
-- Todo o código está na branch **`claude/trusting-dirac-shrp4a`** (continuação da
-  `claude/compassionate-faraday-kwzzf6`; ainda não foi para a `main`).
+- Todo o código está na branch **`claude/dreamy-goodall-queyas`** (continuação da
+  `claude/trusting-dirac-shrp4a`; ainda não foi para a `main`).
+- **23/10: site animado** (GSAP + anime.js, ver `docs/WEB.md` › Animações). Prévia:
+  https://claude.ai/artifact/6LHYT2yAimUHZLJCgFfMwY — falta o usuário aprovar.
 - 12 migrations. Testes: `npm run check` passa 245/245, `npm run test:db` passa 85/85 e
   `npm run db:lint` não acha erros (rodados contra um Supabase local, na nuvem do Claude).
 - **22/10: web e iPhone** (pedidos 11 a 15, guia em `docs/WEB.md`): app pelo navegador (PWA) para o
@@ -64,7 +66,9 @@ do `eas.json` já tem a URL e a chave publicável do TST.
 
 **Próximo (começar por aqui):**
 
-Combinado em 22/10 à noite: **23/10 subir tudo**. Para isso, ter em mãos:
+Combinado em 22/10 à noite: **23/10 subir tudo**. Ordem combinada em 23/10: aprovar o site animado,
+dar à sessão acesso à Cloudflare, autorizar a migration `web_push` no TST, pular a Política (item 3)
+por enquanto e ligar os domínios. Para isso, ter em mãos:
 
 - acesso da sessão à **Cloudflare** (token com permissão de Pages no domínio `duoday.com.br`);
 - **autorização** para o Claude aplicar a migration `web_push` no TST (foi bloqueada nesta sessão);
