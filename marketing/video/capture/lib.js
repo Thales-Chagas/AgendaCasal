@@ -5,8 +5,8 @@ const path = require('node:path');
 
 const BASE = process.env.APP_URL || 'http://localhost:8099/';
 const MAILPIT = process.env.MAILPIT_URL || 'http://127.0.0.1:54324';
-const CHROME = process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
-const OUT = path.join(__dirname, '../public/screens');
+const CHROME = process.env.CHROME_PATH || '/opt/pw-browsers/chromium';
+const OUT = process.env.SCREENS_DIR || path.join(__dirname, '../public/screens');
 const PROFILES = process.env.PROFILES_DIR || path.join(__dirname, '.profiles');
 
 /** Casal fictício usado em todo o vídeo. */

@@ -389,6 +389,29 @@ h1 {
   }
 }
 
+/* Vídeo de apresentação */
+.film .lead {
+  margin-bottom: 32px;
+}
+.film-frame {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-muted);
+  box-shadow: var(--phone-shadow);
+}
+.film-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.film-frame video::cue {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: rgba(42, 31, 40, 0.86);
+}
+
 /* Recursos */
 section {
   padding: 72px 0;

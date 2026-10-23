@@ -11,7 +11,15 @@
     "audio": "python3 audio/make_audio.py 134",
     "render:principal-narrado": "remotion render src/index.ts PrincipalNarrado out/duoday-principal-narrado-16x9.mp4 && ./finalize.sh out/duoday-principal-narrado-16x9.mp4",
     "render:vertical-narrado": "remotion render src/index.ts VerticalNarrado out/duoday-vertical-narrado-9x16.mp4 && ./finalize.sh out/duoday-vertical-narrado-9x16.mp4",
-    "voz": "python3 audio/make_voice.py"
+    "voz": "python3 audio/make_voice.py",
+    "apresentacao:voz": "python3 audio/apresentacao/voz.py elevenlabs",
+    "apresentacao:voz-reserva": "python3 audio/apresentacao/voz.py edge",
+    "apresentacao:trilha": "python3 audio/apresentacao/trilha.py",
+    "apresentacao:legendas": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON legendas.mjs out/duoday-apresentacao.vtt",
+    "render:apresentacao": "remotion render src/index.ts Apresentacao out/duoday-apresentacao-16x9.mp4 && ./finalize.sh out/duoday-apresentacao-16x9.mp4",
+    "render:apresentacao-legendada": "remotion render src/index.ts ApresentacaoLegendada out/duoday-apresentacao-legendada-16x9.mp4 && ./finalize.sh out/duoday-apresentacao-legendada-16x9.mp4",
+    "render:apresentacao-vertical": "remotion render src/index.ts ApresentacaoVertical out/duoday-apresentacao-vertical-9x16.mp4 && ./finalize.sh out/duoday-apresentacao-vertical-9x16.mp4",
+    "apresentacao:site": "./site-video.sh out/duoday-apresentacao-16x9.mp4"
   },
   "dependencies": {
     "@remotion/cli": "4.0.532",

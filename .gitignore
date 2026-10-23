@@ -53,5 +53,6 @@ marketing/video/node_modules/
 marketing/video/capture/.profiles/
 marketing/video/out/
 marketing/video/public/audio/*.wav
+marketing/video/public/apresentacao/som/
 marketing/video/audio/models/
 dist-site/

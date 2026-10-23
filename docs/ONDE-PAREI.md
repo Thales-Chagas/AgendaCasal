@@ -1,11 +1,19 @@
 # Onde parei
 
-Última atualização: 23/10/2026.
+Última atualização: 23/10/2026 (noite).
 
 ## Estado do projeto
 
-- Todo o código está na branch **`claude/dreamy-goodall-queyas`** (continuação da
+- Todo o código está na branch **`claude/nifty-hamilton-d40uer`** (vídeo novo, 23/10 à noite; continua a
+  `claude/dreamy-goodall-queyas`, que é continuação da
   `claude/trusting-dirac-shrp4a`; ainda não foi para a `main`).
+- **23/10 (noite): novo vídeo de apresentação** ("Apresentação", `marketing/video`, ver o README de
+  lá): tour divertido e minimalista por todas as abas, tema claro, telas recapturadas do app atual
+  (barra flutuante etc.), marcador "📍 onde estou" e os pontinhos da Bia e do Rafa como mascotes.
+  16:9 (site) e 9:16 (Reels) com legenda; já entrou no site (seção "Vídeo", `site/video/`).
+  A **ElevenLabs recusou a conta grátis** (bloqueia chamadas por proxy, como as da nuvem); o vídeo
+  saiu com a voz reserva (Microsoft Thalita). Com o plano Starter: `npm run apresentacao:voz` e
+  renderizar de novo (tudo se reposiciona sozinho).
 - **23/10: site animado** (GSAP + anime.js, ver `docs/WEB.md` › Animações). Prévia:
   https://claude.ai/artifact/6LHYT2yAimUHZLJCgFfMwY — falta o usuário aprovar.
 - 12 migrations. Testes: `npm run check` passa 245/245, `npm run test:db` passa 85/85 e
@@ -84,7 +92,8 @@ por enquanto e ligar os domínios. Para isso, ter em mãos:
    dos cartões no Android e dica da busca. Para enviar outra: `eas update --channel preview
 --platform android --environment preview` com as variáveis `EXPO_PUBLIC_*` do TST no terminal.
 4. Trocar o link do APK em `site/_redirects` pelo de produção quando existir.
-5. Continuar as mudanças no app; depois refazer o vídeo com a voz nova.
+5. Vídeo novo pronto (23/10). Falta: assinar o Starter da ElevenLabs (ou outra conta paga) e
+   gerar a narração definitiva (`npm run apresentacao:voz` em `marketing/video`).
 6. Pendências LGPD em `docs/PRIVACIDADE.md` (preencher o controlador, logs de 6 meses etc.).
 
 Caminho manual, se preferir (PowerShell, na pasta `AgendaCasal`):
