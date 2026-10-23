@@ -422,6 +422,31 @@
     scrollTrigger: { trigger: '.faq', start: 'top 80%', once: true },
   });
 
+  // ---- Rodapé: os dois calendários se desenham e o coração bate (anime.js) ----
+  var artLines = $$('.footer-art rect, .footer-art path');
+  gsap.set(artLines, { strokeDasharray: 1, strokeDashoffset: 1 });
+  gsap.to(artLines, {
+    strokeDashoffset: 0,
+    duration: 1.4,
+    ease: 'power2.inOut',
+    stagger: 0.1,
+    scrollTrigger: {
+      trigger: '.footer',
+      start: 'top 95%',
+      once: true,
+      onEnter: function () {
+        A.animate('.footer-heart', {
+          scale: [1, 1.3, 1, 1.2, 1],
+          duration: 1000,
+          delay: 900,
+          loop: true,
+          loopDelay: 1400,
+          ease: 'inOut(2)',
+        });
+      },
+    },
+  });
+
   // As fontes mudam a altura dos textos: recalcula os pontos de disparo quando chegam.
   if (document.fonts && document.fonts.ready)
     document.fonts.ready.then(function () {
