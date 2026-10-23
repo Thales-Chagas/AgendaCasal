@@ -15,11 +15,14 @@ Tour divertido e minimalista por **todas as abas**, no tema claro do app e com n
 | Versão leve do site     | (de `Apresentacao`)     | 1080p, CRF 24, + capa e VTT | `site/video/duoday-apresentacao.{mp4,jpg,vtt}` |
 
 **Ideia.** Abre com a briga clássica ("Amor, você marcou o dentista?" "Que dentista?") e os dois
-pontinhos do casal, a Bia (índigo) e o Rafa (lagoa), viram mascotes. O "Dentista, de Rafa" volta
+pontinhos do casal, a Bia (rosa) e o Rafa (azul claro), viram mascotes; no app eles usam as cores
+Magenta e Ciano. O "Dentista, de Rafa" volta
 na Agenda e no final. O resto é um celular só, navegando pelo app de verdade, com:
 
 - um marcador **📍 onde estou** (ex.: "Agenda › Mês", "+ › Novo compromisso") para cada tela;
 - toques animados nos lugares reais dos botões (`src/apresentacao/taps.json`, medido no app);
+- destaques centrados no tamanho exato de cada cartão, linha ou botão (`src/apresentacao/boxes.json`,
+  medido no app pelas mesmas capturas);
 - destaques e rótulos ligados à tela, a barra de abas ampliada, miniaturas das configurações.
 
 Roteiro, na ordem: gancho → o que é → conectar (código, QR Code, link) → barra (Início, Agenda,
@@ -56,7 +59,9 @@ npm run apresentacao:site          # versão leve + capa + legenda em site/video
   caracteres; o roteiro tem ~1.700) basta rodar `npm run apresentacao:voz` e renderizar de novo.
 - Telas: `public/apresentacao/` (tema claro), geradas por `capture/07a-convite-claro.js` e
   `capture/07b-tour-claro.js` no Supabase **local** com o casal fictício (ver "Refazer as
-  capturas" abaixo; rode o `seed.sql` antes da 07b).
+  capturas" abaixo; rode o `seed.sql` antes da 07b). Para rodar a 07a de novo no mesmo banco, use
+  outro `CONVITE_TAG` (ex.: `CONVITE_TAG=4 node 07a-convite-claro.js`); a 07b aceita só algumas
+  etapas (ex.: `node 07b-tour-claro.js agenda financas`).
 
 ---
 

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { AbsoluteFill, Audio, Img, Sequence, staticFile, useCurrentFrame } from 'remotion';
 
 import { FONT, Fonts } from '../theme';
+import boxes from './boxes.json';
 import taps from './taps.json';
 import { captionLines, cue, scene, scenes, TOTAL } from './timeline';
 import {
@@ -34,6 +35,8 @@ export const APRESENTACAO_FRAMES = TOTAL;
 
 type P = [number, number];
 const T = taps as unknown as Record<string, P>;
+/** Caixas [centroX, centroY, largura, altura] dos elementos, medidas no app (capture/07*.js). */
+const BX = boxes as unknown as Record<string, [number, number, number, number]>;
 const end = (id: string) => scene(id).from + scene(id).len;
 const start = (id: string) => scene(id).from;
 
@@ -56,6 +59,12 @@ function buildTrack() {
   };
   const pt = (at: number, to: number, x: number, y: number, w: number, h: number, label?: string, r?: number) =>
     points.push({ at, to, x, y, w, h, label, r });
+  /** Destaque em volta de um elemento medido no app (boxes.json), com folga `pad` de cada lado. */
+  const mark = (at: number, to: number, key: string, label?: string, r = 18, pad = 5) => {
+    const [x, y, w, h] = BX[key];
+    pt(at, to, x, y, w + pad * 2, h + pad * 2, label, Math.min(r + pad, (h + pad * 2) / 2));
+  };
+  const center = (key: string): P => [BX[key][0], BX[key][1]];
   const cam = (at: number, v: Partial<Cam>) => cams.push([at, { ...CAM0, ...v }]);
 
   // 2. O que é: o celular da Bia (o do Rafa é outro, ao lado).
@@ -64,12 +73,12 @@ function buildTrack() {
   // 3. Conectar
   const C = 'conectar';
   go(start(C), 'a01-comecar', undefined, 'Começar');
-  go(cue(C, 'cria'), 'a02-convite', [200, 425], 'Começar › Convite');
-  pt(cue(C, 'codigo'), cue(C, 'outro') - 4, 195, 242, 300, 74, 'Código');
-  pt(cue(C, 'qr'), cue(C, 'outro') - 4, 195, 372, 190, 190, 'QR Code', 12);
-  pt(cue(C, 'link'), cue(C, 'outro') - 4, 195, 738, 326, 58, 'Link', 16);
+  go(cue(C, 'cria'), 'a02-convite', center('criarAgenda'), 'Começar › Convite');
+  mark(cue(C, 'codigo'), cue(C, 'outro') - 4, 'codigo', 'Código', 10, 10);
+  mark(cue(C, 'qr'), cue(C, 'outro') - 4, 'qr', 'QR Code', 10, 10);
+  mark(cue(C, 'link'), cue(C, 'outro') - 4, 'enviarConvite', 'Link', 28);
   go(cue(C, 'outro'), 'a03-entrar-com-convite', undefined, 'Celular do Rafa › Entrar com convite');
-  tapList.push({ at: cue(C, 'aceita') + 6, x: 195, y: 803 });
+  tapList.push({ at: cue(C, 'aceita') + 6, x: BX.aceitar[0], y: BX.aceitar[1] });
   go(cue(C, 'pronto'), 'a04-conectados-rafa', undefined, 'Conectados ❤️');
 
   // 4. Barra de abas
@@ -94,27 +103,27 @@ function buildTrack() {
   const I = 'inicio';
   cam(start(I), CAM0);
   where.push({ from: start(I), label: 'Início' });
-  pt(cue(I, 'proximo'), cue(I, 'falta') - 2, 165, 186, 302, 168, 'Próximo compromisso');
-  pt(cue(I, 'falta'), cue(I, 'atalhos') - 2, 165, 350, 302, 72, 'Contagem para as datas');
-  pt(cue(I, 'atalhos'), cue(I, 'alto') - 2, 165, 470, 302, 120, 'Atalhos');
+  mark(cue(I, 'proximo'), cue(I, 'falta') - 2, 'proximo', 'Próximo evento', 22);
+  mark(cue(I, 'falta'), cue(I, 'atalhos') - 2, 'contagem', 'Contagem ⏳', 22);
+  mark(cue(I, 'atalhos'), cue(I, 'alto') - 2, 'atalhos', 'Atalhos', 22);
   cam(cue(I, 'alto'), { cx: 290, cy: 60, s: 1.5 });
-  pt(cue(I, 'lupa'), cue(I, 'tudo') + 6, T.buscar[0], T.buscar[1], 44, 44, 'Busca', 22);
-  go(cue(I, 'tudo') + 4, 'b80-busca', T.buscar, 'Início › Buscar');
-  cam(cue(I, 'tudo') + 8, CAM0);
-  pt(cue(I, 'tudo') + 18, end(I) + 2, 195, 316, 310, 128, 'Achou: Dentista (de Rafa) 👀');
+  mark(cue(I, 'alto') + 6, cue(I, 'busca') + 2, 'buscar', 'Busca', 22, 4);
+  go(cue(I, 'busca'), 'b80-busca', center('buscar'), 'Início › Buscar');
+  cam(cue(I, 'busca') + 4, CAM0);
+  mark(cue(I, 'busca') + 16, end(I) + 2, 'resultado', 'Achou o Dentista 👀', 18);
 
   // 6. Agenda
   const A = 'agenda';
   go(start(A) + 2, 'b20-agenda-hoje', T.tab_agenda, 'Agenda › Hoje');
-  pt(cue(A, 'hoje'), cue(A, 'semana'), 66, 96, 80, 40, undefined, 20);
+  mark(cue(A, 'hoje'), cue(A, 'semana'), 'segHoje', undefined, 12, 3);
   go(cue(A, 'semana'), 'b21-semana', T.seg_Semana, 'Agenda › Semana');
   go(cue(A, 'mes'), 'b22-mes', T['seg_Mês'], 'Agenda › Mês');
   go(cue(A, 'proximos'), 'b23-proximos', T['seg_Próximos'], 'Agenda › Próximos');
   go(cue(A, 'cada'), 'b21-semana', T.seg_Semana, 'Agenda › Semana');
-  cam(cue(A, 'cada') + 6, { cx: 195, cy: 600, s: 1.3 });
-  go(cue(A, 'dentista'), 'b24-detalhe-dentista', [195, 560], 'Agenda › Dentista');
+  cam(cue(A, 'cada') + 6, { cx: 195, cy: BX.dentistaSemana[1], s: 1.3 });
+  go(cue(A, 'dentista'), 'b24-detalhe-dentista', center('dentistaSemana'), 'Agenda › Dentista');
   cam(cue(A, 'dentista') + 2, { cx: 120, cy: 160, s: 1.9 });
-  pt(cue(A, 'rafa'), end(A) - 4, 60, 140, 92, 30, 'De Rafa', 15);
+  mark(cue(A, 'rafa'), end(A) - 4, 'deRafa', 'De Rafa', 14, 4);
 
   // 7. Criar pelo +
   const R = 'criar';
@@ -123,46 +132,46 @@ function buildTrack() {
   go(cue(R, 'mais'), 'b30-criar', T.criar, 'Botão +');
   go(cue(R, 'novo'), 'b31-form-vazio', T.novoCompromisso, '+ › Novo compromisso');
   go(cue(R, 'diz'), 'b32-form-preenchido');
-  pt(cue(R, 'seu'), cue(R, 'outro'), 72, 575, 92, 62, undefined, 14);
-  pt(cue(R, 'outro'), cue(R, 'nosso'), 195, 575, 92, 62, undefined, 14);
-  tapList.push({ at: cue(R, 'nosso'), x: T.nosso[0], y: T.nosso[1] });
-  pt(cue(R, 'nosso'), cue(R, 'hora'), 314, 575, 92, 62, undefined, 14);
-  pt(cue(R, 'hora'), cue(R, 'lembrete'), 285, 322, 160, 58, 'Hora', 14);
+  mark(cue(R, 'seu'), cue(R, 'outro'), 'meu', undefined, 14, 3);
+  mark(cue(R, 'outro'), cue(R, 'nosso'), 'doParceiro', undefined, 14, 3);
+  tapList.push({ at: cue(R, 'nosso'), x: BX.nosso[0], y: BX.nosso[1] });
+  mark(cue(R, 'nosso'), cue(R, 'hora'), 'nosso', undefined, 14, 3);
+  mark(cue(R, 'hora'), cue(R, 'lembrete'), 'hora', 'Hora', 12, 8);
   go(cue(R, 'lembrete') - 2, 'b33-form-opcoes');
-  pt(cue(R, 'lembrete'), cue(R, 'repeticao'), 252, 666, 122, 44, 'Lembrete', 22);
-  pt(cue(R, 'repeticao'), cue(R, 'salva'), 79, 422, 126, 44, 'Repetição', 22);
+  mark(cue(R, 'lembrete'), cue(R, 'repeticao'), 'lembrete', 'Lembrete', 22, 4);
+  mark(cue(R, 'repeticao'), cue(R, 'salva'), 'repeticao', 'Repetição', 22, 4);
   go(cue(R, 'salva'), 'b35-salvo', T.salvar, 'Início');
-  pt(cue(R, 'salva') + 14, end(R) + 4, 195, 721, 360, 62, 'Salvo ✓', 16);
+  mark(cue(R, 'salva') + 14, end(R) + 4, 'salvo', 'Salvo ✓', 16, 3);
 
   // 8. Ao vivo: o celular da Bia vai para a esquerda; o do Rafa entra (fora deste track).
 
   // 9. Finanças
   const F = 'financas';
   go(start(F) + 2, 'b50-financas', T.tab_finance, 'Finanças');
-  pt(cue(F, 'aluguel'), cue(F, 'internet'), 195, 510, 322, 62, undefined, 16);
-  pt(cue(F, 'internet'), cue(F, 'streaming'), 195, 735, 322, 62, undefined, 16);
-  pt(cue(F, 'streaming'), cue(F, 'casal'), 195, 660, 322, 62, undefined, 16);
-  pt(cue(F, 'casal'), cue(F, 'avisa'), 195, 380, 326, 46, 'Do casal ou só suas', 14);
-  pt(cue(F, 'avisa'), cue(F, 'toque'), 292, 678, 110, 28, 'Aviso antes de vencer 🔔', 14);
+  mark(cue(F, 'aluguel'), cue(F, 'internet'), 'aluguel', undefined, 14, 3);
+  mark(cue(F, 'internet'), cue(F, 'streaming'), 'internet', undefined, 14, 3);
+  mark(cue(F, 'streaming'), cue(F, 'casal'), 'streaming', undefined, 14, 3);
+  mark(cue(F, 'casal'), cue(F, 'avisa'), 'filtros', 'Do casal ou só suas', 14, 4);
+  mark(cue(F, 'avisa'), cue(F, 'toque'), 'aviso', 'Aviso de vencimento 🔔', 13, 4);
   go(cue(F, 'toque') + 6, 'b51-paga', T.pagarInternet);
-  pt(cue(F, 'paga'), end(F) + 2, 195, 729, 350, 52, 'Paga ✓', 16);
+  mark(cue(F, 'paga'), end(F) + 2, 'paga', 'Paga ✓', 16, 3);
 
   // 10. Notas
   const N = 'notas';
   go(start(N) + 2, 'b43-notas-lista', T.tab_notes, 'Notas');
-  pt(cue(N, 'privado'), cue(N, 'parceiro'), 195, 105, 330, 82, 'Privado · só neste aparelho', 18);
-  go(cue(N, 'presente'), 'b42-nota-editor', [195, 262], 'Notas › Presente surpresa 🤫');
-  
+  mark(cue(N, 'privado'), cue(N, 'parceiro'), 'privado', 'Só neste aparelho', 18, 4);
+  go(cue(N, 'presente'), 'b42-nota-editor', center('notaPresente'), 'Notas › Presente surpresa 🤫');
+
   // 11. Nós
   const S = 'nos';
   cam(start(S), CAM0);
   go(start(S) + 2, 'b60-nos', T.tab_us, 'Nós');
-  pt(cue(S, 'datas'), cue(S, 'configuracoes'), 195, 400, 330, 232, 'Datas especiais', 18);
+  mark(cue(S, 'datas'), cue(S, 'configuracoes'), 'datas', 'Datas especiais', 18, 10);
   go(cue(S, 'configuracoes'), 'b61-nos-rolado', undefined, 'Nós › Configurações');
-  pt(cue(S, 'cor'), cue(S, 'tema'), 195, 67, 346, 52, undefined, 14);
-  pt(cue(S, 'tema'), cue(S, 'notificacoes'), 195, 125, 346, 52, undefined, 14);
-  pt(cue(S, 'notificacoes'), cue(S, 'bloqueio'), 195, 181, 346, 52, undefined, 14);
-  pt(cue(S, 'bloqueio'), end(S), 195, 237, 346, 52, undefined, 14);
+  mark(cue(S, 'cor'), cue(S, 'tema'), 'minhaConta', undefined, 14, 5);
+  mark(cue(S, 'tema'), cue(S, 'notificacoes'), 'aparencia', undefined, 14, 5);
+  mark(cue(S, 'notificacoes'), cue(S, 'bloqueio'), 'notificacoes', undefined, 14, 5);
+  mark(cue(S, 'bloqueio'), end(S), 'seguranca', undefined, 14, 5);
 
   return { shots, tapList, points, where, cams };
 }
@@ -192,9 +201,9 @@ function useLayout() {
         V,
         phoneW: 410,
         std: { x: 1330, y: 542, s: 1, r: 0, o: 1 },
-        head: { x: 150, y: 300, size: 92, w: 860 },
+        head: { x: 150, y: 230, size: 80, w: 800 },
         where: { x: 152, y: 150, size: 30 },
-        chips: { x: 150, y: 620, gap: 92, size: 34 },
+        chips: { x: 150, y: 540, gap: 92, size: 34 },
         cap: { y: 990, size: 38 },
       };
 }
@@ -336,7 +345,7 @@ export function Apresentacao({ legendas = false }: { legendas?: boolean }) {
           shots={[
             { at: 0, img: 'b36-rafa-ve' },
           ]}
-          marks={[{ from: cue('aovivo', 'celular'), to: end('aovivo'), x: 195, y: 186, w: 302, h: 168 }]}
+          marks={[{ from: cue('aovivo', 'celular'), to: end('aovivo'), x: BX.rafaProximo[0], y: BX.rafaProximo[1], w: BX.rafaProximo[2] + 8, h: BX.rafaProximo[3] + 8, r: 24 }]}
         />
       </PhoneAt>
 
@@ -403,7 +412,8 @@ function Backdrop() {
     />
   );
   return (
-    <AbsoluteFill>
+    <AbsoluteFill style={{ background: `linear-gradient(160deg, ${c.bg} 0%, ${c.bg2} 100%)` }}>
+      {blob(W * (0.22 + 0.02 * Math.sin(t * 0.25)), H * (0.2 + 0.03 * Math.sin(t * 0.2)), Math.max(W, H) * 0.4, 'rgba(249,228,234,0.75)')}
       {blob(W * (0.78 + 0.02 * Math.sin(t * 0.3)), H * (0.42 + 0.03 * Math.cos(t * 0.25)), Math.max(W, H) * 0.42, 'rgba(249,228,234,0.9)')}
       {blob(W * (0.12 + 0.02 * Math.cos(t * 0.2)), H * (0.9 + 0.02 * Math.sin(t * 0.3)), Math.max(W, H) * 0.3, 'rgba(231,233,250,0.7)')}
     </AbsoluteFill>
@@ -472,8 +482,8 @@ function Gancho() {
         <div
           style={{
             position: 'absolute',
-            left: rafaX + size * 0.25,
-            top: baseY - size * 1.25 - q * 20,
+            left: rafaX + size * 0.62,
+            top: baseY - size * 0.6 - q * 20,
             fontFamily: FONT,
             fontWeight: 800,
             fontSize: size * 0.6,
@@ -554,7 +564,7 @@ function OQue({ head }: { head: HeadFn }) {
             key={i}
             style={{
               position: 'absolute',
-              ...(V ? { left: 0, width: W, textAlign: 'center' as const, top: 360 + i * 76 } : { left: 152, top: 560 + i * 92 }),
+              ...(V ? { left: 0, width: W, textAlign: 'center' as const, top: 360 + i * 76 } : { left: 152, top: 480 + i * 92 }),
               fontFamily: FONT,
               fontWeight: 700,
               fontSize: size,
@@ -654,7 +664,7 @@ function Barra({ head }: { head: HeadFn }) {
   const y0 = 768;
   const hgt = 64;
   const left = V ? 80 : 150;
-  const top = V ? 455 : 600;
+  const top = V ? 455 : 520;
   const ent = springIn(f, cue(B, 'embaixo'), 30, 14);
   const o = Math.min(ramp(f, cue(B, 'embaixo'), cue(B, 'embaixo') + 8), 1 - ramp(f, out, out + 8));
   const names: [string, string, string][] = [
@@ -744,7 +754,7 @@ function Inicio({ head }: { head: HeadFn }) {
   const f = useCurrentFrame();
   const I = 'inicio';
   if (f < start(I) - 5 || f > end(I) + 15) return null;
-  return <>{head('Início: / o *resumo* do dia.', I)}</>;
+  return <>{head('Início: / o *resumo* do dia.', I, { out: cue(I, 'busca') + 4 })}</>;
 }
 
 function Agenda({ head, chipPos }: { head: HeadFn; chipPos: ChipPos }) {
@@ -938,7 +948,7 @@ function Nos({ head }: { head: HeadFn }) {
         const o = Math.min(Math.min(1, (f - at) / 4), 1 - ramp(f, out, out + 8));
         if (o <= 0) return null;
         const left = V ? 110 + i * (w + 40) : 150 + i * (w + 30);
-        const top = V ? 430 : 560;
+        const top = V ? 430 : 480;
         return (
           <div key={word} style={{ position: 'absolute', left, top, width: w, opacity: o, transform: `translateY(${(1 - p) * 40}px) scale(${0.85 + 0.15 * p})` }}>
             <div style={{ width: w, height: h, borderRadius: 22, overflow: 'hidden', boxShadow: '0 20px 40px -20px rgba(42,31,40,0.45), 0 0 0 1px rgba(42,31,40,0.08)', background: c.white }}>

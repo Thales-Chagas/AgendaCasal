@@ -9,7 +9,9 @@
   `claude/trusting-dirac-shrp4a`; ainda não foi para a `main`).
 - **23/10 (noite): novo vídeo de apresentação** ("Apresentação", `marketing/video`, ver o README de
   lá): tour divertido e minimalista por todas as abas, tema claro, telas recapturadas do app atual
-  (barra flutuante etc.), marcador "📍 onde estou" e os pontinhos da Bia e do Rafa como mascotes.
+  (barra flutuante etc.), marcador "📍 onde estou" e os pontinhos da Bia (rosa) e do Rafa (azul
+  claro) como mascotes. Ajustes pedidos depois da 1ª versão: cores do casal, fundo rosado desde o
+  início e destaques centrados (medidos no próprio app).
   16:9 (site) e 9:16 (Reels) com legenda; já entrou no site (seção "Vídeo", `site/video/`).
   A **ElevenLabs recusou a conta grátis** (bloqueia chamadas por proxy, como as da nuvem); o vídeo
   saiu com a voz reserva (Microsoft Thalita). Com o plano Starter: `npm run apresentacao:voz` e

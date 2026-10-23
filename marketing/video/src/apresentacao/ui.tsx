@@ -5,15 +5,17 @@ import { FONT } from '../theme';
 
 /** Paleta "rosé e areia" do app (tema claro) e as cores das duas pessoas do casal fictício. */
 export const c = {
-  bg: '#FBF8F6',
-  bg2: '#F5EFEB',
+  /** Fundo rosado do vídeo inteiro (areia puxada para o rosé do app). */
+  bg: '#FBF1F2',
+  bg2: '#F8E8EC',
   line: '#EDE4DE',
   ink: '#2A1F28',
   soft: '#6B5D67',
   rose: '#B8385A',
   roseSoft: '#F9E4EA',
-  bia: '#4F5BD5',
-  rafa: '#0EA5A0',
+  /** Bia em rosa e Rafa em azul claro (no app: as opções Magenta e Ciano). */
+  bia: '#E0569C',
+  rafa: '#2FA6DE',
   white: '#FFFFFF',
 };
 
