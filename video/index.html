@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>DuoDay Motion</title>
+<style>
+  @font-face { font-family: "Plus Jakarta Sans"; font-weight: 500; src: url(fonts/PlusJakartaSans_500Medium.ttf); }
+  @font-face { font-family: "Plus Jakarta Sans"; font-weight: 600; src: url(fonts/PlusJakartaSans_600SemiBold.ttf); }
+  @font-face { font-family: "Plus Jakarta Sans"; font-weight: 700; src: url(fonts/PlusJakartaSans_700Bold.ttf); }
+  @font-face { font-family: "Plus Jakarta Sans"; font-weight: 800; src: url(fonts/PlusJakartaSans_800ExtraBold.ttf); }
+
+  /* Tokens do app (src/design-system/tokens/colors.ts — tema escuro, paleta "rosé e areia") */
+  :root {
+    --bg: #161216;            /* plum950 · background */
+    --surface: #201A20;       /* plum900 · surface */
+    --muted-bg: #2A232A;      /* plum850 · surfaceMuted */
+    --border: #352C35;
+    --border-strong: #54485A;
+    --text: #F6EFF3;
+    --text-2: #C2B5BD;
+    --text-3: #A3949D;
+    --rose: #F0819E;          /* rose400 · primary */
+    --rose-soft: #3A1A25;     /* rose900 · primarySoft */
+    --on-rose-soft: #F7B8C8;
+    --on-rose: #2B0D18;       /* textOnPrimary */
+    --rose-600: #B8385A;
+    --success: #6FD0A0;
+    --success-soft: #17332A;
+    --rafa: #0EA5A0; --rafa-soft: #173634; --rafa-strong: #8FDCD5;   /* teal */
+    --bia: #E4572E;  --bia-soft: #572B24;  --bia-strong: #F7A58C;    /* coral */
+    --font: "Plus Jakarta Sans", "Noto Color Emoji", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  body { font-family: var(--font); color: var(--text); -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  .glow { position: absolute; border-radius: 50%; will-change: transform; }
+  #glow1 { width: 1000px; height: 1000px; background: radial-gradient(circle, rgba(240,129,158,.16), transparent 62%); left: 420px; top: -380px; }
+  #glow2 { width: 1000px; height: 1000px; background: radial-gradient(circle, rgba(184,56,90,.16), transparent 62%); left: -420px; top: 1120px; }
+
+  .scene { position: absolute; inset: 0; display: none; will-change: opacity, transform; }
+
+  /* Barra de passos no estilo do SegmentedControl do app */
+  #chips { position: absolute; left: 60px; right: 60px; top: 108px; height: 72px; display: flex; gap: 4px; padding: 6px;
+           background: var(--muted-bg); border-radius: 22px; }
+  .chip { flex: 1; border-radius: 16px; font: 700 15px/1 var(--font); color: var(--text-3); position: relative; overflow: hidden;
+          display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid transparent; }
+  .chip b { font-size: 18px; font-weight: 800; }
+  .chip .bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--rose); width: 0; }
+  .chip.on { background: var(--bg); border-color: var(--border); color: var(--text); }
+  .chip.on b { color: var(--rose); }
+  .chip.done { color: var(--text-2); }
+
+  .label { position: absolute; left: 60px; top: 222px; font: 700 26px/1 var(--font); letter-spacing: 2.5px; color: var(--rose); text-transform: uppercase; }
+  .head { position: absolute; left: 60px; right: 60px; top: 262px; font: 800 96px/1.06 var(--font); letter-spacing: -3.5px; }
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 10px; margin-bottom: -10px; }
+  .wi { display: inline-block; will-change: transform; }
+  .rose, .rose .wi { color: var(--rose); }
+
+  .card { position: absolute; background: var(--surface); border: 1px solid var(--border); border-radius: 36px; overflow: hidden; }
+  .ctitle { font: 700 20px/1 var(--font); color: var(--rose); letter-spacing: 2px; text-transform: uppercase; }
+  .tag { position: absolute; font: 600 22px/1 var(--font); color: var(--text-2); background: var(--muted-bg);
+         border: 1px solid var(--border); padding: 14px 22px; border-radius: 999px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tag b { color: var(--rose); font-weight: 700; }
+  .pill { display: inline-flex; align-items: center; gap: 12px; font: 600 34px/1 var(--font); padding: 22px 30px; border-radius: 999px;
+          background: var(--muted-bg); border: 1px solid var(--border); color: var(--text); }
+  .pill.sel { background: var(--rose-soft); border-color: var(--rose); color: var(--on-rose-soft); }
+
+  /* Legenda */
+  #caption { position: absolute; left: 70px; right: 70px; top: 1466px; text-align: center; font: 700 50px/1.24 var(--font); letter-spacing: -.5px; }
+  #caption span { color: rgba(246,239,243,.3); }
+  #caption span.past { color: rgba(246,239,243,.85); }
+  #caption span.now { color: #fff; }
+
+  /* Celular com a interface do app */
+  .phone { position: absolute; width: 600px; height: 840px; border-radius: 66px; background: var(--bg); border: 12px solid #2A232A;
+           overflow: hidden; box-shadow: 0 40px 140px rgba(240,129,158,.14), 0 0 0 1px #3A313A; color: var(--text); }
+  .notch { position: absolute; left: 50%; top: 14px; width: 150px; height: 34px; margin-left: -75px; background: #0c090c; border-radius: 20px; z-index: 9; }
+  .screen { position: absolute; inset: 0; padding: 72px 30px 30px; }
+  .a-h { font: 700 40px/1.15 var(--font); letter-spacing: -.8px; }
+  .a-sub { font: 500 21px/1.3 var(--font); color: var(--text-2); margin-top: 4px; }
+  .a-av { width: 64px; height: 64px; border-radius: 50%; font: 700 27px/64px var(--font); text-align: center; color: #fff; }
+  .a-av.b { background: var(--bia); } .a-av.r { background: var(--rafa); }
+  .a-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; }
+  .a-card { border-radius: 30px; background: var(--surface); border: 1px solid var(--border); padding: 24px 26px; position: relative; }
+  .a-next { background: var(--rose-soft); border-color: var(--rose-soft); }
+  .a-k { font: 700 16px/1 var(--font); letter-spacing: 1.2px; color: var(--rose); text-transform: uppercase; }
+  .a-t { font: 700 30px/1.2 var(--font); letter-spacing: -.4px; margin-top: 10px; }
+  .a-big { font: 800 62px/1 var(--font); letter-spacing: -1px; margin-top: 10px; }
+  .a-m { font: 500 20px/1.3 var(--font); color: var(--text-2); margin-top: 8px; }
+  .a-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; font: 600 18px/1 var(--font); margin-top: 12px; }
+  .a-chip.r { background: #0f2d2b; color: var(--rafa-strong); } .a-chip.b { background: #3a1d18; color: var(--bia-strong); }
+  .a-row2 { display: flex; gap: 14px; }
+  .a-row2 .a-card { flex: 1; }
+  .a-qi { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; }
+  .a-sec { display: flex; justify-content: space-between; align-items: baseline; font: 700 26px/1 var(--font); margin: 26px 2px 14px; }
+  .a-sec span { font: 600 21px/1 var(--font); color: var(--rose); }
+  .ev { border-radius: 30px; padding: 20px 24px 20px 46px; position: relative; margin-bottom: 14px; }
+  .ev::before { content: ""; position: absolute; left: 22px; top: 22px; bottom: 22px; width: 6px; border-radius: 3px; background: var(--c); }
+  .ev .tm { font: 500 19px/1 var(--font); color: var(--text-2); }
+  .ev .tt { font: 700 26px/1.2 var(--font); margin-top: 8px; }
+  .ev.r { background: var(--rafa-soft); --c: var(--rafa); }
+  .ev.b { background: var(--bia-soft); --c: var(--bia); }
+  .ev.n { background: var(--rose-soft); --c: var(--rose); }
+  .skel { position: absolute; inset: 0; border-radius: 30px; background: var(--muted-bg); }
+  .seg { display: flex; background: var(--muted-bg); border-radius: 20px; padding: 6px; margin-top: 16px; }
+  .seg div { flex: 1; text-align: center; font: 600 21px/52px var(--font); color: var(--text-2); border-radius: 15px; border: 1px solid transparent; }
+  .seg div.on { background: var(--bg); color: var(--text); border-color: var(--border); }
+  .tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 104px; background: var(--surface); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center; padding: 0 10px 8px; }
+  .tabbar div { font: 600 15px/1 var(--font); color: var(--text-2); text-align: center; width: 84px; }
+  .tabbar div.on { color: var(--text); }
+  .tabbar svg { display: block; margin: 0 auto 6px; }
+  .tabbar .fab { width: 82px; height: 82px; border-radius: 50%; background: var(--rose); display: grid; place-items: center; margin-top: -30px; }
+  .tabbar .fab svg { margin: 0; }
+
+  .cal-h { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; font: 700 28px/1 var(--font); }
+  .cal-h .arr { color: var(--text); font-size: 34px; width: 40px; text-align: center; }
+  .cal-box { overflow: hidden; margin-top: 16px; border: 1px solid var(--border); background: var(--surface); border-radius: 32px; padding: 16px 12px 10px; }
+  .dows, .grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+  .dows { font: 600 18px/1 var(--font); color: var(--text-3); padding: 6px 0 12px; }
+  .grid-wrap { position: relative; height: 306px; }
+  .grid { position: absolute; left: 0; right: 0; top: 0; row-gap: 4px; }
+  .grid div { height: 58px; font: 600 23px/52px var(--font); position: relative; z-index: 1; }
+  .grid div.o { color: var(--text-3); opacity: .7; }
+  .grid div i { position: absolute; bottom: 1px; left: 50%; width: 8px; height: 8px; border-radius: 50%; margin-left: -4px; }
+  .grid div i + i { margin-left: 2px; } .grid div i.two { margin-left: -10px; }
+  .grid .sel { position: absolute; top: 0; left: 50%; width: 52px; height: 52px; margin-left: -26px; border-radius: 50%; background: var(--rose); z-index: -1; }
+  .grid div.on { color: var(--on-rose); }
+  .grid div.on i { background: var(--on-rose) !important; }
+
+  /* Botão e toast do app */
+  .btn { position: absolute; height: 104px; border-radius: 26px; background: var(--rose); color: var(--on-rose); font: 700 32px/104px var(--font); text-align: center; }
+  .cursor { position: absolute; left: 0; top: 0; width: 46px; height: 46px; z-index: 20; }
+  .toast { position: absolute; border-radius: 26px; background: var(--muted-bg); border: 1px solid var(--border); display: flex; align-items: center; gap: 20px; padding: 24px 28px;
+           font: 600 26px/1.3 var(--font); box-shadow: 0 20px 60px rgba(0,0,0,.45); }
+  .states { position: absolute; display: flex; gap: 10px; }
+  .st { font: 600 20px/1 var(--font); padding: 12px 18px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-3); }
+  .st.on { color: var(--on-rose-soft); border-color: var(--rose); background: var(--rose-soft); }
+
+  /* Folha / modal */
+  .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.6); opacity: 0; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 40px 40px 0 0; background: var(--surface); padding: 22px 30px 40px; border-top: 1px solid var(--border); }
+  .grab { width: 64px; height: 7px; border-radius: 4px; background: var(--border-strong); margin: 0 auto 22px; }
+  .field-l { font: 600 19px/1 var(--font); color: var(--text-2); margin: 20px 0 10px; }
+  .field { border: 1px solid var(--border); background: var(--muted-bg); border-radius: 20px; padding: 20px 22px; font: 500 24px/1 var(--font); position: relative; }
+  .focus { position: absolute; inset: -6px; border-radius: 25px; border: 3px solid var(--rose); opacity: 0; }
+  .key { position: absolute; width: 150px; height: 110px; border-radius: 24px; background: var(--muted-bg); border: 1px solid var(--border);
+         box-shadow: 0 8px 0 #0c090c; font: 700 34px/110px var(--font); text-align: center; color: var(--text); }
+
+  /* Números */
+  .axis { position: absolute; font: 600 19px/1 var(--font); color: var(--text-3); }
+  .lane { position: absolute; left: 0; right: 0; height: 96px; }
+  .lane .nm { font: 700 27px/1 var(--font); }
+  .lane .ms { font: 700 23px/1 var(--font); color: var(--rose); position: absolute; right: 0; top: 2px; font-variant-numeric: tabular-nums; }
+  .lane .track { position: absolute; left: 0; right: 0; top: 46px; height: 26px; border-radius: 13px; background: var(--muted-bg); }
+  .lane .fill { position: absolute; top: 0; height: 26px; border-radius: 13px; background: linear-gradient(90deg, var(--rose-600), var(--rose)); }
+  .prop { font: 700 27px/1 var(--font); padding: 20px 24px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); }
+  .prop.ok { color: var(--success); border-color: rgba(111,208,160,.35); background: var(--success-soft); }
+  .prop.no { color: var(--text-3); text-decoration: line-through; opacity: .7; }
+
+  .rc { position: absolute; left: 60px; right: 60px; height: 170px; border-radius: 32px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; gap: 34px; padding: 0 40px; }
+  .rc .no { font: 800 80px/1 var(--font); color: var(--rose); letter-spacing: -3px; width: 110px; }
+  .rc .tt { font: 700 40px/1.1 var(--font); letter-spacing: -1px; }
+  .rc .ds { font: 500 24px/1 var(--font); color: var(--text-2); margin-top: 12px; }
+
+  .switch { position: absolute; width: 124px; height: 72px; border-radius: 36px; background: var(--border-strong); }
+  .knob { position: absolute; top: 6px; left: 6px; width: 60px; height: 60px; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+  .chk { font: 600 30px/1.2 var(--font); display: flex; gap: 18px; align-items: center; }
+  .chk b { width: 48px; height: 48px; border-radius: 50%; background: var(--success-soft); color: var(--success); font: 800 26px/48px var(--font); text-align: center; flex: none; }
+  .lrow { display: flex; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); position: relative; }
+  .lrow:last-child { border-bottom: none; }
+  .lrow .ic { width: 58px; height: 58px; border-radius: 18px; background: var(--rose-soft); display: grid; place-items: center; flex: none; font-size: 28px; }
+  .lrow .tx { flex: 1; font: 700 28px/1.2 var(--font); }
+  .lrow .tx small { display: block; font: 500 21px/1.2 var(--font); color: var(--text-2); margin-top: 4px; }
+  .ok-b { font: 700 19px/1 var(--font); color: var(--success); background: var(--success-soft); padding: 10px 16px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10.1A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.8c0 5.5-7.5 10.1-7.5 10.1z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5.5A1.5 1.5 0 0 1 4 19z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5v4M16 3.5v4M4 10h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-note" viewBox="0 0 24 24"><path d="M6.5 4.5h7.5l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 5 19V6a1.5 1.5 0 0 1 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 12h7M8.5 15.5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-us" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.1A4.3 4.3 0 0 1 12 7.1a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-calev" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="15.5" cy="15" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  </defs>
+</svg>
+<div id="stage">
+  <div class="glow" id="glow1"></div>
+  <div class="glow" id="glow2"></div>
+
+  <div id="chips">
+    <div class="chip"><b>01</b>ANALISAR<div class="bar"></div></div>
+    <div class="chip"><b>02</b>DIREÇÃO<div class="bar"></div></div>
+    <div class="chip"><b>03</b>ENTRADAS<div class="bar"></div></div>
+    <div class="chip"><b>04</b>TOQUES<div class="bar"></div></div>
+    <div class="chip"><b>05</b>MODAIS<div class="bar"></div></div>
+    <div class="chip"><b>06</b>CASAL<div class="bar"></div></div>
+    <div class="chip"><b>07</b>NÚMEROS<div class="bar"></div></div>
+  </div>
+
+  <!-- HOOK -->
+  <section class="scene" id="s-hook">
+    <div class="head" id="hk-h" style="top:200px;text-align:center;left:40px;right:40px">Seu app de casal funciona…</div>
+    <div class="head rose" id="hk-h2" style="top:420px;text-align:center;font-size:90px">mas parece parado?</div>
+    <div class="phone" id="hk-ph" style="left:240px;top:600px;height:680px">
+      <div class="notch"></div>
+      <img src="img/inicio.jpg" style="position:absolute;left:0;top:30px;width:100%;filter:grayscale(1) brightness(.8)">
+    </div>
+    <div class="tag" id="hk-tag" style="left:390px;top:1310px">sem movimento · <b>0 ms</b></div>
+    <div id="hk-logo" style="position:absolute;left:0;right:0;top:560px;height:700px">
+      <img id="hk-icon" src="img/icone.png" style="position:absolute;left:400px;top:0;width:280px;height:280px;border-radius:64px;box-shadow:0 30px 90px rgba(184,56,90,.45)">
+      <div id="hk-word" style="position:absolute;left:0;right:0;top:340px;text-align:center;font:800 150px/1 var(--font);letter-spacing:-6px">DuoDay</div>
+      <div id="hk-sub" style="position:absolute;left:0;right:0;top:520px;text-align:center;font:600 34px/1 var(--font);color:var(--text-2)">Organizem a vida juntos ❤️</div>
+    </div>
+  </section>
+
+  <!-- PROBLEMA -->
+  <section class="scene" id="s-problema">
+    <div class="label" style="top:420px;left:0;right:0;text-align:center" id="pb-l">O problema</div>
+    <div class="head" id="pb-h1" style="top:480px;text-align:center;font-size:120px">Não é a função.</div>
+    <div class="head rose" id="pb-h2" style="top:630px;text-align:center;font-size:120px">É a sensação.</div>
+    <div id="pb-t" style="position:absolute;left:0;right:0;top:900px;text-align:center;font:500 40px/1.3 var(--font);color:var(--text-2)">Uma agenda a dois precisa parecer</div>
+    <div id="pb-pills" style="position:absolute;left:0;right:0;top:1000px;display:flex;justify-content:center;gap:20px">
+      <div class="pill sel"><svg width="30" height="30" style="color:var(--rose)"><use href="#i-check"/></svg>viva</div>
+      <div class="pill sel"><svg width="30" height="30" style="color:var(--rose)"><use href="#i-check"/></svg>leve</div>
+      <div class="pill sel"><svg width="30" height="30" style="color:var(--rose)"><use href="#i-check"/></svg>cuidadosa</div>
+    </div>
+  </section>
+
+  <!-- PASSO 1 -->
+  <section class="scene" id="s-p1">
+    <div class="label">Passo 1</div>
+    <div class="head" id="p1-h">Analisar antes de animar.</div>
+    <div class="card" id="p1-a" style="left:60px;right:60px;top:520px;height:500px;padding:34px 40px 10px">
+      <div class="ctitle">Análise do projeto</div>
+      <div id="p1-list" style="margin-top:12px">
+        <div class="lrow"><div class="ic">📱</div><div class="tx">Framework<small>Expo + React Native</small></div><div class="ok-b ck">✓ ok</div></div>
+        <div class="lrow"><div class="ic">🧩</div><div class="tx">Componentes<small>design-system: Button, Card, Sheet…</small></div><div class="ok-b ck">✓ ok</div></div>
+        <div class="lrow"><div class="ic">🎨</div><div class="tx">Estilos<small>tokens “rosé e areia”</small></div><div class="ok-b ck">✓ ok</div></div>
+        <div class="lrow"><div class="ic">✨</div><div class="tx">Bibliotecas<small>Reanimated já instalado</small></div><div class="ok-b ck">✓ ok</div></div>
+      </div>
+    </div>
+    <div class="card" id="p1-b" style="left:60px;right:60px;top:1050px;height:370px;padding:30px 40px">
+      <div class="ctitle" style="color:var(--text-2)">🔒 Não mexer</div>
+      <div id="p1-locks" style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="pill" style="font-size:26px;padding:20px 24px">Lógica de negócio</div>
+        <div class="pill" style="font-size:26px;padding:20px 24px">Banco de dados</div>
+        <div class="pill" style="font-size:26px;padding:20px 24px">Autenticação</div>
+        <div class="pill" style="font-size:26px;padding:20px 24px">Vínculo do casal</div>
+      </div>
+      <div id="p1-intact" style="margin-top:24px;font:700 26px/1 var(--font);color:var(--success)">✓ tudo intocado</div>
+    </div>
+  </section>
+
+  <!-- PASSO 2 -->
+  <section class="scene" id="s-p2">
+    <div class="label">Passo 2</div>
+    <div class="head" id="p2-h">Direção de arte.</div>
+    <div id="p2-words" style="position:absolute;left:60px;right:60px;top:410px;display:flex;flex-wrap:wrap;gap:14px">
+      <div class="pill" style="font-size:28px;padding:18px 26px">Moderno</div><div class="pill" style="font-size:28px;padding:18px 26px">Romântico</div>
+      <div class="pill" style="font-size:28px;padding:18px 26px">Elegante</div><div class="pill" style="font-size:28px;padding:18px 26px">Minimalista</div>
+    </div>
+    <div class="card" id="p2-pal" style="left:60px;right:60px;top:530px;height:440px;padding:34px 40px">
+      <div class="ctitle">Paleta rosé e areia</div>
+      <div id="p2-sw" style="display:flex;gap:16px;margin-top:30px">
+        <div><div style="height:150px;border-radius:24px;background:#161216;border:1px solid var(--border)"></div><p>Ameixa</p></div>
+        <div><div style="height:150px;border-radius:24px;background:#2A232A"></div><p>Ameixa 850</p></div>
+        <div><div style="height:150px;border-radius:24px;background:#FBF8F6"></div><p>Areia</p></div>
+        <div><div style="height:150px;border-radius:24px;background:#F0819E"></div><p>Rosé 400</p></div>
+        <div><div style="height:150px;border-radius:24px;background:#B8385A"></div><p>Rosé 600</p></div>
+      </div>
+      <div style="position:relative;margin-top:30px;height:22px;border-radius:11px;overflow:hidden;display:flex;background:var(--muted-bg)">
+        <div id="pal-n" style="background:#54485A"></div><div id="pal-s" style="background:#EDE4DE"></div><div id="pal-k" style="background:var(--rose)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:14px;font:600 20px/1 var(--font);color:var(--text-3)"><span>neutros na base</span><span style="color:var(--rose)">rosé só no que importa</span></div>
+    </div>
+    <div class="card" id="p2-hearts" style="left:60px;right:60px;top:1000px;height:420px;padding:34px 40px">
+      <div class="ctitle" style="color:var(--text-2)">Corações · com moderação</div>
+      <div id="hearts" style="position:absolute;left:40px;right:40px;top:100px;bottom:30px"></div>
+    </div>
+  </section>
+
+  <!-- PASSO 3 -->
+  <section class="scene" id="s-p3">
+    <div class="label">Passo 3</div>
+    <div class="head" id="p3-h">Entradas.</div>
+    <div class="tag" id="p3-tag" style="right:60px;top:285px"></div>
+    <div class="phone" id="p3-ph" style="left:240px;top:470px;height:900px">
+      <div class="notch"></div>
+      <div class="screen" id="p3-dash">
+        <div id="d-top" style="position:relative">
+          <div class="a-h">Boa tarde, Bia ❤️</div><div class="a-sub">Quarta-feira, 21 de outubro</div>
+          <div style="position:absolute;right:0;top:0;display:flex;gap:12px"><div class="a-icon"><svg width="30" height="30"><use href="#i-search"/></svg></div><div class="a-av b">B</div></div>
+        </div>
+        <div class="a-card a-next" id="c1" style="margin-top:24px">
+          <div class="a-k">Próximo compromisso</div><div class="a-t">🏥 Dentista</div><div class="a-big">17:30</div>
+          <div class="a-m">Hoje · em 35 minutos</div><div class="a-chip r">👤 De Rafa</div>
+          <div class="skel"></div><div id="d-ring" style="position:absolute;inset:-5px;border-radius:34px;border:3px solid var(--rose);opacity:0"></div>
+        </div>
+        <div class="a-card" id="c2" style="margin-top:14px;display:flex;gap:18px;align-items:center">
+          <div style="font-size:38px">⏳</div><div><div style="font:700 26px/1.2 var(--font)">Faltam 10 dias ❤️</div><div class="a-m" style="margin-top:4px">Festa à fantasia 🎃 · sáb, 31 de out</div></div>
+          <div class="skel"></div>
+        </div>
+        <div class="a-row2" style="margin-top:14px">
+          <div class="a-card" id="c3"><div class="a-qi" style="background:var(--rose-soft)"><svg width="30" height="30" style="color:var(--rose)"><use href="#i-calev"/></svg></div><div style="font:700 24px/1 var(--font);margin-top:14px">Novo evento</div><div class="a-m">Para vocês dois</div><div class="skel"></div></div>
+          <div class="a-card" id="c4"><div class="a-qi" style="background:#2a2140"><svg width="30" height="30" style="color:#B7A6F2"><use href="#i-note"/></svg></div><div style="font:700 24px/1 var(--font);margin-top:14px">Nova anotação</div><div class="a-m">🔒 Só sua</div><div class="skel"></div></div>
+        </div>
+        <div id="d-list"><div class="a-sec">Hoje<span>Ver agenda</span></div>
+          <div class="ev r"><div class="tm">17:30 – 18:15</div><div class="tt">🏥 Dentista</div></div>
+        </div>
+      </div>
+      <div class="screen" id="p3-cal">
+        <div style="display:flex;justify-content:space-between;align-items:center"><div class="a-h">Agenda</div>
+          <div style="display:flex;gap:12px;align-items:center"><svg width="34" height="34"><use href="#i-search"/></svg><div class="a-icon" style="background:var(--rose-soft);color:var(--rose)"><svg width="30" height="30"><use href="#i-plus"/></svg></div></div></div>
+        <div class="seg"><div>Hoje</div><div>Semana</div><div class="on">Mês</div><div>Próximos</div></div>
+        <div class="cal-h"><div class="arr">‹</div><div id="cal-m">Outubro de 2026</div><div class="arr">›</div></div>
+        <div class="cal-box">
+          <div class="dows"><div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div></div>
+          <div class="grid-wrap"><div class="grid" id="g1"></div><div class="grid" id="g2"></div></div>
+        </div>
+        <div id="cal-ev"><div style="font:700 19px/1 var(--font);color:var(--text-2);letter-spacing:1px;margin:16px 4px 12px">2 DE NOVEMBRO</div>
+          <div class="ev n" style="padding-top:22px;padding-bottom:22px"><div class="tt" style="margin:0">💕 Nosso aniversário de namoro</div></div></div>
+      </div>
+      <div class="tabbar" id="p3-tab">
+        <div><svg width="32" height="32"><use href="#i-home"/></svg>Início</div>
+        <div><svg width="32" height="32"><use href="#i-cal"/></svg>Agenda</div>
+        <div class="fab"><svg width="38" height="38" style="color:var(--on-rose)"><use href="#i-plus"/></svg></div>
+        <div><svg width="32" height="32"><use href="#i-note"/></svg>Notas</div>
+        <div><svg width="32" height="32"><use href="#i-us"/></svg>Nós</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASSO 4 -->
+  <section class="scene" id="s-p4">
+    <div class="label">Passo 4</div>
+    <div class="head" id="p4-h">Microinterações.</div>
+    <div class="card" id="p4-pan" style="left:60px;right:60px;top:520px;height:890px;background:var(--bg)">
+      <div class="ctitle" style="position:absolute;left:40px;top:38px">Feedback imediato</div>
+      <div class="btn" id="p4-btn" style="left:70px;right:70px;top:110px"><span id="p4-bl">Salvar compromisso</span></div>
+      <div class="states" id="p4-st" style="left:70px;top:246px">
+        <div class="st">hover</div><div class="st">pressionado</div><div class="st">salvando</div><div class="st">salvo</div>
+      </div>
+      <div class="a-card" id="p4-ev" style="position:absolute;left:70px;right:70px;top:350px;padding:30px 34px">
+        <div class="a-k">Data especial</div>
+        <div style="font:700 36px/1.2 var(--font);margin-top:14px;letter-spacing:-.5px">💕 Nosso aniversário<br>de namoro</div>
+        <div class="a-m" style="font-size:23px;margin-top:12px">5 anos juntos · 2 de novembro</div>
+        <div id="p4-heart" style="position:absolute;right:34px;top:34px;width:84px;height:84px">
+          <div id="p4-hring" style="position:absolute;inset:0;border-radius:50%;border:3px solid var(--rose);opacity:0"></div>
+          <svg viewBox="0 0 24 24" width="84" height="84" style="position:absolute;inset:0"><use id="p4-hp" href="#i-heart" fill="none" stroke="#A3949D" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="toast" id="p4-toast" style="left:70px;right:70px;top:640px">
+        <svg width="40" height="40" style="color:var(--success);flex:none"><use href="#i-check"/></svg>
+        <div>Compromisso salvo ✓ Já aparece para vocês dois</div>
+      </div>
+      <div class="tag" id="p4-tag" style="left:70px;top:800px"></div>
+      <svg class="cursor" id="p4-cur" viewBox="0 0 24 24"><path d="M4 2l15 10-6.5 1.4L16 21l-3 1.3-3.4-7.6L4 19z" fill="#fff" stroke="#161216" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+
+  <!-- PASSO 5 -->
+  <section class="scene" id="s-p5">
+    <div class="label">Passo 5</div>
+    <div class="head" id="p5-h">Modais e navegação.</div>
+    <div class="phone" id="p5-ph" style="left:240px;top:500px;height:800px">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="a-h">Agenda</div>
+        <div class="seg"><div class="on">Hoje</div><div>Semana</div><div>Mês</div><div>Próximos</div></div>
+        <div style="margin-top:22px">
+          <div class="ev r" id="p5-item"><div class="tm">17:30 – 18:15</div><div class="tt">🏥 Dentista</div><div class="a-chip r">👤 De Rafa</div>
+            <div class="focus" id="p5-ifocus" style="border-radius:34px"></div></div>
+          <div class="ev b"><div class="tm">18:00 – 19:00</div><div class="tt">🧘 Pilates</div><div class="a-chip b">👤 Meu</div></div>
+          <div class="ev n"><div class="tm">20:00 – 22:00</div><div class="tt">❤️ Jantar no italiano 🍝</div></div>
+        </div>
+      </div>
+      <div class="backdrop" id="p5-bd"></div>
+      <div class="sheet" id="p5-sheet">
+        <div class="grab"></div>
+        <div class="a-h" style="font-size:36px">Editar compromisso</div>
+        <div class="field-l">O que vai acontecer?</div>
+        <div class="field">🏥 Dentista<span id="p5-caret" style="display:inline-block;width:3px;height:28px;background:var(--rose);vertical-align:-5px;margin-left:3px"></span><div class="focus" id="p5-focus"></div></div>
+        <div class="field-l">Quando</div>
+        <div style="display:flex;gap:12px"><div class="pill sel" style="font-size:22px;padding:14px 20px">✓ Hoje</div><div class="pill" style="font-size:22px;padding:14px 20px">Amanhã</div></div>
+        <div class="field-l">De quem é?</div>
+        <div style="display:flex;gap:12px"><div class="pill" style="font-size:22px;padding:14px 20px">Meu</div><div class="pill" style="font-size:22px;padding:14px 20px;background:#0f2d2b;border-color:var(--rafa);color:var(--rafa-strong)">De Rafa</div><div class="pill" style="font-size:22px;padding:14px 20px">Nosso</div></div>
+      </div>
+      <div id="p5-tap" style="position:absolute;width:90px;height:90px;border-radius:50%;background:rgba(240,129,158,.35);left:250px;top:250px;opacity:0"></div>
+    </div>
+    <div class="tag" id="p5-tag" style="left:60px;top:1330px"></div>
+    <div class="key" id="p5-key" style="left:870px;top:1300px">esc</div>
+  </section>
+
+  <!-- PASSO 6 -->
+  <section class="scene" id="s-p6">
+    <div class="label">Passo 6</div>
+    <div class="head" id="p6-h">Momentos especiais.</div>
+    <div class="card" id="p6-list" style="left:60px;right:60px;top:520px;height:560px;padding:30px 36px">
+      <div class="a-h" style="font-size:38px">Datas especiais</div>
+      <div class="a-sub">Aniversários e momentos importantes de vocês.</div>
+      <div id="p6-rows" style="margin-top:12px">
+        <div class="lrow"><div id="p6-glow" style="position:absolute;inset:4px -18px;border-radius:24px;background:var(--rose-soft);opacity:0"></div>
+          <div class="tx" style="position:relative">💕 Nosso aniversário de namoro<small>5 anos juntos · 2 de novembro · Faltam 12 dias</small></div><span style="color:var(--text-3);font-size:34px;position:relative">›</span></div>
+        <div class="lrow"><div class="tx">🎂 Aniversário do Rafa<small>31 anos · 8 de dezembro · Faltam 48 dias</small></div><span style="color:var(--text-3);font-size:34px">›</span></div>
+        <div class="lrow"><div class="tx">🎂 Aniversário da Bia<small>31 anos · 14 de março · Faltam 144 dias</small></div><span style="color:var(--text-3);font-size:34px">›</span></div>
+        <div class="lrow"><div class="tx">⭐ Dia em que nos conhecemos<small>19 de junho · Faltam 241 dias</small></div><span style="color:var(--text-3);font-size:34px">›</span></div>
+      </div>
+    </div>
+    <div class="card" id="p6-rem" style="left:60px;right:60px;top:1110px;height:260px;padding:34px 40px;background:var(--rose-soft);border-color:var(--rose-soft)">
+      <div class="a-k" style="font-size:20px">Lembrete para os dois</div>
+      <div style="font:700 44px/1.15 var(--font);margin-top:14px;letter-spacing:-1px">Faltam 12 dias ❤️</div>
+      <div class="a-m" style="font-size:25px;margin-top:10px">Nosso aniversário de namoro · 5 anos</div>
+      <div style="position:absolute;right:40px;top:78px;width:150px;height:84px">
+        <div class="a-av b" id="p6-a" style="position:absolute;left:0;top:0;width:84px;height:84px;line-height:76px;font-size:34px;border:4px solid var(--rose-soft)">B</div>
+        <div class="a-av r" id="p6-b" style="position:absolute;left:62px;top:0;width:84px;height:84px;line-height:76px;font-size:34px;border:4px solid var(--rose-soft)">R</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASSO 7 -->
+  <section class="scene" id="s-p7">
+    <div class="label">Passo 7</div>
+    <div class="head" id="p7-h">Os números.</div>
+    <div class="card" id="p7-chart" style="left:60px;right:60px;top:440px;height:610px;padding:40px">
+      <div class="ctitle">Duração · ms</div>
+      <div id="lanes" style="position:absolute;left:40px;right:40px;top:110px;height:420px">
+        <div class="lane" style="top:0"><div class="nm">Microinterações</div><div class="ms">120–220</div><div class="track"><div class="fill" data-a="120" data-b="220"></div></div></div>
+        <div class="lane" style="top:110px"><div class="nm">Entradas</div><div class="ms">180–320</div><div class="track"><div class="fill" data-a="180" data-b="320"></div></div></div>
+        <div class="lane" style="top:220px"><div class="nm">Modais e navegação</div><div class="ms">200–350</div><div class="track"><div class="fill" data-a="200" data-b="350"></div></div></div>
+        <div class="lane" style="top:330px"><div class="nm">Intervalo entre cartões</div><div class="ms">40–80</div><div class="track"><div class="fill" data-a="40" data-b="80"></div></div></div>
+      </div>
+      <div class="axis" style="left:40px;bottom:30px">0</div><div class="axis" style="left:50%;bottom:30px">200</div><div class="axis" style="right:40px;bottom:30px">400 ms</div>
+    </div>
+    <div class="card" id="p7-ease" style="left:60px;width:470px;top:1080px;height:330px;padding:30px">
+      <div class="ctitle" style="color:var(--text-2)">Easing</div>
+      <svg viewBox="0 0 400 220" width="410" height="225" style="position:absolute;left:30px;top:80px">
+        <line x1="10" y1="210" x2="390" y2="210" stroke="#352C35" stroke-width="2"/>
+        <line x1="10" y1="210" x2="10" y2="10" stroke="#352C35" stroke-width="2"/>
+        <line x1="10" y1="210" x2="390" y2="10" stroke="#54485A" stroke-width="2" stroke-dasharray="6 8"/>
+        <path id="p7-curve" fill="none" stroke="#F0819E" stroke-width="6" stroke-linecap="round"/>
+        <circle id="p7-dot" r="11" fill="#F6EFF3"/>
+      </svg>
+    </div>
+    <div id="p7-props" style="position:absolute;left:560px;right:60px;top:1080px;display:grid;gap:14px">
+      <div class="prop ok">opacity ✓</div><div class="prop ok">transform ✓</div><div class="prop no">width</div><div class="prop no">top / left</div>
+    </div>
+  </section>
+
+  <!-- ACESSIBILIDADE -->
+  <section class="scene" id="s-a11y">
+    <div class="label">Acessibilidade</div>
+    <div class="head" id="ay-h">Menos movimento.</div>
+    <div class="card" id="ay-set" style="left:60px;right:60px;top:520px;height:180px;padding:40px">
+      <div style="font:700 36px/1 var(--font)">Reduzir movimento</div>
+      <div style="font:500 23px/1 var(--font);color:var(--text-2);margin-top:16px">Ajuste de acessibilidade do sistema</div>
+      <div class="switch" id="ay-sw" style="right:40px;top:54px"><div class="knob" id="ay-knob"></div></div>
+    </div>
+    <div class="card" id="ay-demo" style="left:60px;right:60px;top:730px;height:360px;padding:36px 40px;background:var(--bg)">
+      <div class="ctitle" id="ay-mode"></div>
+      <div class="ev r" id="ay-card" style="position:absolute;left:40px;right:40px;top:100px;padding-top:26px;padding-bottom:26px">
+        <div class="tm">Domingo · 19:00</div><div class="tt" style="font-size:34px">🍿 Cinema</div><div class="a-chip r">👤 Adicionado por Rafa</div>
+      </div>
+    </div>
+    <div id="ay-checks" style="position:absolute;left:60px;right:60px;top:1140px;display:grid;gap:26px">
+      <div class="chk"><b>✓</b>Feedbacks essenciais preservados</div>
+      <div class="chk"><b>✓</b>Teclado e foco visível</div>
+      <div class="chk"><b>✓</b>Nenhuma função depende da animação</div>
+    </div>
+  </section>
+
+  <!-- RECAP -->
+  <section class="scene" id="s-recap">
+    <div class="head" id="rc-h" style="top:300px">Recapitulando.</div>
+    <div class="rc" id="rc1" style="top:480px"><div class="no">01</div><div><div class="tt">Analisar</div><div class="ds">estrutura e limites</div></div></div>
+    <div class="rc" id="rc2" style="top:680px"><div class="no">02</div><div><div class="tt">Dirigir</div><div class="ds">rosé na medida certa</div></div></div>
+    <div class="rc" id="rc3" style="top:880px"><div class="no">03</div><div><div class="tt">Animar com propósito</div><div class="ds">opacity + transform</div></div></div>
+    <div class="rc" id="rc4" style="top:1080px"><div class="no">04</div><div><div class="tt">Testar tudo</div><div class="ds">celular, teclado, movimento reduzido</div></div></div>
+  </section>
+
+  <!-- CTA -->
+  <section class="scene" id="s-cta">
+    <div class="head" id="ct-h" style="top:350px;text-align:center;font-size:108px">Cada movimento com uma <span class="rose">função.</span></div>
+    <div id="ct-q" style="position:absolute;left:80px;right:80px;top:740px;text-align:center;font:700 52px/1.25 var(--font);letter-spacing:-1px">Comenta qual tela do DuoDay você quer ver animada primeiro.</div>
+    <div class="card" id="ct-box" style="left:90px;right:90px;top:1010px;height:150px;border-radius:30px;display:flex;align-items:center;padding:0 30px;gap:22px">
+      <div class="a-av b" style="flex:none">B</div>
+      <div id="ct-type" style="font:500 36px/1 var(--font);flex:1"></div>
+      <div id="ct-pub" style="font:700 26px/1 var(--font);padding:20px 26px;border-radius:18px;background:var(--rose);color:var(--on-rose)">Publicar</div>
+    </div>
+    <div id="ct-logo" style="position:absolute;left:0;right:0;top:1240px;display:flex;justify-content:center;align-items:center;gap:22px;font:800 64px/1 var(--font);letter-spacing:-2px">
+      <img src="img/icone.png" style="width:84px;height:84px;border-radius:22px">DuoDay</div>
+  </section>
+
+  <div id="caption"></div>
+</div>
+
+<script>
+// ---------- utilidades de tempo ----------
+const T = window.TEMPOS;
+const SEG = Object.fromEntries(T.segments.map((s, i) => [s.id, { ...s, i }]));
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const p = (t, start, dur) => clamp((t - start) / dur);
+const easeOut = (k) => 1 - Math.pow(1 - k, 3);
+const easeOutQuint = (k) => 1 - Math.pow(1 - k, 5);
+const easeInOut = (k) => (k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+const easeBack = (k) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const $ = (id) => document.getElementById(id);
+const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
+
+// Momento (s) em que a narração diz uma palavra de um trecho.
+function cue(seg, word, n = 0) {
+  const w = T.words.filter((x) => x.seg === seg && norm(x.w) === norm(word));
+  if (!w[n]) throw new Error(`cue não encontrado: ${seg}/${word}`);
+  return w[n].t0;
+}
+
+function st(el, { o = 1, x = 0, y = 0, s = 1, r = 0 } = {}) {
+  el.style.opacity = o;
+  el.style.transform = `translate(${x}px,${y}px) scale(${s}) rotate(${r}deg)`;
+}
+// Entrada padrão: fade + pequeno deslocamento vertical.
+function enter(el, t, t0, { dy = 28, dx = 0, s0 = 1, dur = .55, ease = easeOut } = {}) {
+  const k = ease(p(t, t0, dur));
+  st(el, { o: k, y: (1 - k) * dy, x: (1 - k) * dx, s: lerp(s0, 1, k) });
+  return k;
+}
+
+// Títulos: cada palavra sobe de dentro de uma máscara.
+function splitWords(el) {
+  const walk = (node) => {
+    [...node.childNodes].forEach((c) => {
+      if (c.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        c.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"); w.className = "w";
+          const wi = document.createElement("span"); wi.className = "wi";
+          // O ponto final da Plus Jakarta Sans é largo; aproxima um pouco nos títulos.
+          wi.textContent = part.replace(/\.$/, "");
+          if (part.endsWith(".")) { const d = document.createElement("span"); d.textContent = "."; d.style.marginLeft = "-.1em"; wi.appendChild(d); }
+          w.appendChild(wi); frag.appendChild(w);
+        });
+        c.replaceWith(frag);
+      } else if (c.nodeType === 1 && !c.classList.contains("w")) walk(c);
+    });
+  };
+  walk(el);
+  el._wi = [...el.querySelectorAll(".wi")];
+}
+function reveal(el, t, t0, stagger = .07, dur = .6) {
+  el._wi.forEach((wi, i) => {
+    const k = easeOutQuint(p(t, t0 + i * stagger, dur));
+    wi.style.transform = `translateY(${(1 - k) * 110}%)`;
+    wi.style.opacity = clamp(k * 1.6);
+  });
+}
+function typeText(el, text, t, t0, cps = 26) {
+  const n = Math.floor(clamp((t - t0) * cps, 0, text.length));
+  const blink = Math.floor(t * 2.2) % 2 === 0 || (n > 0 && n < text.length);
+  el.innerHTML = text.slice(0, n).replace(/&/g, "&amp;") +
+    `<span style="display:inline-block;width:3px;height:1em;vertical-align:-.15em;margin-left:2px;background:${blink ? "var(--rose)" : "transparent"}"></span>`;
+}
+
+document.querySelectorAll(".head").forEach(splitWords);
+
+// ---------- calendário (cores dos pontos: Rafa, Bia e "nosso") ----------
+const DOT = { r: "var(--rafa)", b: "var(--bia)", n: "var(--rose)" };
+function fillGrid(el, offset, days, prevDays, dots = {}) {
+  let html = "";
+  for (let i = 0; i < offset; i++) html += `<div class="o">${prevDays - offset + 1 + i}</div>`;
+  for (let d = 1; d <= days; d++) {
+    const ds = (dots[d] || "").split("").filter(Boolean);
+    html += `<div data-d="${d}">${d}${ds.map((c, i) => `<i class="${ds.length > 1 && i === 0 ? "two" : ""}" style="background:${DOT[c]}"></i>`).join("")}</div>`;
+  }
+  let k = 1; while ((offset + days + k - 1) % 7) html += `<div class="o">${k++}</div>`;
+  el.innerHTML = html;
+}
+// Outubro de 2026 começa numa quinta; novembro, num domingo.
+fillGrid($("g1"), 4, 31, 30, { 21: "rb", 22: "rn", 23: "n", 24: "n", 25: "n", 26: "b", 28: "b", 31: "n" });
+fillGrid($("g2"), 0, 30, 31, { 2: "n", 4: "b", 9: "r", 11: "b", 14: "n", 18: "b", 21: "n", 25: "r" });
+const mkSel = (cell) => { const s = document.createElement("div"); s.className = "sel"; cell.prepend(s); cell._sel = s; return cell; };
+const DAY21 = mkSel($("g1").querySelector('[data-d="21"]'));
+const DAY2 = mkSel($("g2").querySelector('[data-d="2"]'));
+DAY21.classList.add("on");
+
+// ---------- corações (passo 2) ----------
+(() => {
+  const box = $("hearts"); let html = "";
+  for (let i = 0; i < 15; i++) {
+    const c = i % 5, r = Math.floor(i / 5);
+    html += `<svg class="hh" viewBox="0 0 24 24" width="88" height="88" style="position:absolute;left:${c * 182 + 30}px;top:${r * 94}px"><use href="#i-heart" fill="${i === 7 ? "#F0819E" : "#3A313A"}"/></svg>`;
+  }
+  box.innerHTML = html;
+  document.querySelectorAll("#p2-sw > div").forEach((d) => {
+    d.style.flex = "1";
+    d.querySelector("p").style.cssText = "font:600 19px/1 var(--font);color:var(--text-2);margin-top:14px;text-align:center";
+  });
+})();
+
+// ---------- legendas ----------
+const CHUNKS = [];
+(() => {
+  let cur = [];
+  T.words.forEach((w, i) => {
+    const prev = T.words[i - 1];
+    const gap = prev ? w.t0 - prev.t1 : 0;
+    if (cur.length && (cur.length >= 5 || gap > .22 || prev.seg !== w.seg)) { CHUNKS.push(cur); cur = []; }
+    cur.push(w);
+  });
+  if (cur.length) CHUNKS.push(cur);
+})();
+let lastChunk = -1;
+function drawCaption(t) {
+  const cap = $("caption");
+  let idx = -1;
+  for (let i = 0; i < CHUNKS.length; i++) if (CHUNKS[i][0].t0 - .08 <= t) idx = i;
+  const ch = CHUNKS[idx];
+  const visible = ch && t < ch[ch.length - 1].t1 + .7;
+  if (idx !== lastChunk) {
+    cap.innerHTML = ch ? ch.map((w) => `<span>${w.w}</span> `).join("") : "";
+    lastChunk = idx;
+  }
+  if (!visible) { cap.style.opacity = 0; return; }
+  const k = easeOut(p(t, ch[0].t0 - .08, .18));
+  cap.style.opacity = k; cap.style.transform = `translateY(${(1 - k) * 12}px)`;
+  [...cap.children].forEach((s, i) => {
+    const w = ch[i];
+    s.className = t >= w.t0 && t < (ch[i + 1] ? ch[i + 1].t0 : w.t1 + .7) ? "now" : t >= w.t0 ? "past" : "";
+  });
+}
+
+// ---------- cenas ----------
+const STEP_SEGS = ["p1", "p2", "p3", "p4", "p5", "p6", "p7"];
+const scenes = {
+  hook(t) {
+    reveal($("hk-h"), t, 0.05, .1);
+    reveal($("hk-h2"), t, cue("hook", "mas") - .1, .09);
+    const out = cue("hook", "olha") - .1;
+    const ko = easeInOut(p(t, out, .45));
+    const kin = easeOut(p(t, .3, .7));
+    st($("hk-ph"), { o: kin * (1 - ko), y: (1 - kin) * 40 + ko * -30 });
+    $("hk-tag").style.opacity = easeOut(p(t, 1.4, .4)) * (1 - ko);
+    st($("hk-h"), { o: 1 - ko, y: -ko * 30 }); st($("hk-h2"), { o: 1 - ko, y: -ko * 30 });
+    // Ícone do app entra com escala suave; depois o nome e o slogan.
+    const ki = easeOutQuint(p(t, out + .15, .8));
+    st($("hk-icon"), { o: ki, s: lerp(.82, 1, ki), y: (1 - ki) * 30 });
+    enter($("hk-word"), t, cue("hook", "duoday") - .05, { dy: 40, dur: .7 });
+    enter($("hk-sub"), t, cue("hook", "duoday") + .35, { dy: 20 });
+    $("hk-logo").style.opacity = t > out ? 1 : 0;
+  },
+  problema(t) {
+    enter($("pb-l"), t, SEG.problema.t0, { dy: 16 });
+    reveal($("pb-h1"), t, cue("problema", "nao") - .1, .08);
+    reveal($("pb-h2"), t, cue("problema", "e", 1) - .1, .09);
+    enter($("pb-t"), t, cue("problema", "uma") - .05, { dy: 20 });
+    const pills = $("pb-pills").children;
+    ["viva", "leve", "cuidadosa"].forEach((w, i) => enter(pills[i], t, cue("problema", w) - .1, { dy: 30, s0: .92, dur: .5 }));
+  },
+  p1(t) {
+    const s = SEG.p1.t0;
+    reveal($("p1-h"), t, s + .1);
+    enter($("p1-a"), t, s + .2, { dy: 40, dur: .6 });
+    const items = $("p1-list").children;
+    ["framework", "componentes", "estilos", "bibliotecas"].forEach((w, i) => {
+      const t0 = cue("p1", w) - .15;
+      enter(items[i], t, t0, { dy: 16, dur: .45 });
+      const kc = p(t, t0 + .3, .35);
+      st(items[i].querySelector(".ck"), { o: easeOut(kc), s: lerp(.6, 1, easeBack(kc)) });
+    });
+    enter($("p1-b"), t, cue("p1", "nada") - .1, { dy: 40, dur: .6 });
+    const lt = [cue("p1", "logica"), cue("p1", "banco"), cue("p1", "autenticacao"), cue("p1", "ficam")];
+    [...$("p1-locks").children].forEach((row, i) => enter(row, t, lt[i] - .15, { dy: 18, s0: .96, dur: .45 }));
+    enter($("p1-intact"), t, cue("p1", "intocados") - .1, { dy: 12, dur: .4 });
+  },
+  p2(t) {
+    const s = SEG.p2.t0;
+    reveal($("p2-h"), t, s + .1);
+    const words = $("p2-words").children;
+    ["moderno", "romantico", "elegante", "minimalista"].forEach((w, i) => enter(words[i], t, cue("p2", w) - .12, { dy: 24, s0: .94, dur: .45 }));
+    enter($("p2-pal"), t, cue("p2", "minimalista") + .2, { dy: 40, dur: .6 });
+    [...$("p2-sw").children].forEach((d, i) => enter(d, t, cue("p2", "rosa") - .4 + i * .08, { dy: 20, dur: .45 }));
+    $("pal-n").style.width = lerp(0, 62, easeInOut(p(t, cue("p2", "rosa") - .2, .9))) + "%";
+    $("pal-s").style.width = lerp(0, 26, easeInOut(p(t, cue("p2", "roxo") - .3, .8))) + "%";
+    $("pal-k").style.width = lerp(0, 12, easeInOut(p(t, cue("p2", "medida") - .1, .8))) + "%";
+    enter($("p2-hearts"), t, cue("p2", "nada") - .4, { dy: 40, dur: .6 });
+    document.querySelectorAll(".hh").forEach((h, i) => {
+      const kin = easeOut(p(t, cue("p2", "nada") - .2 + (i % 5) * .04 + Math.floor(i / 5) * .05, .4));
+      const kout = i === 7 ? 0 : easeInOut(p(t, cue("p2", "todo") + (i * .037) % .3, .4));
+      const k7 = i === 7 ? easeBack(p(t, cue("p2", "lugar") + .1, .45)) : 0;
+      st(h, { o: kin * (1 - kout), s: (i === 7 ? 1 + .25 * k7 : 1) * lerp(.7, 1, kin) * lerp(1, .6, kout) });
+    });
+  },
+  p3(t) {
+    const s = SEG.p3.t0;
+    reveal($("p3-h"), t, s + .1);
+    const tc = cue("p3", "calendario") - .25;
+    const tDash = cue("p3", "dashboard") - .2, tCards = cue("p3", "cartoes") - .2;
+    const tag = $("p3-tag");
+    tag.innerHTML = t < tCards ? "fade + 16px · <b>320ms</b>" : t < tc ? "em sequência · <b>60ms</b>" : "desliza 24px · <b>300ms</b>";
+    tag.style.opacity = easeOut(p(t, tDash, .4));
+    enter($("p3-ph"), t, s + .2, { dy: 60, dur: .7 });
+    // Início: skeleton pulsando (como o Skeleton do app) e os cartões reais em sequência.
+    const kOut = easeInOut(p(t, tc, .5));
+    st($("p3-dash"), { o: 1 - kOut, x: -50 * kOut });
+    enter($("d-top"), t, tDash, { dy: 18, dur: .6 });
+    ["c1", "c2", "c3", "c4"].forEach((id, i) => {
+      const c = $(id), sk = c.querySelector(".skel");
+      const kSk = easeOut(p(t, tDash + .15, .4));
+      const kReal = easeOut(p(t, tCards + i * .14, .5));
+      const pulse = .55 + .45 * (.5 - .5 * Math.cos((t - tDash) / .8 * Math.PI));
+      sk.style.opacity = pulse * (1 - kReal);
+      [...c.children].forEach((ch) => { if (ch !== sk && ch.id !== "d-ring") st(ch, { o: kReal, y: (1 - kReal) * 14 }); });
+      c.style.opacity = kSk;
+      c.style.background = kReal > 0 ? "" : "transparent";
+      c.style.borderColor = kReal > 0 ? "" : "transparent";
+    });
+    const tNext = cue("p3", "sequencia") + .1;
+    $("d-ring").style.opacity = Math.sin(p(t, tNext, 1.0) * Math.PI) * .9;
+    enter($("d-list"), t, tNext + .2, { dy: 18, dur: .5 });
+    // Agenda › Mês
+    const kIn = easeOut(p(t, tc + .15, .5));
+    st($("p3-cal"), { o: kIn, x: 50 * (1 - kIn) });
+    const tabs = $("p3-tab").children, onTab = kIn < .5 ? 0 : 1;
+    [0, 1].forEach((i) => {
+      tabs[i].className = i === onTab ? "on" : "";
+      tabs[i].querySelector("svg").style.color = i === onTab ? "var(--rose)" : "";
+    });
+    const km = easeInOut(p(t, cue("p3", "desliza") - .1, .5));
+    st($("g1"), { o: 1 - km, x: -60 * km });
+    st($("g2"), { o: km, x: 60 * (1 - km) });
+    $("cal-m").textContent = km < .5 ? "Outubro de 2026" : "Novembro de 2026";
+    $("cal-m").style.opacity = Math.abs(km - .5) * 2;
+    const ts = cue("p3", "discreto") - .2;
+    const ks = p(t, ts, .35);
+    st(DAY2._sel, { o: easeOut(ks), s: lerp(.85, 1, easeOut(ks)) });
+    DAY2.classList.toggle("on", ks > .4);
+    enter($("cal-ev"), t, ts + .25, { dy: 16, dur: .45 });
+  },
+  p4(t) {
+    const s = SEG.p4.t0;
+    reveal($("p4-h"), t, s + .1);
+    enter($("p4-pan"), t, s + .2, { dy: 40, dur: .6 });
+    const btn = $("p4-btn"), cur = $("p4-cur");
+    const tHover = cue("p4", "responde") - .2, tPress = cue("p4", "clique") - .1;
+    const tSaved = cue("p4", "salvou"), tToast = cue("p4", "confirmacao") - .3;
+    const tFav = cue("p4", "favoritou");
+    const kb = easeOut(p(t, s + .5, .55));
+    btn.style.opacity = kb;
+    // Cursor: entra, passa sobre o botão, clica e vai até o coração.
+    const k1 = easeInOut(p(t, s + 1.0, tHover - s - .8));
+    const k2 = easeInOut(p(t, tFav - 1.0, .8));
+    const cx = lerp(lerp(900, 500, k1), 840, k2), cy = lerp(lerp(700, 150, k1), 400, k2);
+    const press = Math.sin(p(t, tPress, .22) * Math.PI) + Math.sin(p(t, tFav - .05, .2) * Math.PI);
+    st(cur, { o: easeOut(p(t, s + 1.0, .3)), x: cx, y: cy, s: 1 - press * .12 });
+    const kh = easeOut(p(t, tHover + .1, .15));
+    const kp = Math.sin(p(t, tPress, .2) * Math.PI);
+    const loading = t >= tPress + .2 && t < tSaved;
+    const saved = t >= tSaved;
+    btn.style.background = `color-mix(in srgb, #EFA3B7 ${kh * 100}%, #F0819E)`;
+    btn.style.transform = `translateY(${(1 - kb) * 20}px) scale(${1 - kp * .03})`;   // motion.pressScale = 0.97
+    const bl = $("p4-bl");
+    if (loading) bl.textContent = "Salvando" + ".".repeat(Math.floor((t - tPress) * 6) % 4);
+    else bl.textContent = saved ? "✓  Salvo" : "Salvar compromisso";
+    const active = saved ? 3 : loading ? 2 : t >= tPress && t < tPress + .2 ? 1 : t >= tHover ? 0 : -1;
+    [...$("p4-st").children].forEach((e, i) => { e.className = "st" + (i === active ? " on" : ""); });
+    $("p4-st").style.opacity = easeOut(p(t, s + .8, .4));
+    // Toast: FadeInDown 220ms / FadeOutDown 180ms (ToastHost do app)
+    const kti = easeOutQuint(p(t, tToast, .4)), kto = easeInOut(p(t, tFav - .7, .3));
+    st($("p4-toast"), { o: kti * (1 - kto), y: lerp(-30, 0, kti) + kto * 24 });
+    // Coração
+    enter($("p4-ev"), t, s + .7, { dy: 30 });
+    const kf = p(t, tFav, .4);
+    $("p4-hp").setAttribute("fill", kf > 0 ? "#F0819E" : "none");
+    $("p4-hp").setAttribute("stroke", kf > 0 ? "#F0819E" : "#A3949D");
+    const pop = kf > 0 ? 1 + .26 * Math.sin(Math.min(1, kf * 1.4) * Math.PI) : 1;
+    $("p4-heart").querySelector("svg").style.transform = `scale(${pop})`;
+    const kr = p(t, tFav, .6);
+    st($("p4-hring"), { o: kr > 0 ? (1 - kr) * .7 : 0, s: lerp(.8, 1.7, easeOut(kr)) });
+    const tag = $("p4-tag");
+    tag.innerHTML = t < tToast ? "escala <b>0.97</b> · 150ms" : t < tFav - .3 ? "toast · fade + desce <b>220ms</b>" : "coração · <b>220ms</b> · sem partículas";
+    tag.style.opacity = easeOut(p(t, s + 1, .4));
+  },
+  p5(t) {
+    const s = SEG.p5.t0;
+    reveal($("p5-h"), t, s + .1);
+    enter($("p5-ph"), t, s + .2, { dy: 50, dur: .6 });
+    const tTap = cue("p5", "navegacao") - .1, tOpen = cue("p5", "fade") - .15;
+    const tFocus = cue("p5", "foco") - .1, tEsc = cue("p5", "escape") - .25;
+    const tClose = tEsc + .2;
+    const kt = p(t, tTap, .5);
+    st($("p5-tap"), { o: kt > 0 ? (1 - kt) * .9 : 0, s: lerp(.3, 1.4, easeOut(kt)) });
+    // Folha: entrada 420ms com desaceleração longa, saída 260ms (motion.sheet do app).
+    const ko = easeOutQuint(p(t, tOpen, .42)), kc = easeInOut(p(t, tClose, .26));
+    const k = ko * (1 - kc);
+    $("p5-bd").style.opacity = easeOut(p(t, tOpen, .32)) * (1 - easeInOut(p(t, tClose, .24)));
+    st($("p5-sheet"), { o: clamp(k * 1.5), s: lerp(.96, 1, k), y: (1 - k) * 120 });
+    const kf = easeOut(p(t, tFocus, .22));
+    st($("p5-focus"), { o: kf * (1 - kc), s: lerp(1.03, 1, kf) });
+    $("p5-caret").style.opacity = t > tFocus && Math.floor(t * 2.4) % 2 === 0 ? 1 : 0;
+    // Foco volta para o item que abriu a folha.
+    const kif = easeOut(p(t, tClose + .25, .3));
+    st($("p5-ifocus"), { o: kif, s: lerp(1.03, 1, kif) });
+    const key = $("p5-key");
+    const kk = Math.sin(p(t, tEsc, .3) * Math.PI);
+    st(key, { o: easeOut(p(t, tEsc - .6, .3)), y: kk * 8 });
+    key.style.boxShadow = `0 ${8 - kk * 8}px 0 #0c090c`;
+    key.style.borderColor = kk > .1 ? "var(--rose)" : "var(--border)";
+    const tag = $("p5-tag");
+    tag.innerHTML = t < tFocus ? "fade + escala 0.96 · <b>420ms</b>" : t < tClose + .2 ? "foco no primeiro campo" : "foco devolvido ao item";
+    tag.style.opacity = easeOut(p(t, tOpen, .4));
+  },
+  p6(t) {
+    const s = SEG.p6.t0;
+    reveal($("p6-h"), t, s + .1);
+    enter($("p6-list"), t, s + .3, { dy: 40, dur: .6 });
+    [...$("p6-rows").children].forEach((r, i) => enter(r, t, s + .6 + i * .07, { dy: 16, dur: .45 }));
+    const ta = cue("p6", "aniversarios") - .15;
+    $("p6-glow").style.opacity = easeOut(p(t, ta, .45));
+    $("p6-glow").style.boxShadow = `0 0 ${lerp(0, 40, Math.sin(p(t, ta + .2, 1.6) * Math.PI))}px rgba(240,129,158,.45)`;
+    enter($("p6-rem"), t, cue("p6", "destaque") - .2, { dy: 40, dur: .6 });
+    const km = easeInOut(p(t, cue("p6", "dos") - .2, .6));
+    st($("p6-a"), { x: lerp(-34, 0, km) });
+    st($("p6-b"), { x: lerp(34, 0, km) });
+  },
+  p7(t) {
+    const s = SEG.p7.t0;
+    reveal($("p7-h"), t, s + .1);
+    enter($("p7-chart"), t, s + .3, { dy: 40, dur: .6 });
+    const lt = [cue("p7", "microinteracoes"), cue("p7", "milissegundos"), cue("p7", "modais"), cue("p7", "cartoes")];
+    document.querySelectorAll("#lanes .lane").forEach((ln, i) => {
+      enter(ln, t, lt[i] - .25, { dy: 16, dur: .45 });
+      const f = ln.querySelector(".fill");
+      const a = +f.dataset.a, b = +f.dataset.b;
+      f.style.left = (a / 400 * 100) + "%";
+      f.style.width = ((b - a) / 400 * 100 * easeOut(p(t, lt[i], .7))) + "%";
+    });
+    const te = cue("p7", "cartoes") + .4;
+    enter($("p7-ease"), t, te, { dy: 30, dur: .5 });
+    // cubic-bezier(.22,1,.36,1) — desaceleração natural.
+    const bez = (u) => { const c = (a, b) => 3 * a * u * (1 - u) * (1 - u) + 3 * b * u * u * (1 - u) + u * u * u; return [c(.22, .36), c(1, 1)]; };
+    const kc = p(t, te + .2, 1.0);
+    let d = "";
+    for (let i = 0; i <= 60 * kc; i++) { const [x, y] = bez(i / 60); d += (i ? "L" : "M") + (10 + x * 380).toFixed(1) + " " + (210 - y * 200).toFixed(1); }
+    $("p7-curve").setAttribute("d", d || "M10 210");
+    const [dx, dy] = bez(clamp(((t - (te + 1.3)) % 1.8) / 1.2));
+    $("p7-dot").setAttribute("cx", 10 + dx * 380); $("p7-dot").setAttribute("cy", 210 - dy * 200);
+    $("p7-dot").style.opacity = t > te + 1.3 ? 1 : 0;
+    const tp = [cue("p7", "opacity"), cue("p7", "transform"), cue("p7", "transform") + .35, cue("p7", "transform") + .5];
+    [...$("p7-props").children].forEach((e, i) => enter(e, t, tp[i] - .2, { dx: 24, dy: 0, dur: .4 }));
+  },
+  a11y(t) {
+    const s = SEG.a11y.t0;
+    reveal($("ay-h"), t, s + .1);
+    enter($("ay-set"), t, s + .3, { dy: 40, dur: .6 });
+    enter($("ay-demo"), t, s + .5, { dy: 40, dur: .6 });
+    const tOn = cue("a11y", "preferencia");
+    const kon = easeInOut(p(t, tOn, .22));
+    st($("ay-knob"), { x: kon * 52 });
+    $("ay-sw").style.background = `color-mix(in srgb, #F0819E ${kon * 100}%, #54485A)`;
+    const reduced = t >= tOn;
+    $("ay-mode").textContent = reduced ? "Reduzido · só opacidade" : "Padrão · desliza + escala";
+    $("ay-mode").style.color = reduced ? "var(--success)" : "var(--rose)";
+    // O cartão entra em loop; com movimento reduzido vira um fade puro.
+    const cyc = ((t - s - .8) % 1.9 + 1.9) % 1.9;
+    const k = easeOut(clamp(cyc / .6)), ko = easeInOut(clamp((cyc - 1.4) / .4));
+    st($("ay-card"), reduced ? { o: k * (1 - ko) } : { o: k * (1 - ko), y: (1 - k) * 60 - ko * 20, s: lerp(.9, 1, k) });
+    [...$("ay-checks").children].forEach((c, i) => enter(c, t, cue("a11y", "nenhuma") - .4 + i * .25, { dy: 20, dur: .45 }));
+  },
+  recap(t) {
+    const s = SEG.recap.t0;
+    reveal($("rc-h"), t, s + .05);
+    const ws = [cue("recap", "analisar"), cue("recap", "dirigir"), cue("recap", "animar"), cue("recap", "testar")];
+    ws.forEach((w, i) => {
+      const el = $("rc" + (i + 1));
+      enter(el, t, w - .25, { dy: 30, dur: .5 });
+      const on = t >= w - .1 && (i === 3 || t < ws[i + 1] - .1);
+      el.style.borderColor = on ? "var(--rose)" : "var(--border)";
+      el.style.background = on ? "var(--rose-soft)" : "var(--surface)";
+    });
+  },
+  cta(t) {
+    const s = SEG.cta.t0;
+    reveal($("ct-h"), t, s + .05, .08);
+    enter($("ct-q"), t, cue("cta", "comenta") - .15, { dy: 30, dur: .6 });
+    enter($("ct-box"), t, cue("cta", "duoday") - .2, { dy: 30, dur: .5 });
+    typeText($("ct-type"), "a agenda do mês!", t, cue("cta", "animada"), 13);
+    const kp = Math.sin(p(t, SEG.cta.t1 - .35, .2) * Math.PI);
+    $("ct-pub").style.transform = `scale(${1 - kp * .03})`;
+    enter($("ct-logo"), t, cue("cta", "primeiro") - .1, { dy: 20 });
+  },
+};
+
+const ORDER = T.segments.map((s) => s.id);
+window.render = function (t) {
+  // Fundo: brilhos rosé que se movem bem devagar.
+  st($("glow1"), { x: Math.sin(t * .15) * 60, y: Math.cos(t * .12) * 50 });
+  st($("glow2"), { x: Math.cos(t * .13) * 50, y: Math.sin(t * .1) * 40 });
+
+  ORDER.forEach((id, i) => {
+    const el = $("s-" + id);
+    const a = SEG[id].t0, b = i < ORDER.length - 1 ? SEG[ORDER[i + 1]].t0 : 1e9;
+    const fi = i === 0 ? 1 : easeOut(p(t, a - .15, .35));
+    const fo = 1 - easeInOut(p(t, b - .2, .3));
+    const k = Math.min(fi, fo);
+    if (k <= 0) { el.style.display = "none"; return; }
+    el.style.display = "block";
+    el.style.opacity = k;
+    el.style.transform = `translateY(${(1 - fo) * -24}px)`;
+    scenes[id](t);
+  });
+
+  // Barra de passos
+  const chips = document.querySelectorAll(".chip");
+  const kc = easeOut(p(t, SEG.p1.t0 - .3, .5)) * (1 - easeInOut(p(t, SEG.a11y.t0 - .2, .4)));
+  $("chips").style.opacity = kc;
+  $("chips").style.display = kc > 0 ? "flex" : "none";
+  STEP_SEGS.forEach((id, i) => {
+    const sg = SEG[id];
+    const on = t >= sg.t0 - .15 && t < sg.t1 - .15;
+    chips[i].className = "chip" + (on ? " on" : t >= sg.t1 - .15 ? " done" : "");
+    chips[i].querySelector(".bar").style.width = (on ? p(t, sg.t0, sg.t1 - sg.t0) * 100 : 0) + "%";
+  });
+
+  drawCaption(t);
+};
+</script>
+</body>
+</html>

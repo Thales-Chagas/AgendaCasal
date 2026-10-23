@@ -1,0 +1,14 @@
+[
+  {"id":"hook","text":"Seu app de casal funciona… mas parece parado? Olha o que dá pra fazer com o DuoDay."},
+  {"id":"problema","text":"O problema não é a função. É a sensação. Uma agenda a dois precisa parecer viva, leve e cuidadosa."},
+  {"id":"p1","text":"Passo um: analisar antes de animar. Framework, componentes, estilos e bibliotecas. Nada de recriar o que já funciona. Lógica, banco e autenticação ficam intocados."},
+  {"id":"p2","text":"Passo dois: direção de arte. Moderno, romântico, elegante e minimalista. Rosa e roxo na medida certa. E nada de corações em todo lugar."},
+  {"id":"p3","text":"Passo três: entradas. O dashboard surge com um fade e um leve deslocamento. Os cartões chegam em sequência. No calendário, o mês desliza de lado, discreto."},
+  {"id":"p4","text":"Passo quatro: microinterações. O botão responde ao toque e encolhe no clique. Salvou o evento? Uma confirmação elegante. Favoritou? Um coração rápido, sem explosão."},
+  {"id":"p5","text":"Passo cinco: modais e navegação. Fade com uma pequena escala, foco preservado, e fechamento com Escape."},
+  {"id":"p6","text":"Passo seis: momentos especiais. Aniversários e datas importantes ganham um destaque sutil. Afinal, é a agenda dos dois."},
+  {"id":"p7","text":"Agora, os números. Microinterações entre cento e vinte e duzentos e vinte milissegundos. Modais até trezentos e cinquenta. Cartões com quarenta a oitenta de intervalo. E só opacity e transform."},
+  {"id":"a11y","text":"E quem prefere menos movimento? O app respeita a preferência de movimento reduzido, e nenhuma função depende da animação."},
+  {"id":"recap","text":"Recapitulando: analisar, dirigir, animar com propósito e testar tudo."},
+  {"id":"cta","text":"Cada movimento com uma função. Comenta qual tela do DuoDay você quer ver animada primeiro."}
+]
