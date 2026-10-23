@@ -232,9 +232,12 @@ h3 {
 
 /* Topo */
 .topbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 5;
+  transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
   background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: saturate(1.4) blur(14px);
   -webkit-backdrop-filter: saturate(1.4) blur(14px);
@@ -283,6 +286,10 @@ h3 {
   .topbar .btn-small {
     margin-left: 12px;
   }
+}
+
+#smooth-content {
+  padding-top: 64px;
 }
 
 /* Hero */
@@ -698,4 +705,171 @@ details p {
   margin-bottom: 24px;
   font-weight: 700;
   text-decoration: none;
+}
+
+/* Telas: cabeçalho da seção (visível também sem animação) */
+.showcase-head {
+  margin-bottom: 28px;
+}
+.showcase-count {
+  display: none;
+}
+
+/* ---------- Animações (motion.js). Só valem com a classe .motion, posta pelo motion-boot.js ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 6;
+  background: linear-gradient(90deg, var(--rose), #8143ee, #0ea5a0);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  display: none;
+}
+.motion .scroll-progress {
+  display: block;
+}
+.topbar-hidden {
+  transform: translateY(-100%);
+}
+
+.motion:not(.motion-ready) .hero-copy > *,
+.motion:not(.motion-ready) .hero-art {
+  opacity: 0;
+}
+.motion .phone-front {
+  animation: none;
+}
+.motion .btn {
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+/* Título do topo: palavras entram uma a uma */
+.hero h1 .w {
+  transform-origin: 0 100%;
+  will-change: transform, opacity;
+}
+
+.hero-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+@media (min-width: 900px) {
+  .hero-dots {
+    inset: -6% -10%;
+  }
+}
+.hero-dots span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  filter: saturate(1.1);
+  box-shadow: 0 6px 16px -6px rgba(42, 31, 40, 0.35);
+}
+.hero-art .phone {
+  will-change: transform;
+}
+
+/* Recursos: inclinação 3D com o ponteiro */
+.motion .feature-grid {
+  perspective: 1200px;
+}
+.motion .feature {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Telas: seção presa, telas passam para o lado */
+.showcase.is-pinned {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 0;
+}
+.showcase.is-pinned .wrap {
+  overflow: visible;
+}
+.showcase.is-pinned .showcase-head {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.showcase.is-pinned .showcase-head .eyebrow {
+  flex-basis: 100%;
+  margin: 0;
+}
+.showcase.is-pinned .showcase-count {
+  display: block;
+  margin: 0 0 0 auto;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.showcase.is-pinned [data-count] {
+  color: var(--rose);
+}
+.showcase.is-pinned .screens {
+  width: max-content;
+  overflow: visible;
+  scroll-snap-type: none;
+  grid-auto-columns: clamp(170px, 24vh, 250px);
+  gap: clamp(20px, 3vw, 44px);
+  padding-top: 12px;
+  padding-bottom: 12px;
+  will-change: transform;
+}
+.showcase.is-pinned .screens li {
+  perspective: 1100px;
+}
+.showcase.is-pinned figure {
+  will-change: transform, opacity;
+}
+.showcase.is-pinned figcaption {
+  transition:
+    color 200ms ease,
+    transform 200ms ease;
+}
+.showcase.is-pinned .is-current figcaption {
+  color: var(--rose);
+  transform: translateY(2px);
+}
+
+.motion .privacy {
+  will-change: transform;
+}
+
+/* Instalar: o número de cada passo salta */
+.motion .steps li::before {
+  transform: scale(var(--step-scale, 1));
+}
+
+.motion .faq details p {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none !important;
+  }
+}
+html.motion {
+  scroll-behavior: auto;
+}
+/* Elementos que entram pelos lados não podem criar rolagem horizontal antes de animar */
+main {
+  overflow-x: clip;
+}
+section[id],
+.install-card {
+  scroll-margin-top: 80px;
 }

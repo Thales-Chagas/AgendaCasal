@@ -66,6 +66,20 @@ O que muda em relação ao app do celular:
    O APK tem mais de 25 MB, limite de arquivo da Pages; opções: o link do build na Expo, ou um bucket
    público no Cloudflare R2 (grátis até 10 GB).
 
+## Animações do site
+
+`site/motion.js` usa **GSAP 3.15** (ScrollSmoother, ScrollTrigger e SplitText: rolagem suave no
+computador, telas que passam de lado com a seção presa, títulos que sobem) e **anime.js 4.5** (título do
+topo, ícones, botões que seguem o mouse, perguntas que deslizam). As bibliotecas ficam em `site/vendor/`
+(servidas pelo próprio site, por causa da CSP). O anime.js é uma versão enxuta, gerada com:
+
+```bash
+echo "export { animate, stagger, splitText, scrambleText, createAnimatable, spring, utils } from 'animejs';" > entry.js
+npx esbuild entry.js --bundle --format=iife --global-name=anime --minify --outfile=anime.min.js
+```
+
+Com "reduzir movimento" ligado no aparelho, ou sem JavaScript, o site aparece igual, sem animação.
+
 ## Testar localmente (sem tocar no TST nem na produção)
 
 ```bash

@@ -7,3 +7,4 @@ supabase/.temp
 supabase/templates
 package-lock.json
 marketing
+site/vendor

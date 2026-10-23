@@ -31,10 +31,18 @@
       content="Compromissos, datas especiais e contas do casal num só lugar. Grátis, sem anúncios." />
     <meta property="og:image" content="https://duoday.com.br/img/inicio.webp" />
     <meta property="og:locale" content="pt_BR" />
+    <script src="/motion-boot.js"></script>
     <script src="/main.js" defer></script>
+    <script src="/vendor/gsap.min.js" defer></script>
+    <script src="/vendor/ScrollTrigger.min.js" defer></script>
+    <script src="/vendor/ScrollSmoother.min.js" defer></script>
+    <script src="/vendor/SplitText.min.js" defer></script>
+    <script src="/vendor/anime.min.js" defer></script>
+    <script src="/motion.js" defer></script>
   </head>
   <body>
     <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+    <div class="scroll-progress" aria-hidden="true"></div>
 
     <header class="topbar">
       <div class="wrap topbar-inner">
@@ -51,301 +59,317 @@
       </div>
     </header>
 
-    <main id="conteudo">
-      <section class="hero">
-        <div class="wrap hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">A agenda do casal</p>
-            <h1>Vocês dois,<br />na mesma página.</h1>
-            <p class="lead">
-              Compromissos, datas especiais e as contas da casa num só lugar, cada um com a sua cor. E um
-              cantinho de notas que é só seu.
-            </p>
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <main id="conteudo">
+          <section class="hero">
+            <div class="wrap hero-grid">
+              <div class="hero-copy">
+                <p class="eyebrow">A agenda do casal</p>
+                <h1>Vocês dois,<br />na mesma página.</h1>
+                <p class="lead">
+                  Compromissos, datas especiais e as contas da casa num só lugar, cada um com a sua cor. E um
+                  cantinho de notas que é só seu.
+                </p>
 
-            <div class="cta" aria-label="Baixar o DuoDay">
-              <a class="btn btn-primary" href="/baixar/android" data-cta="primary">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="btn-icon">
-                  <path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14" />
-                </svg>
-                <span data-cta-label>Baixar para Android</span>
-              </a>
-              <a class="btn btn-ghost" href="https://app.duoday.com.br" data-cta="secondary">
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="btn-icon">
-                  <path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 15h2" />
-                </svg>
-                <span data-cta-label>Usar no iPhone</span>
-              </a>
-            </div>
-            <p class="cta-note" data-cta-note>
-              Grátis, sem anúncios. No iPhone, pelo Safari; no Android, direto pelo app.
-            </p>
-          </div>
-
-          <div class="hero-art" aria-hidden="true">
-            <figure class="phone phone-back">
-              <img src="/img/semana.webp" alt="" width="585" height="1266" />
-            </figure>
-            <figure class="phone phone-front">
-              <img src="/img/inicio.webp" alt="" width="585" height="1266" />
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section class="features" id="recursos" aria-labelledby="recursos-titulo">
-        <div class="wrap">
-          <p class="eyebrow">Feito para dois</p>
-          <h2 id="recursos-titulo">Tudo o que a rotina de vocês precisa, e nada a mais.</h2>
-          <ul class="feature-grid">
-            <li class="feature">
-              <span class="feature-icon" aria-hidden="true">🗓️</span>
-              <h3>Agenda compartilhada</h3>
-              <p>
-                O que é do casal aparece em rosa; o que é de cada um, na cor que cada um escolheu. Dá para
-                saber de quem é sem ler.
-              </p>
-            </li>
-            <li class="feature">
-              <span class="feature-icon" aria-hidden="true">💸</span>
-              <h3>Contas da casa</h3>
-              <p>
-                Aluguel, internet, cartão: contas do casal ou só suas, com lembrete antes do vencimento e
-                "marcar como paga".
-              </p>
-            </li>
-            <li class="feature">
-              <span class="feature-icon" aria-hidden="true">🎉</span>
-              <h3>Datas especiais</h3>
-              <p>Aniversários, namoro, casamento. Contagem regressiva no início e aviso com antecedência.</p>
-            </li>
-            <li class="feature">
-              <span class="feature-icon" aria-hidden="true">🔒</span>
-              <h3>Notas só suas</h3>
-              <p>
-                Ficam só no seu celular, criptografadas, e abrem com digital, rosto ou PIN. Nem o parceiro,
-                nem nós vemos.
-              </p>
-            </li>
-            <li class="feature">
-              <span class="feature-icon" aria-hidden="true">⏰</span>
-              <h3>Lembretes na hora certa</h3>
-              <p>Avisos dos seus compromissos e um recado quando o outro adicionar algo novo.</p>
-            </li>
-            <li class="feature">
-              <span class="feature-icon" aria-hidden="true">📶</span>
-              <h3>Funciona sem internet</h3>
-              <p>
-                A agenda fica guardada no aparelho e abre na hora. Quando a conexão volta, tudo se acerta
-                sozinho.
-              </p>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="showcase" aria-labelledby="telas-titulo">
-        <div class="wrap">
-          <h2 id="telas-titulo" class="visually-hidden">Telas do app</h2>
-          <ul class="screens" tabindex="0" aria-label="Telas do DuoDay (role para o lado)">
-            <li>
-              <figure>
-                <img
-                  src="/img/mes.webp"
-                  alt="Calendário do mês com os dias marcados na cor de quem marcou"
-                  width="585"
-                  height="1266"
-                  loading="lazy" />
-                <figcaption>O mês num olhar</figcaption>
-              </figure>
-            </li>
-            <li>
-              <figure>
-                <img
-                  src="/img/semana.webp"
-                  alt="Semana com cada dia em destaque e os compromissos"
-                  width="585"
-                  height="1266"
-                  loading="lazy" />
-                <figcaption>Cada dia em destaque</figcaption>
-              </figure>
-            </li>
-            <li>
-              <figure>
-                <img
-                  src="/img/financas.webp"
-                  alt="Contas do mês com total, pagas e a vencer"
-                  width="585"
-                  height="1266"
-                  loading="lazy" />
-                <figcaption>Contas sob controle</figcaption>
-              </figure>
-            </li>
-            <li>
-              <figure>
-                <img
-                  src="/img/notas.webp"
-                  alt="Notas privadas, somente neste aparelho"
-                  width="585"
-                  height="1266"
-                  loading="lazy" />
-                <figcaption>Notas só suas</figcaption>
-              </figure>
-            </li>
-            <li>
-              <figure>
-                <img
-                  src="/img/cor.webp"
-                  alt="Escolha da cor pessoal entre 15 opções"
-                  width="585"
-                  height="1266"
-                  loading="lazy" />
-                <figcaption>A sua cor</figcaption>
-              </figure>
-            </li>
-            <li>
-              <figure>
-                <img
-                  src="/img/inicio-escuro.webp"
-                  alt="Tela inicial no tema escuro"
-                  width="585"
-                  height="1266"
-                  loading="lazy" />
-                <figcaption>Tema escuro</figcaption>
-              </figure>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="privacy" id="privacidade" aria-labelledby="privacidade-titulo">
-        <div class="wrap privacy-grid">
-          <div>
-            <p class="eyebrow eyebrow-light">Privado de verdade</p>
-            <h2 id="privacidade-titulo">O que é de vocês fica com vocês.</h2>
-            <p class="lead lead-light">
-              Sem anúncios, sem venda de dados e sem rastrear o que você faz. Seguimos a LGPD, e você pode
-              ver, baixar ou apagar seus dados quando quiser, no próprio app.
-            </p>
-            <a class="link-light" href="/privacidade/">Ler a Política de Privacidade →</a>
-          </div>
-          <ul class="privacy-list">
-            <li>
-              <strong>Notas nunca saem do seu celular.</strong> Ficam criptografadas e só abrem com você.
-            </li>
-            <li>
-              <strong>O parceiro vê só o que é compartilhado.</strong> Contas marcadas como "só minha" ficam
-              só com você.
-            </li>
-            <li>
-              <strong>Dados no Brasil.</strong> A agenda fica em servidores em São Paulo, com acesso protegido
-              casal a casal.
-            </li>
-            <li>
-              <strong>Avisos discretos.</strong> Por padrão, a tela de bloqueio não mostra o nome dos
-              compromissos.
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="install" id="instalar" aria-labelledby="instalar-titulo">
-        <div class="wrap">
-          <p class="eyebrow">Instalar</p>
-          <h2 id="instalar-titulo">Leva um minuto. Os dois instalam, um convida o outro.</h2>
-          <div class="install-grid">
-            <article class="install-card" id="iphone" data-for="ios">
-              <h3><span aria-hidden="true">📱</span> iPhone</h3>
-              <ol class="steps">
-                <li>
-                  Abra <a href="https://app.duoday.com.br">app.duoday.com.br</a> no <strong>Safari</strong>.
-                </li>
-                <li>
-                  Toque em <strong>Compartilhar</strong>
-                  <span class="share-icon" aria-hidden="true"
-                    ><svg viewBox="0 0 24 24">
+                <div class="cta" aria-label="Baixar o DuoDay">
+                  <a class="btn btn-primary" href="/baixar/android" data-cta="primary">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="btn-icon">
+                      <path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14" />
+                    </svg>
+                    <span data-cta-label>Baixar para Android</span>
+                  </a>
+                  <a class="btn btn-ghost" href="https://app.duoday.com.br" data-cta="secondary">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" class="btn-icon">
                       <path
-                        d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1" /></svg
-                  ></span>
-                  e depois em <strong>Adicionar à Tela de Início</strong>.
+                        d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 15h2" />
+                    </svg>
+                    <span data-cta-label>Usar no iPhone</span>
+                  </a>
+                </div>
+                <p class="cta-note" data-cta-note>
+                  Grátis, sem anúncios. No iPhone, pelo Safari; no Android, direto pelo app.
+                </p>
+              </div>
+
+              <div class="hero-art" aria-hidden="true">
+                <div class="hero-dots"></div>
+                <figure class="phone phone-back">
+                  <img src="/img/semana.webp" alt="" width="585" height="1266" />
+                </figure>
+                <figure class="phone phone-front">
+                  <img src="/img/inicio.webp" alt="" width="585" height="1266" />
+                </figure>
+              </div>
+            </div>
+          </section>
+
+          <section class="features" id="recursos" aria-labelledby="recursos-titulo">
+            <div class="wrap">
+              <p class="eyebrow">Feito para dois</p>
+              <h2 id="recursos-titulo">Tudo o que a rotina de vocês precisa, e nada a mais.</h2>
+              <ul class="feature-grid">
+                <li class="feature">
+                  <span class="feature-icon" aria-hidden="true">🗓️</span>
+                  <h3>Agenda compartilhada</h3>
+                  <p>
+                    O que é do casal aparece em rosa; o que é de cada um, na cor que cada um escolheu. Dá para
+                    saber de quem é sem ler.
+                  </p>
                 </li>
-                <li>Abra o DuoDay pelo ícone novo e permita as notificações para receber os lembretes.</li>
-              </ol>
-              <p class="install-note">
-                Precisa do iOS 16.4 ou mais novo para os lembretes. Não ocupa espaço como um app comum e se
-                atualiza sozinho.
-              </p>
-              <a class="btn btn-primary" href="https://app.duoday.com.br">Abrir o DuoDay</a>
-            </article>
-            <article class="install-card" id="android" data-for="android">
-              <h3><span aria-hidden="true">🤖</span> Android</h3>
-              <ol class="steps">
-                <li>Toque em <strong>Baixar para Android</strong> e abra o arquivo baixado.</li>
+                <li class="feature">
+                  <span class="feature-icon" aria-hidden="true">💸</span>
+                  <h3>Contas da casa</h3>
+                  <p>
+                    Aluguel, internet, cartão: contas do casal ou só suas, com lembrete antes do vencimento e
+                    "marcar como paga".
+                  </p>
+                </li>
+                <li class="feature">
+                  <span class="feature-icon" aria-hidden="true">🎉</span>
+                  <h3>Datas especiais</h3>
+                  <p>
+                    Aniversários, namoro, casamento. Contagem regressiva no início e aviso com antecedência.
+                  </p>
+                </li>
+                <li class="feature">
+                  <span class="feature-icon" aria-hidden="true">🔒</span>
+                  <h3>Notas só suas</h3>
+                  <p>
+                    Ficam só no seu celular, criptografadas, e abrem com digital, rosto ou PIN. Nem o
+                    parceiro, nem nós vemos.
+                  </p>
+                </li>
+                <li class="feature">
+                  <span class="feature-icon" aria-hidden="true">⏰</span>
+                  <h3>Lembretes na hora certa</h3>
+                  <p>Avisos dos seus compromissos e um recado quando o outro adicionar algo novo.</p>
+                </li>
+                <li class="feature">
+                  <span class="feature-icon" aria-hidden="true">📶</span>
+                  <h3>Funciona sem internet</h3>
+                  <p>
+                    A agenda fica guardada no aparelho e abre na hora. Quando a conexão volta, tudo se acerta
+                    sozinho.
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="showcase" aria-labelledby="telas-titulo">
+            <div class="wrap">
+              <div class="showcase-head">
+                <p class="eyebrow">Por dentro do app</p>
+                <h2 id="telas-titulo">Cada tela pensada para dois.</h2>
+                <p class="showcase-count" aria-hidden="true"><span data-count>01</span> / 06</p>
+              </div>
+              <ul class="screens" tabindex="0" aria-label="Telas do DuoDay (role para o lado)">
                 <li>
-                  Se o celular pedir, permita <strong>instalar apps desta fonte</strong> (só para o navegador
-                  que você usou).
+                  <figure>
+                    <img
+                      src="/img/mes.webp"
+                      alt="Calendário do mês com os dias marcados na cor de quem marcou"
+                      width="585"
+                      height="1266"
+                      loading="lazy" />
+                    <figcaption>O mês num olhar</figcaption>
+                  </figure>
                 </li>
-                <li>Abra o DuoDay e crie sua conta.</li>
-              </ol>
-              <p class="install-note">
-                O Google pode mostrar um aviso porque o app ainda não está na Play Store. Ele chega lá em
-                breve; até lá, as atualizações vêm pelo próprio app.
-              </p>
-              <a class="btn btn-primary" href="/baixar/android">Baixar para Android</a>
-            </article>
+                <li>
+                  <figure>
+                    <img
+                      src="/img/semana.webp"
+                      alt="Semana com cada dia em destaque e os compromissos"
+                      width="585"
+                      height="1266"
+                      loading="lazy" />
+                    <figcaption>Cada dia em destaque</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <figure>
+                    <img
+                      src="/img/financas.webp"
+                      alt="Contas do mês com total, pagas e a vencer"
+                      width="585"
+                      height="1266"
+                      loading="lazy" />
+                    <figcaption>Contas sob controle</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <figure>
+                    <img
+                      src="/img/notas.webp"
+                      alt="Notas privadas, somente neste aparelho"
+                      width="585"
+                      height="1266"
+                      loading="lazy" />
+                    <figcaption>Notas só suas</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <figure>
+                    <img
+                      src="/img/cor.webp"
+                      alt="Escolha da cor pessoal entre 15 opções"
+                      width="585"
+                      height="1266"
+                      loading="lazy" />
+                    <figcaption>A sua cor</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <figure>
+                    <img
+                      src="/img/inicio-escuro.webp"
+                      alt="Tela inicial no tema escuro"
+                      width="585"
+                      height="1266"
+                      loading="lazy" />
+                    <figcaption>Tema escuro</figcaption>
+                  </figure>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="privacy" id="privacidade" aria-labelledby="privacidade-titulo">
+            <div class="wrap privacy-grid">
+              <div>
+                <p class="eyebrow eyebrow-light">Privado de verdade</p>
+                <h2 id="privacidade-titulo">O que é de vocês fica com vocês.</h2>
+                <p class="lead lead-light">
+                  Sem anúncios, sem venda de dados e sem rastrear o que você faz. Seguimos a LGPD, e você pode
+                  ver, baixar ou apagar seus dados quando quiser, no próprio app.
+                </p>
+                <a class="link-light" href="/privacidade/">Ler a Política de Privacidade →</a>
+              </div>
+              <ul class="privacy-list">
+                <li>
+                  <strong>Notas nunca saem do seu celular.</strong> Ficam criptografadas e só abrem com você.
+                </li>
+                <li>
+                  <strong>O parceiro vê só o que é compartilhado.</strong> Contas marcadas como "só minha"
+                  ficam só com você.
+                </li>
+                <li>
+                  <strong>Dados no Brasil.</strong> A agenda fica em servidores em São Paulo, com acesso
+                  protegido casal a casal.
+                </li>
+                <li>
+                  <strong>Avisos discretos.</strong> Por padrão, a tela de bloqueio não mostra o nome dos
+                  compromissos.
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="install" id="instalar" aria-labelledby="instalar-titulo">
+            <div class="wrap">
+              <p class="eyebrow">Instalar</p>
+              <h2 id="instalar-titulo">Leva um minuto. Os dois instalam, um convida o outro.</h2>
+              <div class="install-grid">
+                <article class="install-card" id="iphone" data-for="ios">
+                  <h3><span aria-hidden="true">📱</span> iPhone</h3>
+                  <ol class="steps">
+                    <li>
+                      Abra <a href="https://app.duoday.com.br">app.duoday.com.br</a> no
+                      <strong>Safari</strong>.
+                    </li>
+                    <li>
+                      Toque em <strong>Compartilhar</strong>
+                      <span class="share-icon" aria-hidden="true"
+                        ><svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1" /></svg
+                      ></span>
+                      e depois em <strong>Adicionar à Tela de Início</strong>.
+                    </li>
+                    <li>
+                      Abra o DuoDay pelo ícone novo e permita as notificações para receber os lembretes.
+                    </li>
+                  </ol>
+                  <p class="install-note">
+                    Precisa do iOS 16.4 ou mais novo para os lembretes. Não ocupa espaço como um app comum e
+                    se atualiza sozinho.
+                  </p>
+                  <a class="btn btn-primary" href="https://app.duoday.com.br">Abrir o DuoDay</a>
+                </article>
+                <article class="install-card" id="android" data-for="android">
+                  <h3><span aria-hidden="true">🤖</span> Android</h3>
+                  <ol class="steps">
+                    <li>Toque em <strong>Baixar para Android</strong> e abra o arquivo baixado.</li>
+                    <li>
+                      Se o celular pedir, permita <strong>instalar apps desta fonte</strong> (só para o
+                      navegador que você usou).
+                    </li>
+                    <li>Abra o DuoDay e crie sua conta.</li>
+                  </ol>
+                  <p class="install-note">
+                    O Google pode mostrar um aviso porque o app ainda não está na Play Store. Ele chega lá em
+                    breve; até lá, as atualizações vêm pelo próprio app.
+                  </p>
+                  <a class="btn btn-primary" href="/baixar/android">Baixar para Android</a>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="faq" aria-labelledby="faq-titulo">
+            <div class="wrap narrow">
+              <h2 id="faq-titulo">Perguntas frequentes</h2>
+              <details>
+                <summary>É grátis?</summary>
+                <p>
+                  Sim. Sem anúncios e sem assinatura. Se um dia existir algo pago, vai ser opcional e avisado
+                  antes.
+                </p>
+              </details>
+              <details>
+                <summary>Um usa iPhone e o outro Android. Funciona?</summary>
+                <p>Funciona. A agenda é a mesma para os dois, em qualquer aparelho.</p>
+              </details>
+              <details>
+                <summary>Meu parceiro consegue ler minhas notas?</summary>
+                <p>
+                  Não. As notas ficam só no seu celular, criptografadas, e não vão para a internet. Nem nós
+                  temos acesso.
+                </p>
+              </details>
+              <details>
+                <summary>E se eu trocar de celular?</summary>
+                <p>
+                  A agenda, as datas e as contas voltam assim que você entrar na conta. As notas ficam no
+                  aparelho antigo: antes de trocar, use "Exportar minhas notas".
+                </p>
+              </details>
+              <details>
+                <summary>Como apago minha conta?</summary>
+                <p>
+                  No app, em Nós › Minha conta › Excluir minha conta. Seus dados pessoais são apagados na
+                  hora.
+                </p>
+              </details>
+            </div>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div class="wrap footer-inner">
+            <a class="brand" href="/"
+              ><img src="/img/icone.png" alt="" width="28" height="28" /><span>DuoDay</span></a
+            >
+            <nav aria-label="Rodapé">
+              <a href="/privacidade/">Privacidade</a>
+              <a href="/termos/">Termos de Uso</a>
+              <a href="mailto:ajuda@duoday.com.br">ajuda@duoday.com.br</a>
+            </nav>
+            <p class="footer-note">Feito no Brasil, com carinho, para casais. © 2026 DuoDay.</p>
           </div>
-        </div>
-      </section>
-
-      <section class="faq" aria-labelledby="faq-titulo">
-        <div class="wrap narrow">
-          <h2 id="faq-titulo">Perguntas frequentes</h2>
-          <details>
-            <summary>É grátis?</summary>
-            <p>
-              Sim. Sem anúncios e sem assinatura. Se um dia existir algo pago, vai ser opcional e avisado
-              antes.
-            </p>
-          </details>
-          <details>
-            <summary>Um usa iPhone e o outro Android. Funciona?</summary>
-            <p>Funciona. A agenda é a mesma para os dois, em qualquer aparelho.</p>
-          </details>
-          <details>
-            <summary>Meu parceiro consegue ler minhas notas?</summary>
-            <p>
-              Não. As notas ficam só no seu celular, criptografadas, e não vão para a internet. Nem nós temos
-              acesso.
-            </p>
-          </details>
-          <details>
-            <summary>E se eu trocar de celular?</summary>
-            <p>
-              A agenda, as datas e as contas voltam assim que você entrar na conta. As notas ficam no aparelho
-              antigo: antes de trocar, use "Exportar minhas notas".
-            </p>
-          </details>
-          <details>
-            <summary>Como apago minha conta?</summary>
-            <p>
-              No app, em Nós › Minha conta › Excluir minha conta. Seus dados pessoais são apagados na hora.
-            </p>
-          </details>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="wrap footer-inner">
-        <a class="brand" href="/"
-          ><img src="/img/icone.png" alt="" width="28" height="28" /><span>DuoDay</span></a
-        >
-        <nav aria-label="Rodapé">
-          <a href="/privacidade/">Privacidade</a>
-          <a href="/termos/">Termos de Uso</a>
-          <a href="mailto:ajuda@duoday.com.br">ajuda@duoday.com.br</a>
-        </nav>
-        <p class="footer-note">Feito no Brasil, com carinho, para casais. © 2026 DuoDay.</p>
+        </footer>
       </div>
-    </footer>
+    </div>
   </body>
 </html>
